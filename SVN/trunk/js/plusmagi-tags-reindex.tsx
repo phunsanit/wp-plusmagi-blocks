@@ -1,175 +1,101 @@
-/**
- * PlusMagi Tags Reindex - Custom Gutenberg Sidebar Panel (TypeScript Edition)
- *
- * Replaces the default WordPress tags panel with enhanced features:
- * - Bulk comma-separated tag input
- * - Real-time tag statistics
- * - Reindex mode toggle
- */
-
 import { registerPlugin } from '@wordpress/plugins';
-import { PluginDocumentSettingPanel } from '@wordpress/editor';
+import { PluginDocumentSettingPanel } from '@wordpress/edit-post';
 import { useState, useEffect } from '@wordpress/element';
-import { TextControl, Button, Dashicon, ToggleControl, PanelBody } from '@wordpress/components';
+import { CheckboxControl, FormTokenField } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { __, sprintf } from '@wordpress/i18n';
-
-// ... (Interface definitions เหมือนเดิม)
-
-interface TermStats {
-	id: number;
-	name: string;
-	slug: string;
-	edit_link: string;
-	all: number;
-	published: number;
-	future: number;
-	draft: number;
-}
-
-interface StatsMap {
-	[key: number]: TermStats;
-}
-
-interface ComponentHolder {
-	isMounted: boolean;
-}
-
-interface PHPGlobalConfig {
-	statusLabels: Record<string, string>;
-	reindexEnabled: boolean;
-}
 
 declare global {
 	interface Window {
-		plusmagiTagsEditorConfig?: PHPGlobalConfig;
+		plusmagiTagsEditorConfig?: {
+			statusLabels: {
+				all: string;
+				publish: string;
+				future: string;
+				draft: string;
+			};
+			reindexEnabled: boolean | string | number;
+		};
 	}
 }
 
-// ... (fetchTagsWithStats function เหมือนเดิม)
-
-const fetchTagsWithStats = (
-	tagIds: number[],
-	setStatsMap: React.Dispatch<React.SetStateAction<StatsMap>>,
-	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-	holder: ComponentHolder
-): void => {
-	if (!tagIds || tagIds.length === 0) {
-		setStatsMap({});
-		return;
-	}
-
-	setIsLoading(true);
-	apiFetch<TermStats[]>({ path: `/plusmagi-tags/v1/terms-with-stats?ids=${tagIds.join(',')}` })
-		.then((data) => {
-			if (!holder.isMounted) return;
-			const mapping: StatsMap = {};
-			if (Array.isArray(data)) {
-				data.forEach((term) => {
-					mapping[term.id] = term;
-				});
-			}
-			setStatsMap(mapping);
-		})
-		.catch((error: unknown) => {
-			console.error('[PlusMagi Tags Reindex] API Data Aggregation Error:', error);
-		})
-		.finally(() => {
-			if (holder.isMounted) {
-				setIsLoading(false);
-			}
-		});
+const getInitialReindexState = (): boolean => {
+	const configVal = window.plusmagiTagsEditorConfig?.reindexEnabled;
+	return configVal === true || configVal === '1' || configVal === 1;
 };
 
-const PlusMagiTagsPanel: React.FC = () => {
-	const [inputValue, setInputValue] = useState<string>('');
-	const [statsMap, setStatsMap] = useState<StatsMap>({});
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [isReindexPanelOpen, setIsReindexPanelOpen] = useState<boolean>(false);
-	const [reindexMode, setReindexMode] = useState<boolean>(true);
+export const TagsReindexPanel: React.FC = () => {
+	const [isGapFillEnabled, setIsGapFillEnabled] = useState<boolean>(getInitialReindexState);
 
-	const { tagIds, currentPostId } = useSelect((select) => {
-		const editor = select('core/editor');
+	useEffect(() => {
+		setIsGapFillEnabled(getInitialReindexState());
+	}, []);
+
+	// 1. ดึงข้อมูล Tags ของ Post ปัจจุบัน และดึงรายชื่อ Tag ทั้งหมดที่มีในระบบ
+	const { postTags, allTerms } = useSelect((select: any) => {
+		const { getEditedPostAttribute } = select('core/editor');
+		const { getEntityRecords } = select('core');
+
+		const tagIds: number[] = getEditedPostAttribute('tags') || [];
+		const terms = getEntityRecords('taxonomy', 'post_tag', { per_page: -1 }) || [];
+
 		return {
-			tagIds: (editor.getEditedPostAttribute('tags') as number[]) || [],
-			currentPostId: editor.getCurrentPostId() as number | string,
+			postTags: tagIds,
+			allTerms: terms,
 		};
 	}, []);
 
 	const { editPost } = useDispatch('core/editor');
-	const { removeEditorPanel } = useDispatch('core/edit-post');
 
-	useEffect(() => {
-		removeEditorPanel('taxonomy-panel-post_tag');
-	}, [removeEditorPanel]);
+	// แปลง ID ของ Tag ให้กลายเป็นชื่อ String สำหรับ FormTokenField
+	const selectedTagNames = postTags
+		.map((id) => allTerms.find((term: any) => term.id === id)?.name)
+		.filter(Boolean);
 
-	const config: PHPGlobalConfig = window.plusmagiTagsEditorConfig || { statusLabels: {}, reindexEnabled: true };
+	const suggestions = allTerms.map((term: any) => term.name);
 
-	useEffect(() => {
-		const holder: ComponentHolder = { isMounted: true };
-		fetchTagsWithStats(tagIds, setStatsMap, setIsLoading, holder);
-		return () => {
-			holder.isMounted = false;
-		};
-	}, [tagIds.join(','), currentPostId]);
+	/**
+	 * ฟังก์ชันจัดการเมื่อผู้ใช้เพิ่มหรือลบ Tag
+	 */
+	const handleTagsChange = async (newTagNames: string[]) => {
+		// หาว่ามี Tag ชื่อใหม่ที่ยังไม่มี ID ในระบบหรือไม่
+		const addedNames = newTagNames.filter((name) => !selectedTagNames.includes(name));
 
-	// ✅ คำนวณสถิติรวม
-	const calculateTotals = (): { total: number; published: number; future: number; draft: number; newTags: number } => {
-		const totals = { total: 0, published: 0, future: 0, draft: 0, newTags: 0 };
+		let updatedTagIds = [...postTags];
 
-		tagIds.forEach((id) => {
-			const term = statsMap[id];
-			if (term) {
-				totals.published += term.published;
-				totals.future += term.future;
-				totals.draft += term.draft;
-				if (term.all === 0) {
-					totals.newTags += 1;
+		if (addedNames.length > 0) {
+			try {
+				// ยิง API ปลั๊กอินเพื่อ Reindex และสร้าง/ดึง ID
+				const response = await apiFetch<{ ids: number[] }>({
+					path: '/plusmagi-tags/v1/add-tag',
+					method: 'POST',
+					data: {
+						name: addedNames.join(','),
+						reindex_gaps: isGapFillEnabled,
+					},
+				});
+
+				if (response && Array.isArray(response.ids)) {
+					// รวม ID ใหม่เข้ากับ ID เดิม
+					updatedTagIds = Array.from(new Set([...updatedTagIds, ...response.ids]));
 				}
-			} else {
-				totals.newTags += 1;
+			} catch (error) {
+				// eslint-disable-next-line no-console
+				console.error('Error adding reindexed tag:', error);
 			}
-		});
+		}
 
-		totals.total = tagIds.length;
-		return totals;
+		// กรณีมีการลบ Tag ออกจาก TokenField
+		const remainingIds = newTagNames
+			.map((name) => allTerms.find((term: any) => term.name === name)?.id)
+			.filter((id): id is number => id !== undefined);
+
+		const finalTagIds = Array.from(new Set([...updatedTagIds, ...remainingIds]));
+
+		// สั่งให้ Gutenberg บันทึกรายการ Tags ใหม่ลงใน Post
+		editPost({ tags: finalTagIds });
 	};
-
-	const totals = calculateTotals();
-
-	const handleAddTags = (): void => {
-		if (!inputValue.trim()) return;
-
-		apiFetch<{ ids: number[] }>({
-			path: '/plusmagi-tags/v1/add-tag',
-			method: 'POST',
-			data: { name: inputValue }
-		})
-			.then((response) => {
-				if (response && response.ids) {
-					const combinedIds = Array.from(new Set([...tagIds, ...response.ids]));
-					editPost({ tags: combinedIds });
-					setInputValue('');
-				}
-			})
-			.catch((error: unknown) => {
-				console.error('[PlusMagi Tags Reindex] Tag Generation Inversion Interrupted:', error);
-			});
-	};
-
-	const handleRemoveTag = (idToRemove: number): void => {
-		const updatedIds = tagIds.filter(id => id !== idToRemove);
-		editPost({ tags: updatedIds });
-	};
-
-	const handleReindexToggle = (value: boolean): void => {
-		setReindexMode(value);
-		// TODO: ส่งค่าไปยัง backend เพื่ออัปเดตการตั้งค่า
-		console.log('[PlusMagi Tags Reindex] Reindex Mode:', value);
-	};
-
-// ... (ส่วนบนคงเดิม)
 
 	return (
 		<PluginDocumentSettingPanel
@@ -177,122 +103,30 @@ const PlusMagiTagsPanel: React.FC = () => {
 			title={__('PlusMagi Tags Reindex', 'plusmagi-tags-reindex')}
 			className="plusmagi-tags-reindex-panel"
 		>
-			{/* Summary Section */}
-			<div className="plusmagi-tags-summary">
-				<div className="plusmagi-tags-summary__title">
-					{__('Summaries', 'plusmagi-tags-reindex')}
-				</div>
-				<div className="plusmagi-tags-summary__stats">
-					{sprintf(
-						__('Total Tags: %1$d | Published: %2$d | Future: %3$d | Draft: %4$d | New: %5$d', 'plusmagi-tags-reindex'),
-						totals.total,
-						totals.published,
-						totals.future,
-						totals.draft,
-						totals.newTags
-					)}
-				</div>
-			</div>
-
-			{/* Bulk Tag Input */}
-			<div className="plusmagi-tags-input">
-				<div className="plusmagi-tags-input__field">
-					<TextControl
-						label={__('Add Tags (Comma separated)', 'plusmagi-tags-reindex')}
-						value={inputValue}
-						onChange={(value: string) => setInputValue(value)}
-						placeholder="Tag A, Tag B, Tag C"
-						__nextHasNoMarginBottom
-					/>
-				</div>
-				<Button variant="primary" onClick={handleAddTags} className="plusmagi-tags-input__button">
-					{__('Add', 'plusmagi-tags-reindex')}
-				</Button>
-			</div>
-
-			{/* Reindex Options Panel */}
-			<PanelBody
-				title={__('Tags Reindex Options', 'plusmagi-tags-reindex')}
-				initialOpen={isReindexPanelOpen}
-				onToggle={() => setIsReindexPanelOpen(!isReindexPanelOpen)}
-			>
-				<ToggleControl
-					label={__('Enable Gap Filling Mode', 'plusmagi-tags-reindex')}
-					help={__('Reuse term IDs from deleted tags to prevent database bloat', 'plusmagi-tags-reindex')}
-					checked={reindexMode}
-					onChange={handleReindexToggle}
+			<div style={{ marginBottom: '15px' }}>
+				<CheckboxControl
+					label={__('Enable Gap Filling (Reuse missing term_id)', 'plusmagi-tags-reindex')}
+					help={__('When disabled, new tags use WordPress default auto-increment.', 'plusmagi-tags-reindex')}
+					checked={isGapFillEnabled}
+					onChange={(value: boolean) => setIsGapFillEnabled(value)}
 				/>
-
-				<div className="plusmagi-reindex-status">
-					<strong>{__('Current Status:', 'plusmagi-tags-reindex')}</strong>
-					<div>
-						{reindexMode
-							? __('✓ Gap Filling: Active', 'plusmagi-tags-reindex')
-							: __('○ Standard Mode: Active', 'plusmagi-tags-reindex')
-						}
-					</div>
-				</div>
-			</PanelBody>
-
-			{/* Current Tags List - ✅ เพิ่ม class และจำกัดความสูง */}
-			<div className="plusmagi-tags-list">
-				<p className="plusmagi-tags-list__title">
-					{__('Current Tags & Usage Statistics:', 'plusmagi-tags-reindex')}
-					{isLoading && <span className="plusmagi-tags-list__loading">({__('Updating...', 'plusmagi-tags-reindex')})</span>}
-				</p>
-
-				{tagIds.length === 0 ? (
-					<p className="plusmagi-tags-list__empty">
-						{__('No tags assigned to this post.', 'plusmagi-tags-reindex')}
-					</p>
-				) : (
-					<ul className="plusmagi-tags-list__items">
-						{tagIds.map((id: number) => {
-							const term: TermStats = statsMap[id] || {
-								id: id,
-								name: `ID: ${id}`,
-								slug: '',
-								edit_link: '',
-								all: 0,
-								published: 0,
-								future: 0,
-								draft: 0
-							};
-
-							return (
-								<li key={id} className="plusmagi-tags-list__item">
-									<div className="plusmagi-tags-list__info">
-										<div className="plusmagi-tags-list__name">{term.name}</div>
-										<div className="plusmagi-tags-list__stats">
-											{sprintf(
-												__('Total usage: %1$d | Published: %2$d | Future: %3$d | Draft: %4$d', 'plusmagi-tags-reindex'),
-												term.all,
-												term.published,
-												term.future,
-												term.draft
-											)}
-										</div>
-									</div>
-
-									<Button
-										variant="link"
-										isDestructive
-										onClick={() => handleRemoveTag(id)}
-										className="plusmagi-tags-list__remove"
-									>
-										<Dashicon icon="dismiss" />
-									</Button>
-								</li>
-							);
-						})}
-					</ul>
-				)}
 			</div>
+
+			<FormTokenField
+				label={__('Tags', 'plusmagi-tags-reindex')}
+				value={selectedTagNames}
+				suggestions={suggestions}
+				onChange={handleTagsChange}
+				placeholder={__('Add new tag', 'plusmagi-tags-reindex')}
+			/>
 		</PluginDocumentSettingPanel>
 	);
 };
 
+// บันทึกเข้า Gutenberg Sidebar
 registerPlugin('plusmagi-tags-reindex', {
-	render: PlusMagiTagsPanel,
-	icon: 'admin-settings',
+	render: TagsReindexPanel,
+	icon: 'tag',
 });
+
+export default TagsReindexPanel;

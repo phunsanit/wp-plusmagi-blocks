@@ -61,15 +61,15 @@ resolve_slug() {
 
 # 2. Compile frontend assets if the build script exists in package.json
 build_frontend_if_present() {
-  local package_json="./package.json"
+	local package_json="./package.json"
 
-  if [[ -f "$package_json" ]] && grep -q '"build:plugin"' "$package_json"; then
-	echo "-> Compiling Frontend Assets via workspace build..."
-	npm run build:plugin
-	echo "✅ Frontend Build Completed."
-  else
-	echo "-> No 'build:plugin' script found in package.json, skipping frontend build."
-  fi
+	if [[ -f "$package_json" ]] && grep -q '"build:plugin"' "$package_json"; then
+		echo "-> Compiling Frontend Assets via workspace build..."
+		npm run build:plugin
+		echo "✅ Frontend Build Completed."
+	else
+		echo "-> No 'build:plugin' script found in package.json, skipping frontend build."
+	fi
 }
 
 main() {
