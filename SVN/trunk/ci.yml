@@ -2,43 +2,54 @@ name: CI Build and Test
 
 on:
   push:
-    branches: [ main ]
+	branches: [ main ]
   pull_request:
-    branches: [ main ]
+	branches: [ main ]
 
 jobs:
   build-and-test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
+	timeout-minutes: 60
+	runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+	steps:
+	- name: Checkout code
+	  uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
+	- name: Setup Node.js
+	  uses: actions/setup-node@v4
+	  with:
+		node-version: 20
 
-    - name: Install Playwright Dependencies
-      working-directory: ./Playwright
-      run: |
-        npm install
-        npx playwright install --with-deps
+	# 1. ติดตั้ง Dependencies ใน Root สำหรับใช้คอมไพล์ UI Assets (TSX -> JS)
+	- name: Install Plugin Dependencies
+	  run: |
+		if [ -f package.json ]; then
+		  npm ci || npm install
+		fi
 
-    - name: Build Plugin Zip
-      run: bash ./build.sh
+	# 2. ติดตั้ง Dependencies สำหรับ Playwright
+	- name: Install Playwright Dependencies
+	  working-directory: ./Playwright
+	  run: |
+		npm ci || npm install
+		npx playwright install --with-deps
 
-    - name: Upload Built Plugin
-      uses: actions/upload-artifact@v4
-      with:
-        name: plusmagi-tags-reindex-latest
-        path: Website/build/plusmagi-tags-reindex-latest.zip
+	# 3. รัน build.sh เพื่อสั่งคอมไพล์ Assets และแพ็ก ZIP ลง ./wp-assets/
+	- name: Build Plugin Zip
+	  run: bash ./build.sh plusmagi-tags-reindex
 
-    - name: Run Playwright E2E Tests
-      working-directory: ./Playwright
-      env:
-        WP_ADMIN_PASSWORD: ${{ secrets.WP_ADMIN_PASSWORD }}
-      run: |
-        npx playwright test --project=setup
-        npx playwright test --project=admin
+	# 4. อัปโหลด Artifact (อ้างอิงไฟล์ ZIP จากโฟลเดอร์ wp-assets)
+	- name: Upload Built Plugin
+	  uses: actions/upload-artifact@v4
+	  with:
+		name: plusmagi-tags-reindex-latest
+		path: wp-assets/*.zip
+
+	# 5. รัน Playwright E2E Tests
+	- name: Run Playwright E2E Tests
+	  working-directory: ./Playwright
+	  env:
+		WP_ADMIN_PASSWORD: ${{ secrets.WP_ADMIN_PASSWORD }}
+	  run: |
+		npx playwright test --project=setup
+		npx playwright test --project=admin

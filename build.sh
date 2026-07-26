@@ -63,12 +63,18 @@ resolve_slug() {
 build_frontend_if_present() {
 	local package_json="./package.json"
 
-	if [[ -f "$package_json" ]] && grep -q '"build:plugin"' "$package_json"; then
-		echo "-> Compiling Frontend Assets via workspace build..."
-		npm run build:plugin
-		echo "✅ Frontend Build Completed."
-	else
-		echo "-> No 'build:plugin' script found in package.json, skipping frontend build."
+	if [[ -f "$package_json" ]]; then
+		if grep -q '"build:plugin"' "$package_json"; then
+			echo "-> Compiling Frontend Assets via 'build:plugin'..."
+			npm run build:plugin
+			echo "✅ Frontend Build Completed."
+		elif grep -q '"build"' "$package_json"; then
+			echo "-> Compiling Frontend Assets via 'build'..."
+			npm run build
+			echo "✅ Frontend Build Completed."
+		else
+			echo "-> No 'build' or 'build:plugin' script found in package.json, skipping."
+		fi
 	fi
 }
 

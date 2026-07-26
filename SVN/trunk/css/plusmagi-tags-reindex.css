@@ -37,8 +37,8 @@
 
 /* Summary Section */
 .plusmagi-tags-summary {
-	margin-bottom: 20px;
-	padding: 12px;
+	margin-bottom: 15px;
+	padding: 8px 12px;
 	background-color: #f8f9fa;
 	border-radius: 4px;
 	border: 1px solid #ddd;
@@ -81,15 +81,14 @@
 	font-size: 11px;
 }
 
-/* Tags List - ✅ จำกัดความสูงและเพิ่ม scroll */
+/* Tags List */
 .plusmagi-tags-list {
-	margin-top: 20px;
+	margin-top: 15px;
 }
 
 .plusmagi-tags-list__title {
 	font-weight: 600;
-	margin-bottom: 8px;
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .plusmagi-tags-list__loading {
@@ -104,15 +103,17 @@
 	font-size: 12px;
 }
 
-/* ✅ Container สำหรับ tag items - จำกัดความสูง */
+/* Tags List Items */
 .plusmagi-tags-list__items {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	max-height: 500px; /* ✅ จำกัดความสูงที่ 500px */
-	overflow-y: auto; /* ✅ แสดง scroll แนวตั้ง */
-	border: 1px solid #eee;
-	border-radius: 4px;
+	max-height: 250px; /* limit the height of the list to 250px */
+	overflow-y: auto;  /* show vertical scroll */
+	border: 1px solid #dcdcde;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+	background-color: #fff;
 }
 
 /* Tag Item */
@@ -120,9 +121,9 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 8px 12px;
+	padding: 6px 10px;
 	border-bottom: 1px solid #eee;
-	gap: 10px;
+	gap: 8px;
 }
 
 .plusmagi-tags-list__item:last-child {
@@ -140,7 +141,7 @@
 .plusmagi-tags-list__name {
 	font-weight: 500;
 	color: #1e1e1e;
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .plusmagi-tags-list__stats {
@@ -155,27 +156,26 @@
 	height: auto;
 }
 
-.plusmagi-tags-list__remove .dashicon {
-	color: #cc1818;
+.plusmagi-tags-list__remove:hover {
+	color: #cc1818 !important;
 }
 
-/* Scrollbar Styling (Optional) */
+/* Scrollbar Styling */
 .plusmagi-tags-list__items::-webkit-scrollbar {
-	width: 8px;
+	width: 6px;
 }
 
 .plusmagi-tags-list__items::-webkit-scrollbar-track {
 	background: #f1f1f1;
-	border-radius: 4px;
 }
 
 .plusmagi-tags-list__items::-webkit-scrollbar-thumb {
-	background: #888;
-	border-radius: 4px;
+	background: #ccc;
+	border-radius: 3px;
 }
 
 .plusmagi-tags-list__items::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: #999;
 }
 
 /* Responsive */
