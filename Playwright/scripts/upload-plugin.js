@@ -14,6 +14,11 @@ const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD || process.env.WP_ADMIN_PASS;
 const ZIP_ARG = process.argv[2] ? path.resolve(process.argv[2]) : '';
 
+function isInsideDir(filePath, dirPath) {
+	const relative = path.relative(dirPath, filePath);
+	return relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+
 function pickLatestZip(dirPath) {
 	if (!fs.existsSync(dirPath)) {
 	throw new Error(`Zip directory not found: ${dirPath}`);
@@ -96,6 +101,9 @@ async function main() {
 	}
 
 	const zipPath = ZIP_ARG || pickLatestZip(ZIP_DIR);
+	if (!isInsideDir(zipPath, ZIP_DIR)) {
+	throw new Error(`Zip file must be inside wp-assets only: ${ZIP_DIR}`);
+	}
 	if (!fs.existsSync(zipPath)) {
 	throw new Error(`Zip file not found: ${zipPath}`);
 	}
