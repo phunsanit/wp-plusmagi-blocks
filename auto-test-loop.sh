@@ -4,41 +4,46 @@ cd "$(dirname "$0")" || exit
 
 while true; do
 	echo -e "\n======================================================="
-	echo " 🚀 เริ่มต้นกระบวนการ Build & Test (Automated Loop)"
+	echo " 🚀 Starting Build & Test loop"
 	echo "======================================================="
 
-	# 1. สั่ง Build ปลั๊กอิน
+	# 1. Build plugin package
 	bash ./build.sh
 	if [ $? -ne 0 ]; then
-		echo "❌ Build ไม่สำเร็จ! กรุณาแก้ไข Error แล้วกด [Enter] เพื่อลองใหม่..."
+		echo "❌ Build failed. Fix the error and press [Enter] to retry..."
 		read -r
 		continue
 	fi
 
-	# 2. หยุดรอให้อัปโหลดขึ้นเว็บจริง
-	echo -e "\n📦 Build เสร็จสมบูรณ์!"
-	echo "⚠️  กรุณานำไฟล์ Website/build/plusmagi-tags-reindex-latest.zip"
-	echo "   ไปอัปโหลดและกดแทนที่ (Replace) บนเว็บ pitt.plusmagi.com ให้เรียบร้อย"
-	echo "👉 อัปโหลดเสร็จแล้ว กด [Enter] เพื่อเริ่มการทดสอบ..."
-	read -r
+	# 2. Upload plugin automatically to target site
+	echo -e "\n📦 Build completed"
+	echo "☁️  Uploading plugin automatically (supports overwrite flow for same version)..."
+	node ./Playwright/scripts/upload-plugin.js
+	if [ $? -ne 0 ]; then
+		echo "❌ Plugin upload failed"
+		echo "👉 Fix the issue and press [Enter] to retry..."
+		read -r
+		continue
+	fi
+	echo "✅ Plugin upload/overwrite completed, starting tests"
 
-	# 3. สั่งรัน Playwright Test
-	echo -e "\n🧪 กำลังรัน Playwright Tests (Admin Project)..."
+	# 3. Run Playwright tests
+	echo -e "\n🧪 Running Playwright tests (admin project)..."
 	(
 		cd Playwright || exit 1
 		npx playwright test --project=admin
 	)
 	TEST_RESULT=$?
 
-	# 4. ประเมินผลและวนลูป
+	# 4. Evaluate result and continue loop if needed
 	if [ $TEST_RESULT -eq 0 ]; then
-		echo -e "\n✅ สุดยอด! ทดสอบผ่านครบ 100% ออกจากลูปการทำงาน"
+		echo -e "\n✅ All tests passed. Exiting loop."
 		break
 	else
-		echo -e "\n❌ ทดสอบไม่ผ่าน (มี Error)"
-		echo "🔍 ดู Report เพื่อหาสาเหตุ พิมพ์คำสั่งนี้ในหน้าต่าง Terminal ใหม่:"
+		echo -e "\n❌ Tests failed"
+		echo "🔍 Open the report to inspect failures. Run this in a new terminal:"
 		echo "   cd Playwright && npx playwright show-report"
-		echo "👉 เมื่อแก้ไขโค้ดเสร็จแล้ว กด [Enter] เพื่อวนลูป Build และ Test ใหม่อีกครั้ง..."
+		echo "👉 After fixing the code, press [Enter] to run the loop again..."
 		read -r
 	fi
 done

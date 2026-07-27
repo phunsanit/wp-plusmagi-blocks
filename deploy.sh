@@ -35,7 +35,7 @@ main() {
 		rsync -av --delete --exclude='.svn/' --exclude='.git/' "$SOURCE_DIR/" "$SVN_TRUNK/"
 	fi
 
-	# 2. Sync Images -> Assets (ข้ามไฟล์ .zip เสมอ)
+	# 2. Sync Images -> Assets (always exclude .zip files)
 	if [ -d "$PM_ASSETS_SRC" ]; then
 		echo "🎨 Syncing banners/icons to SVN assets..."
 		rsync -av --delete --exclude='.svn/' --exclude='*.zip' "$PM_ASSETS_SRC/" "$SVN_ASSETS/"
@@ -44,7 +44,7 @@ main() {
 	# 3. SVN Status Update
 	cd "$SVN_ROOT" || exit
 	svn add --force trunk/* assets/* 2>/dev/null
-	# ลบไฟล์ที่ต้นทางไม่มีออกจากการติดตามของ SVN
+	# Remove files from SVN tracking when they no longer exist in source.
 	svn status | awk '/^!/ {print substr($0, 9)}' | while IFS= read -r missing_path; do
 		[ -n "$missing_path" ] && svn rm "$missing_path"
 	done
@@ -76,7 +76,7 @@ main() {
 	echo "---------------------------------------------------"
 	echo "✅ SVN + Git tag staging complete!"
 	echo "📍 Path: $SVN_ROOT"
-	echo "👉 ขั้นตอนต่อไป: 'svn commit' (tag ถูกเตรียมไว้แล้วถ้ายังไม่มี)"
+	echo "👉 Next step: run 'svn commit' (tag is already prepared when missing)."
 	echo "---------------------------------------------------"
 }
 

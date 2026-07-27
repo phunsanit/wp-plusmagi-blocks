@@ -3,8 +3,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	build: {
-		outDir: '../SVN/trunk/js', // Output ไปที่โฟลเดอร์ที่ PHP โหลด
-		emptyOutDir: false, // อย่าลบไฟล์อื่นในโฟลเดอร์
+		outDir: '../SVN/trunk/js', // Output to the folder loaded by PHP
+		emptyOutDir: false, // Do not remove other files in this folder
 		lib: {
 			entry: '../SVN/trunk/js/plusmagi-tags-reindex.tsx',
 			name: 'plusmagiTagsReindex',

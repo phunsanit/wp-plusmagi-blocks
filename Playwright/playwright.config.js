@@ -65,17 +65,17 @@ module.exports = defineConfig({
         // ------------------------------------------------------------------
         {
             name: 'chromium',
-            testIgnore: /block\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
             use: { ...devices['Desktop Chrome'] },
         },
         {
             name: 'firefox',
-            testIgnore: /block\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
             use: { ...devices['Desktop Firefox'] },
         },
         {
             name: 'webkit',
-            testIgnore: /block\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
             use: { ...devices['Desktop Safari'] },
         },
 
@@ -85,7 +85,7 @@ module.exports = defineConfig({
         // ------------------------------------------------------------------
         {
             name: 'admin',
-            testMatch: /(block|reindex-option)\.spec\.js/,
+            testMatch: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
             dependencies: ['setup'],
             use: {
                 ...devices['Desktop Chrome'],

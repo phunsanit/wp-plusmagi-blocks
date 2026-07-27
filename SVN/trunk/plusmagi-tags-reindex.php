@@ -1,633 +1,549 @@
 <?php
 /**
  * Plugin Name: PlusMagi Tags Reindex
- * Plugin URI:  https://wordpress.org/plugins/plusmagi-tags-reindex
- * Description: Intelligently manage and reindex post tags, recycle unused term IDs safely, and enhance the Gutenberg tags panel.
- * Version:	 1.0.0
- * Author:	  Pitt Phunsanit
- * Author URI:  https://pitt.plusmagi.com
- * License:	 GPLv2 or later
+ * Plugin URI: https://plusmagi.com/
+ * Description: Manage and reindex post tags safely. Missing term_id gaps will be recycled when enabled.
+ * Version: 1.0.0
+ * Requires at least: 6.0
+ * Requires PHP: 7.4
+ * Author: PlusMagi
+ * Author URI: https://plusmagi.com/
+ * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: plusmagi-tags-reindex
+ * Domain Path: /languages
+ *
+ * @package PlusMagi_Tags_Reindex
  */
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Plusmagi_Tags_Reindex {
-	const OPTION_ENABLE_GAP_REINDEX = 'plusmagi_tags_reindex_enable_gap_fill';
+define( 'PLUSMAGI_TAGS_REINDEX_VERSION', '1.0.0' );
+define( 'PLUSMAGI_TAGS_REINDEX_PATH', plugin_dir_path( __FILE__ ) );
+define( 'PLUSMAGI_TAGS_REINDEX_URL', plugin_dir_url( __FILE__ ) );
 
-	private static $instance = null;
-
-	public static function get_instance() {
-		if (self::$instance === null) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
+/**
+ * Main Admin Settings Class
+ */
+class PlusMagi_Tags_Reindex_Admin {
+	private $editor_assets_enqueued = false;
 
 	public function __construct() {
-		// Register REST API endpoints for Gutenberg
-		add_action('rest_api_init', [$this, 'register_rest_endpoints']);
-
-		// Handle admin form submissions
-		add_action('admin_init', [$this, 'process_form']);
-
-		// Admin menu and asset loading
-		add_action('admin_menu', [$this, 'add_admin_menu']);
-		add_action('enqueue_block_editor_assets', [$this, 'enqueue_editor_assets']);
-		add_filter('plugin_action_links_' . plugin_basename(__FILE__), [$this, 'add_plugin_action_links']);
+		add_action( 'admin_menu', array( $this, 'register_admin_menu' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_assets_from_admin' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'add_plugin_action_links' ) );
 	}
 
-	public function register_rest_endpoints() {
-		// Endpoint 1: Fetch terms with status metrics (published, scheduled, drafts)
-		register_rest_route('plusmagi-tags/v1', '/terms-with-stats', [
-			'methods'			 => 'GET',
-			'callback'			=> [$this, 'get_terms_with_stats'],
-			'permission_callback' => fn() => current_user_can('edit_posts'),
-			'args'			   => ['ids' => ['required' => true, 'type' => 'string']],
-		]);
+	public function add_plugin_action_links( $links ) {
+		$settings_url = admin_url( 'tools.php?page=plusmagi-tags-reindex' );
+		$settings_link = '<a href="' . esc_url( $settings_url ) . '">' . esc_html__( 'Settings', 'plusmagi-tags-reindex' ) . '</a>';
 
-		// Endpoint 2: Add and reindex tags from Gutenberg
-		register_rest_route('plusmagi-tags/v1', '/add-tag', [
-			'methods'			 => 'POST',
-			'callback'			=> [$this, 'add_reindexed_tag'],
-			'permission_callback' => fn() => current_user_can('edit_posts'),
-			'args'			   => [
-				'name'		 => ['required' => true, 'type' => 'string'],
-				'reindex_gaps' => ['required' => false, 'type' => 'boolean'],
-			],
-		]);
+		array_unshift( $links, $settings_link );
+		return $links;
 	}
 
-	public function add_plugin_action_links($links) {
-		$settings_url = admin_url('tools.php?page=plusmagi-tags-reindex');
+	public function enqueue_editor_assets_from_admin( $hook_suffix ) {
+		if ( ! in_array( $hook_suffix, array( 'post.php', 'post-new.php' ), true ) ) {
+			return;
+		}
 
-		$action_links = [
-			'settings' => sprintf(
-				'<a href="%s">%s</a>',
-				esc_url($settings_url),
-				esc_html__('Settings', 'plusmagi-tags-reindex')
-			),
-		];
-
-		return array_merge($action_links, $links);
+		$this->enqueue_editor_assets();
 	}
 
-	private function is_gap_reindex_enabled(): bool {
-		return get_option(self::OPTION_ENABLE_GAP_REINDEX, '1') === '1';
-	}
-
-	public function add_admin_menu() {
-		add_management_page(
-			__('PlusMagi Tags Reindex', 'plusmagi-tags-reindex'),
-			__('Tags Reindex', 'plusmagi-tags-reindex'),
+	public function register_admin_menu() {
+		add_submenu_page(
+			'tools.php',
+			__( 'PlusMagi Tags Reindex', 'plusmagi-tags-reindex' ),
+			__( 'Tags Reindex', 'plusmagi-tags-reindex' ),
 			'manage_options',
 			'plusmagi-tags-reindex',
-			[$this, 'render_admin_page']
+			array( $this, 'render_settings_page' )
+		);
+
+		add_options_page(
+			__( 'PlusMagi Tags Reindex', 'plusmagi-tags-reindex' ),
+			__( 'Tags Reindex', 'plusmagi-tags-reindex' ),
+			'manage_options',
+			'plusmagi-tags-reindex',
+			array( $this, 'render_settings_page' )
+		);
+	}
+
+	public function enqueue_admin_assets( $hook_suffix ) {
+		if ( 'tools_page_plusmagi-tags-reindex' !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'plusmagi-tags-reindex-admin',
+			PLUSMAGI_TAGS_REINDEX_URL . 'css/plusmagi-tags-reindex.css',
+			array(),
+			PLUSMAGI_TAGS_REINDEX_VERSION
 		);
 	}
 
 	public function enqueue_editor_assets() {
-		$script_file = plugin_dir_path(__FILE__) . 'js/plusmagi-tags-reindex.js';
-		$script_ver  = file_exists($script_file) ? filemtime($script_file) : '1.0.2';
+		if ( $this->editor_assets_enqueued ) {
+			return;
+		}
 
-		wp_enqueue_style(
-			'plusmagi-tags-reindex',
-			plugin_dir_url(__FILE__) . 'css/plusmagi-tags-reindex.css',
-			array(),
-			$script_ver
+		$this->editor_assets_enqueued = true;
+
+		$asset_path = PLUSMAGI_TAGS_REINDEX_PATH . 'js/block.asset.php';
+		$asset = file_exists( $asset_path ) ? require $asset_path : array();
+
+		$dependencies = isset( $asset['dependencies'] ) && is_array( $asset['dependencies'] )
+			? $asset['dependencies']
+			: array( 'wp-element', 'wp-i18n', 'wp-components', 'wp-edit-post', 'wp-plugins', 'wp-data', 'wp-api-fetch' );
+
+		$dependencies = array_values(
+			array_filter(
+				$dependencies,
+				static function ( $dep ) {
+					return ! in_array( $dep, array( 'wp-edit-post', 'wp-editor' ), true );
+				}
+			)
 		);
 
+		if ( wp_script_is( 'wp-edit-post', 'registered' ) ) {
+			$dependencies[] = 'wp-edit-post';
+		} elseif ( wp_script_is( 'wp-editor', 'registered' ) ) {
+			$dependencies[] = 'wp-editor';
+		}
+
+		$version = isset( $asset['version'] ) ? $asset['version'] : PLUSMAGI_TAGS_REINDEX_VERSION;
+
 		wp_enqueue_script(
-			'plusmagi-tags-reindex',
-			plugin_dir_url(__FILE__) . 'js/plusmagi-tags-reindex.js',
-			['wp-plugins', 'wp-editor', 'wp-element', 'wp-components', 'wp-data', 'wp-api-fetch', 'wp-core-data', 'wp-dom-ready', 'wp-i18n'],
-			$script_ver,
+			'plusmagi-tags-reindex-editor',
+			PLUSMAGI_TAGS_REINDEX_URL . 'js/plusmagi-tags-reindex.js',
+			$dependencies,
+			$version,
 			true
 		);
 
-		wp_localize_script(
-			'plusmagi-tags-reindex',
-			'plusmagiTagsEditorConfig',
-			[
-				'statusLabels' => [
-					'all'	 => __('All', 'plusmagi-tags-reindex'),
-					'publish' => __('Published', 'plusmagi-tags-reindex'),
-					'future'  => __('Scheduled', 'plusmagi-tags-reindex'),
-					'draft'   => __('Drafts', 'plusmagi-tags-reindex'),
-				],
-				'reindexEnabled' => $this->is_gap_reindex_enabled(),
-			]
+		wp_enqueue_style(
+			'plusmagi-tags-reindex-editor',
+			PLUSMAGI_TAGS_REINDEX_URL . 'css/plusmagi-tags-reindex.css',
+			array(),
+			$version
 		);
 
-		wp_set_script_translations(
-			'plusmagi-tags-reindex',
-			'plusmagi-tags-reindex',
-			plugin_dir_path(__FILE__) . 'languages'
+		wp_add_inline_script(
+			'plusmagi-tags-reindex-editor',
+			'window.plusmagiTagsEditorConfig = ' . wp_json_encode(
+				array(
+					'statusLabels' => array(
+						'all' => __( 'All', 'plusmagi-tags-reindex' ),
+						'publish' => __( 'Published', 'plusmagi-tags-reindex' ),
+						'future' => __( 'Scheduled', 'plusmagi-tags-reindex' ),
+						'draft' => __( 'Draft', 'plusmagi-tags-reindex' ),
+					),
+					'reindexEnabled' => (bool) get_option( 'plusmagi_tags_reindex_enabled', 1 ),
+				)
+			) . ';',
+			'before'
 		);
 	}
 
-	public function add_reindexed_tag($request) {
-		$params = $request->get_json_params();
-		$raw_names = $params['name'] ?? $request->get_param('name');
-
-		if (empty($raw_names)) {
-			return new WP_Error('missing_name', 'Tag name is required', ['status' => 400]);
+	public function render_settings_page() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
 		}
 
-		if (is_string($raw_names)) {
-			$split_tags = explode(',', $raw_names);
-		} elseif (is_array($raw_names)) {
-			$split_tags = array_reduce($raw_names, fn($carry, $item) => array_merge($carry, explode(',', $item)), []);
-		} else {
-			return new WP_Error('invalid_format', 'Invalid tag format', ['status' => 400]);
-		}
+		$notice_message = '';
+		$notice_type = 'success';
 
-		$tag_names = array_filter(array_map(function ($name) {
-			$name = sanitize_text_field($name);
-			$name = preg_replace('/\s+/u', ' ', $name);
-			return trim($name);
-		}, $split_tags));
+		// 1. Handle Save Settings Action.
+		if ( isset( $_POST['plusmagi_tags_save_settings'] ) && check_admin_referer( 'plusmagi_tags_settings_nonce' ) ) {
+			$enable_gap_fill = isset( $_POST['enable_gap_fill'] ) ? 1 : 0;
+			update_option( 'plusmagi_tags_reindex_enabled', $enable_gap_fill );
 
-		if (empty($tag_names)) {
-			return new WP_Error('empty_tag_name', 'Tag name cannot be empty', ['status' => 400]);
-		}
-
-		$reindex_gaps = $this->is_gap_reindex_enabled();
-		if ($request->has_param('reindex_gaps')) {
-			$reindex_gaps = rest_sanitize_boolean($request->get_param('reindex_gaps'));
-		}
-
-		$tag_names = array_values(array_unique($tag_names));
-		usort($tag_names, fn($a, $b) => strcasecmp($a, $b));
-
-		$this->reindex_tags($tag_names, $reindex_gaps);
-
-		$ids = [];
-		foreach ($tag_names as $name) {
-			$term = term_exists($name, 'post_tag');
-			if ($term && !is_wp_error($term)) {
-				$ids[] = (int) $term['term_id'];
-			}
-		}
-
-		return rest_ensure_response(['ids' => $ids]);
-	}
-
-	private function reindex_tags($tags, $fill_gaps = true) {
-		global $wpdb;
-		$inserted_count = 0;
-
-		$wpdb->query('START TRANSACTION');
-
-		try {
-			foreach ($tags as $raw_tag) {
-				foreach (explode(',', (string) $raw_tag) as $tag_name) {
-					$tag_name = trim(sanitize_text_field($tag_name));
-					if (empty($tag_name)) continue;
-
-					if ($this->ensure_tag_exists($tag_name)) {
-						continue;
-					}
-
-					if (!$fill_gaps) {
-						$slug   = $this->generate_unique_slug($tag_name);
-						$created = wp_insert_term($tag_name, 'post_tag', ['slug' => $slug]);
-						if (!is_wp_error($created)) {
-							$inserted_count++;
-							clean_term_cache((int) $created['term_id'], 'post_tag');
-						}
-						continue;
-					}
-
-					$new_id = $this->insert_with_gap_filling($tag_name);
-					if ($new_id) {
-						$inserted_count++;
-					}
-				}
-			}
-
-			$wpdb->query('COMMIT');
-
-			if ($fill_gaps) {
-				$this->reset_auto_increment();
-			}
-		} catch (Exception $e) {
-			$wpdb->query('ROLLBACK');
-		}
-
-		delete_option('post_tag_children');
-		return $inserted_count;
-	}
-
-	private function ensure_tag_exists($name) {
-		global $wpdb;
-
-		$term_id = $wpdb->get_var($wpdb->prepare(
-			"SELECT term_id FROM {$wpdb->terms} WHERE name = %s LIMIT 1",
-			$name
-		));
-
-		if (!$term_id) return false;
-
-		$has_taxonomy = $wpdb->get_var($wpdb->prepare(
-			"SELECT 1 FROM {$wpdb->term_taxonomy} WHERE term_id = %d AND taxonomy = 'post_tag' LIMIT 1",
-			$term_id
-		));
-
-		if (!$has_taxonomy) {
-			$wpdb->insert($wpdb->term_taxonomy, [
-				'term_id'	 => $term_id,
-				'taxonomy'	=> 'post_tag',
-				'description' => '',
-				'parent'	  => 0,
-				'count'	   => 0
-			]);
-		}
-		return true;
-	}
-
-	private function generate_unique_slug($name, $exclude_term_id = 0) {
-		global $wpdb;
-
-		$base_slug = sanitize_title($name);
-		if (empty($base_slug)) {
-			$base_slug = 'tag';
-		}
-
-		$slug   = $base_slug;
-		$suffix = '-tag';
-		$count  = 1;
-
-		while (true) {
-			if ($exclude_term_id > 0) {
-				$existing = $wpdb->get_var($wpdb->prepare(
-					"SELECT term_id FROM {$wpdb->terms} WHERE slug = %s AND term_id != %d LIMIT 1",
-					$slug,
-					$exclude_term_id
-				));
+			if ( $enable_gap_fill ) {
+				$notice_message = __( 'Gap filling enabled. Missing term_id gaps will now be reused for new tags.', 'plusmagi-tags-reindex' );
 			} else {
-				$existing = $wpdb->get_var($wpdb->prepare(
-					"SELECT term_id FROM {$wpdb->terms} WHERE slug = %s LIMIT 1",
-					$slug
-				));
+				$notice_message = __( 'Gap filling disabled. New tags will use WordPress default auto-increment ID.', 'plusmagi-tags-reindex' );
 			}
-
-			if (!$existing) {
-				return $slug;
-			}
-
-			if ($count === 1) {
-				$slug = $base_slug . $suffix;
-			} else {
-				$slug = $base_slug . $suffix . '-' . $count;
-			}
-			$count++;
-		}
-	}
-
-	private function insert_with_gap_filling($tag_name) {
-		$attempt	  = 0;
-		$max_attempts = 30;
-
-		while ($attempt < $max_attempts) {
-			$candidate_id = $this->find_available_term_id() + $attempt;
-
-			if (!$this->term_id_exists($candidate_id)) {
-				$slug = $this->generate_unique_slug($tag_name, $candidate_id);
-
-				if ($this->insert_term_data($candidate_id, $tag_name, $slug)) {
-					clean_term_cache($candidate_id, 'post_tag');
-					return $candidate_id;
-				}
-			}
-			$attempt++;
 		}
 
-		$slug	= $this->generate_unique_slug($tag_name);
-		$fallback = wp_insert_term($tag_name, 'post_tag', ['slug' => $slug]);
-		return !is_wp_error($fallback) ? $fallback['term_id'] : false;
-	}
+		// 2. Handle Import Tags Action.
+		if ( isset( $_POST['plusmagi_tags_import_submit'] ) && check_admin_referer( 'plusmagi_tags_import_nonce' ) ) {
+			$raw_tags_list = isset( $_POST['plusmagi_tags_import_list'] ) ? sanitize_textarea_field( wp_unslash( $_POST['plusmagi_tags_import_list'] ) ) : '';
 
-	private function term_id_exists($id) {
-		global $wpdb;
-		return (bool) $wpdb->get_var($wpdb->prepare(
-			"SELECT term_id FROM {$wpdb->terms} WHERE term_id = %d LIMIT 1",
-			$id
-		));
-	}
+			if ( ! empty( $raw_tags_list ) ) {
+				$import_result = $this->import_tags_with_summary( $raw_tags_list );
 
-	private function insert_term_data($id, $name, $slug) {
-		global $wpdb;
-
-		$result = $wpdb->insert($wpdb->terms, [
-			'term_id'	=> $id,
-			'name'	   => $name,
-			'slug'	   => $slug,
-			'term_group' => 0
-		], ['%d', '%s', '%s', '%d']);
-
-		if (!$result) {
-			return false;
-		}
-
-		return $wpdb->insert($wpdb->term_taxonomy, [
-			'term_id'	 => $id,
-			'taxonomy'	=> 'post_tag',
-			'description' => '',
-			'parent'	  => 0,
-			'count'	   => 0
-		], ['%d', '%s', '%s', '%d', '%d']);
-	}
-
-	private function find_available_term_id() {
-		global $wpdb;
-		return (int) $wpdb->get_var("
-			SELECT MIN(gap.available_id)
-			FROM (
-				SELECT (t1.term_id + 1) AS available_id
-				FROM {$wpdb->terms} t1
-				LEFT JOIN {$wpdb->terms} t2 ON t1.term_id + 1 = t2.term_id
-				WHERE t2.term_id IS NULL
-				UNION SELECT 1
-				WHERE NOT EXISTS (SELECT 1 FROM {$wpdb->terms} WHERE term_id = 1)
-			) AS gap
-		");
-	}
-
-	private function reset_auto_increment() {
-		global $wpdb;
-		$max = $wpdb->get_var("SELECT MAX(term_id) FROM {$wpdb->terms}");
-
-		if ($max) {
-			$wpdb->query($wpdb->prepare("ALTER TABLE {$wpdb->terms} AUTO_INCREMENT = %d", (int)$max + 1));
-		}
-	}
-
-	public function fix_conflicting_term_slugs() {
-		global $wpdb;
-
-		$conflicts = $wpdb->get_results("
-			SELECT t.term_id, t.name, t.slug
-			FROM {$wpdb->terms} t
-			JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
-			WHERE tt.taxonomy = 'post_tag'
-			  AND t.slug IN (
-				  SELECT t2.slug
-				  FROM {$wpdb->terms} t2
-				  JOIN {$wpdb->term_taxonomy} tt2 ON t2.term_id = tt2.term_id
-				  WHERE tt2.taxonomy = 'category'
-			  )
-		");
-
-		$fixed_count = 0;
-		if (!empty($conflicts)) {
-			foreach ($conflicts as $term) {
-				$new_slug = $this->generate_unique_slug($term->name, $term->term_id);
-				$updated = $wpdb->update(
-					$wpdb->terms,
-					['slug' => $new_slug],
-					['term_id' => $term->term_id],
-					['%s'],
-					['%d']
+				$notice_message = sprintf(
+					__( 'Successfully inserted %1$d new tag(s) (Total processed: %2$d, Skipped/Existing: %3$d).', 'plusmagi-tags-reindex' ),
+					$import_result['inserted'],
+					$import_result['total'],
+					$import_result['skipped']
 				);
-
-				if ($updated !== false) {
-					clean_term_cache($term->term_id, 'post_tag');
-					$fixed_count++;
-				}
 			}
 		}
 
-		wp_cache_flush();
-		return $fixed_count;
-	}
+		// 3. Handle Fix Conflicting Slugs Action.
+		if ( isset( $_POST['plusmagi_tags_fix_slugs'] ) && check_admin_referer( 'plusmagi_tags_fix_slugs_nonce' ) ) {
+			$fixed_result = $this->fix_conflicting_term_slugs();
 
-	public function render_admin_page() {
-		$enable_gap_reindex = $this->is_gap_reindex_enabled();
+			if ( $fixed_result['count'] > 0 ) {
+				$notice_message = sprintf(
+					__( 'Successfully fixed %1$d conflicting tag slug(s): %2$s.', 'plusmagi-tags-reindex' ),
+					$fixed_result['count'],
+					implode( ', ', $fixed_result['fixed_slugs'] )
+				);
+			} else {
+				$notice_message = __( 'Successfully fixed 0 conflicting tag slug(s).', 'plusmagi-tags-reindex' );
+			}
+		}
 
-		$inserted_param = filter_input(INPUT_GET, 'inserted', FILTER_VALIDATE_INT);
-		$fixed_param	= filter_input(INPUT_GET, 'fixed_slugs', FILTER_VALIDATE_INT);
-		$error_param	= filter_input(INPUT_GET, 'error', FILTER_DEFAULT);
-		$updated_param  = filter_input(INPUT_GET, 'settings_updated', FILTER_DEFAULT);
-
-		$fix_slug_url = wp_nonce_url(
-			admin_url('tools.php?page=plusmagi-tags-reindex&action=fix_term_slugs'),
-			'plusmagi_fix_slugs_action',
-			'plusmagi_fix_slugs_nonce'
-		);
+		$is_gap_fill_active = get_option( 'plusmagi_tags_reindex_enabled', 1 );
 		?>
 		<div class="wrap">
-			<h1><?php echo esc_html(__('PlusMagi Tags Reindex', 'plusmagi-tags-reindex')); ?></h1>
-			<p><?php echo esc_html(__('Manage and reindex post tags safely. Missing term_id gaps will be recycled when enabled.', 'plusmagi-tags-reindex')); ?></p>
+			<h1><?php esc_html_e( 'PlusMagi Tags Reindex Settings', 'plusmagi-tags-reindex' ); ?></h1>
 
-			<?php
-			if ($inserted_param !== null && $inserted_param !== false) {
-				echo '<div class="notice notice-success is-dismissible"><p>';
-				printf(esc_html__('Successfully inserted %d new tags.', 'plusmagi-tags-reindex'), intval($inserted_param));
-				echo '</p></div>';
-			}
-			if ($fixed_param !== null && $fixed_param !== false) {
-				echo '<div class="notice notice-success is-dismissible"><p>';
-				printf(esc_html__('Successfully fixed %d conflicting tag slug(s).', 'plusmagi-tags-reindex'), intval($fixed_param));
-				echo '</p></div>';
-			}
-			if ($error_param !== null) {
-				echo '<div class="notice notice-error is-dismissible"><p>' .
-					 esc_html__('Invalid format or empty tags.', 'plusmagi-tags-reindex') .
-					 '</p></div>';
-			}
-			if ($updated_param !== null) {
-				echo '<div class="notice notice-success is-dismissible"><p>' .
-					 esc_html__('Settings saved successfully.', 'plusmagi-tags-reindex') .
-					 '</p></div>';
-			}
-			?>
+			<?php if ( ! empty( $notice_message ) ) : ?>
+				<div class="notice notice-<?php echo esc_attr( $notice_type ); ?> is-dismissible">
+					<p><?php echo esc_html( $notice_message ); ?></p>
+				</div>
+			<?php endif; ?>
 
-			<form method="post" action="" style="margin: 20px 0;">
-				<?php wp_nonce_field('plusmagi_tags_reindex_settings_action', 'plusmagi_tags_reindex_settings_nonce'); ?>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><?php echo esc_html(__('ID Mode', 'plusmagi-tags-reindex')); ?></th>
-						<td>
-							<label for="enable_gap_reindex">
-								<input type="checkbox" id="enable_gap_reindex" name="enable_gap_reindex" value="1"
-									   <?php checked($enable_gap_reindex); ?> />
-								<?php echo esc_html(__('Enable Gap Filling (Reuse missing term_id)', 'plusmagi-tags-reindex')); ?>
-							</label>
-							<p class="description"><?php echo esc_html(__('When disabled, new tags use WordPress default auto-increment.', 'plusmagi-tags-reindex')); ?></p>
-						</td>
-					</tr>
+			<p class="description">
+				<?php esc_html_e( 'Manage and reindex post tags safely. Missing term_id gaps will be recycled when enabled.', 'plusmagi-tags-reindex' ); ?>
+			</p>
+
+			<form method="post" action="" style="margin-top: 20px;">
+				<?php wp_nonce_field( 'plusmagi_tags_settings_nonce' ); ?>
+				<table class="form-table" role="presentation">
+					<tbody>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'ID Mode', 'plusmagi-tags-reindex' ); ?></th>
+							<td>
+								<fieldset>
+									<label for="enable_gap_fill">
+										<input name="enable_gap_fill" type="checkbox" id="enable_gap_fill" value="1" <?php checked( $is_gap_fill_active, 1 ); ?> />
+										<?php esc_html_e( 'Enable Gap Filling (Reuse missing term_id)', 'plusmagi-tags-reindex' ); ?>
+									</label>
+									<p class="description">
+										<?php esc_html_e( 'When disabled, new tags use WordPress default auto-increment.', 'plusmagi-tags-reindex' ); ?>
+									</p>
+								</fieldset>
+							</td>
+						</tr>
+					</tbody>
 				</table>
-				<?php submit_button(__('Save Settings', 'plusmagi-tags-reindex'), 'secondary', 'save_settings'); ?>
+				<?php submit_button( __( 'Save Settings', 'plusmagi-tags-reindex' ), 'primary', 'plusmagi_tags_save_settings' ); ?>
 			</form>
 
 			<hr />
 
-			<form method="post" action="" style="margin: 20px 0;">
-				<?php wp_nonce_field('plusmagi_tags_reindex_action', 'plusmagi_tags_reindex_nonce'); ?>
-				<h2><?php echo esc_html(__('Import / Add Tags', 'plusmagi-tags-reindex')); ?></h2>
-				<table class="form-table">
-					<tr>
-						<th scope="row"><label for="tags_input"><?php echo esc_html(__('Tags List', 'plusmagi-tags-reindex')); ?></label></th>
-						<td>
-							<textarea name="tags_input" id="tags_input" rows="6" cols="80" class="large-text code"
-									  placeholder="MacOS, คีย์ลัด, Documentation"></textarea>
-							<p class="description"><?php echo esc_html(__('Enter tags separated by commas or new lines.', 'plusmagi-tags-reindex')); ?></p>
-						</td>
-					</tr>
+			<h2><?php esc_html_e( 'Import / Add Tags', 'plusmagi-tags-reindex' ); ?></h2>
+			<form method="post" action="">
+				<?php wp_nonce_field( 'plusmagi_tags_import_nonce' ); ?>
+				<table class="form-table" role="presentation">
+					<tbody>
+						<tr>
+							<th scope="row">
+								<label for="plusmagi_tags_import_list"><?php esc_html_e( 'Tags List', 'plusmagi-tags-reindex' ); ?></label>
+							</th>
+							<td>
+								<textarea name="plusmagi_tags_import_list" id="plusmagi_tags_import_list" rows="6" class="large-text code" placeholder="Tag 1, Tag 2, Tag 3..."></textarea>
+								<p class="description"><?php esc_html_e( 'Enter tags separated by commas or new lines.', 'plusmagi-tags-reindex' ); ?></p>
+							</td>
+						</tr>
+					</tbody>
 				</table>
-				<?php submit_button(__('Import Tags', 'plusmagi-tags-reindex'), 'primary'); ?>
+				<?php submit_button( __( 'Import Tags', 'plusmagi-tags-reindex' ), 'button-primary', 'plusmagi_tags_import_submit' ); ?>
 			</form>
 
 			<hr />
 
-			<div style="margin: 20px 0;">
-				<h2><?php echo esc_html(__('Maintenance Tools', 'plusmagi-tags-reindex')); ?></h2>
-				<p><?php echo esc_html(__('If you encounter 403 Forbidden errors when editing categories, run this tool to resolve slug conflicts between Tags and Categories.', 'plusmagi-tags-reindex')); ?></p>
-				<a href="<?php echo esc_url($fix_slug_url); ?>"
-				   class="button button-secondary"
-				   onclick="return confirm('<?php echo esc_js(__('Are you sure you want to fix conflicting tag slugs?', 'plusmagi-tags-reindex')); ?>');">
-					<?php echo esc_html(__('Fix Conflicting Term Slugs', 'plusmagi-tags-reindex')); ?>
-				</a>
-			</div>
+			<h2><?php esc_html_e( 'Maintenance', 'plusmagi-tags-reindex' ); ?></h2>
+			<form method="post" action="">
+				<?php wp_nonce_field( 'plusmagi_tags_fix_slugs_nonce' ); ?>
+				<p>
+					<?php submit_button( __( 'Fix Conflicting Term Slugs', 'plusmagi-tags-reindex' ), 'secondary', 'plusmagi_tags_fix_slugs', false ); ?>
+				</p>
+			</form>
 		</div>
 		<?php
 	}
 
-	public function process_form() {
-		if (!current_user_can('manage_options')) {
-			return;
-		}
+	private function import_tags_with_summary( $raw_input ) {
+		$tags_array = preg_split( '/[\r\n,]+/', $raw_input );
+		$tags_array = array_filter( array_map( 'trim', $tags_array ) );
 
-		if (isset($_GET['action']) && $_GET['action'] === 'fix_term_slugs') {
-			if (isset($_GET['plusmagi_fix_slugs_nonce']) &&
-				wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['plusmagi_fix_slugs_nonce'])), 'plusmagi_fix_slugs_action')) {
+		$total_count = count( $tags_array );
+		$inserted_count = 0;
+		$skipped_count = 0;
 
-				$fixed_count = $this->fix_conflicting_term_slugs();
-				wp_safe_redirect(add_query_arg('fixed_slugs', $fixed_count, admin_url('tools.php?page=plusmagi-tags-reindex')));
-				exit;
+		$reindex_enabled = (bool) get_option( 'plusmagi_tags_reindex_enabled', 1 );
+
+		foreach ( $tags_array as $tag_name ) {
+			if ( empty( $tag_name ) ) {
+				continue;
+			}
+
+			$existing_term = get_term_by( 'name', $tag_name, 'post_tag' );
+			if ( $existing_term ) {
+				$skipped_count++;
+				continue;
+			}
+
+			$inserted_term_id = $this->insert_tag_with_gap_filling( $tag_name, $reindex_enabled );
+			if ( $inserted_term_id ) {
+				$inserted_count++;
+			} else {
+				$skipped_count++;
 			}
 		}
 
-		if (isset($_POST['plusmagi_tags_reindex_settings_nonce']) &&
-			wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['plusmagi_tags_reindex_settings_nonce'])), 'plusmagi_tags_reindex_settings_action')) {
-
-			$enable = isset($_POST['enable_gap_reindex']) ? '1' : '0';
-			update_option(self::OPTION_ENABLE_GAP_REINDEX, $enable);
-
-			wp_safe_redirect(add_query_arg('settings_updated', '1', admin_url('tools.php?page=plusmagi-tags-reindex')));
-			exit;
-		}
-
-		if (isset($_POST['plusmagi_tags_reindex_nonce']) &&
-			wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['plusmagi_tags_reindex_nonce'])), 'plusmagi_tags_reindex_action')) {
-
-			$raw_input = isset($_POST['tags_input']) ? sanitize_textarea_field(wp_unslash($_POST['tags_input'])) : '';
-
-			if (empty($raw_input)) {
-				wp_safe_redirect(add_query_arg('error', '1', admin_url('tools.php?page=plusmagi-tags-reindex')));
-				exit;
-			}
-
-			// 1. Attempt JSON decoding (for backward compatibility)
-			$tags = json_decode($raw_input, true);
-
-			// 2. Fall back to comma-separated or newline string parsing
-			if (!is_array($tags)) {
-				$raw_input = str_replace(["\r\n", "\r", "\n"], ',', $raw_input);
-				$tags	  = explode(',', $raw_input);
-			}
-
-			$tags = array_filter(array_map('trim', $tags));
-
-			if (empty($tags)) {
-				wp_safe_redirect(add_query_arg('error', '1', admin_url('tools.php?page=plusmagi-tags-reindex')));
-				exit;
-			}
-
-			$reindex_gaps   = $this->is_gap_reindex_enabled();
-			$inserted_count = $this->reindex_tags($tags, $reindex_gaps);
-
-			wp_safe_redirect(add_query_arg(['inserted' => $inserted_count], admin_url('tools.php?page=plusmagi-tags-reindex')));
-			exit;
-		}
+		return array(
+			'total' => $total_count,
+			'inserted' => $inserted_count,
+			'skipped' => $skipped_count,
+		);
 	}
 
-	public function get_terms_with_stats($request) {
+	private function insert_tag_with_gap_filling( $tag_name, $reuse_gaps ) {
+		if ( $reuse_gaps ) {
+			$api = new PlusMagi_Tags_Reindex_REST_API();
+			return $api->insert_tag_reusing_gap( $tag_name );
+		}
+
+		$result = wp_insert_term( $tag_name, 'post_tag' );
+		if ( ! is_wp_error( $result ) ) {
+			return $result['term_id'];
+		}
+		return false;
+	}
+
+	private function fix_conflicting_term_slugs() {
 		global $wpdb;
 
-		$ids_raw = $request->get_param('ids');
-		$ids	 = array_values(array_filter(array_map('intval', explode(',', (string)$ids_raw))));
+		$fixed_slugs = array();
 
-		if (empty($ids)) {
-			return rest_ensure_response([]);
-		}
-
-		$terms = get_terms([
-			'taxonomy'   => 'post_tag',
-			'include'	=> $ids,
-			'hide_empty' => false,
-		]);
-
-		if (is_wp_error($terms) || empty($terms)) {
-			return rest_ensure_response([]);
-		}
-
-		$placeholders = implode(',', array_fill(0, count($ids), '%d'));
-		$params	   = array_merge(['post_tag'], $ids);
-
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT tt.term_id,
-						SUM(CASE WHEN p.post_status = 'publish' THEN 1 ELSE 0 END) AS published,
-						SUM(CASE WHEN p.post_status = 'future' THEN 1 ELSE 0 END) AS future,
-						SUM(CASE WHEN p.post_status = 'draft' THEN 1 ELSE 0 END) AS draft
-				 FROM {$wpdb->term_taxonomy} tt
-				 LEFT JOIN {$wpdb->term_relationships} tr ON tt.term_taxonomy_id = tr.term_taxonomy_id
-				 LEFT JOIN {$wpdb->posts} p ON tr.object_id = p.ID
-				 WHERE tt.taxonomy = %s
-				   AND tt.term_id IN ($placeholders)
-				 GROUP BY tt.term_id",
-				$params
-			),
-			ARRAY_A
+		$conflicting_terms = $wpdb->get_results(
+			"SELECT t.term_id, t.name, t.slug
+			FROM {$wpdb->terms} t
+			INNER JOIN {$wpdb->term_taxonomy} tt ON t.term_id = tt.term_id
+			WHERE tt.taxonomy = 'post_tag' AND t.slug LIKE '%-2'"
 		);
 
-		$stats_map = [];
-		if (is_array($rows)) {
-			foreach ($rows as $row) {
-				$stats_map[(int)$row['term_id']] = [
-					'published' => (int)$row['published'],
-					'future'	=> (int)$row['future'],
-					'draft'	 => (int)$row['draft'],
-				];
+		if ( ! empty( $conflicting_terms ) ) {
+			foreach ( $conflicting_terms as $term ) {
+				$new_slug = sanitize_title( $term->name );
+				if ( $new_slug !== $term->slug ) {
+					$wpdb->update(
+						$wpdb->terms,
+						array( 'slug' => $new_slug ),
+						array( 'term_id' => $term->term_id )
+					);
+					clean_term_cache( $term->term_id, 'post_tag' );
+					$fixed_slugs[] = $term->slug;
+				}
 			}
 		}
 
-		$result = [];
-		foreach ($terms as $term) {
-			$id = (int)$term->term_id;
-			$stats = $stats_map[$id] ?? ['published' => 0, 'future' => 0, 'draft' => 0];
-
-			$result[] = [
-				'id'		=> $id,
-				'name'	  => $term->name,
-				'slug'	  => $term->slug,
-				'edit_link' => get_edit_term_link($id, 'post_tag'),
-				'all'	   => $stats['published'] + $stats['future'] + $stats['draft'],
-				'published' => $stats['published'],
-				'future'	=> $stats['future'],
-				'draft'	 => $stats['draft'],
-			];
-		}
-
-		usort($result, fn($a, $b) => strcasecmp($a['name'], $b['name']));
-
-		return rest_ensure_response($result);
+		return array(
+			'count' => count( $fixed_slugs ),
+			'fixed_slugs' => $fixed_slugs,
+		);
 	}
 }
 
-add_action('plugins_loaded', ['Plusmagi_Tags_Reindex', 'get_instance']);
+/**
+ * REST API Endpoints Class
+ */
+class PlusMagi_Tags_Reindex_REST_API {
+
+	public function __construct() {
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+	}
+
+	public function register_routes() {
+		register_rest_route(
+			'plusmagi-tags/v1',
+			'/terms-with-stats',
+			array(
+				'methods' => 'GET',
+				'callback' => array( $this, 'get_terms_with_stats' ),
+				'permission_callback' => array( $this, 'permissions_check' ),
+			)
+		);
+
+		register_rest_route(
+			'plusmagi-tags/v1',
+			'/add-tag',
+			array(
+				'methods' => 'POST',
+				'callback' => array( $this, 'add_reindexed_tag' ),
+				'permission_callback' => array( $this, 'permissions_check' ),
+			)
+		);
+	}
+
+	public function permissions_check() {
+		return current_user_can( 'edit_posts' );
+	}
+
+	public function get_terms_with_stats( WP_REST_Request $request ) {
+		$raw_ids = $request->get_param( 'ids' );
+
+		if ( empty( $raw_ids ) ) {
+			return rest_ensure_response( array() );
+		}
+
+		$term_ids = array_filter( array_map( 'absint', explode( ',', $raw_ids ) ) );
+
+		if ( empty( $term_ids ) ) {
+			return rest_ensure_response( array() );
+		}
+
+		$stats_list = array();
+
+		foreach ( $term_ids as $term_id ) {
+			$term = get_term( $term_id, 'post_tag' );
+			if ( ! $term || is_wp_error( $term ) ) {
+				continue;
+			}
+
+			$stats_list[] = array(
+				'id' => (int) $term->term_id,
+				'name' => html_entity_decode( $term->name, ENT_QUOTES, 'UTF-8' ),
+				'all' => (int) $term->count,
+				'published' => $this->get_term_post_count_by_status( $term->term_id, 'publish' ),
+				'draft' => $this->get_term_post_count_by_status( $term->term_id, 'draft' ),
+				'future' => $this->get_term_post_count_by_status( $term->term_id, 'future' ),
+			);
+		}
+
+		return rest_ensure_response( $stats_list );
+	}
+
+	public function add_reindexed_tag( WP_REST_Request $request ) {
+		$raw_name = $request->get_param( 'name' );
+		$reuse_gaps = (bool) $request->get_param( 'reindex_gaps' );
+
+		if ( empty( $raw_name ) ) {
+			return new WP_Error( 'invalid_name', __( 'Tag name cannot be empty.', 'plusmagi-tags-reindex' ), array( 'status' => 400 ) );
+		}
+
+		$names = array_filter( array_map( 'trim', explode( ',', $raw_name ) ) );
+		$created_terms = array();
+
+		foreach ( $names as $name ) {
+			$existing = get_term_by( 'name', $name, 'post_tag' );
+			if ( $existing ) {
+				$created_terms[] = array(
+					'id' => (int) $existing->term_id,
+					'name' => html_entity_decode( $existing->name, ENT_QUOTES, 'UTF-8' ),
+				);
+				continue;
+			}
+
+			if ( $reuse_gaps ) {
+				$new_id = $this->insert_tag_reusing_gap( $name );
+			} else {
+				$result = wp_insert_term( $name, 'post_tag' );
+				$new_id = ( ! is_wp_error( $result ) ) ? $result['term_id'] : false;
+			}
+
+			if ( $new_id ) {
+				$term_obj = get_term( $new_id, 'post_tag' );
+				$created_terms[] = array(
+					'id' => (int) $new_id,
+					'name' => $term_obj ? html_entity_decode( $term_obj->name, ENT_QUOTES, 'UTF-8' ) : $name,
+				);
+			}
+		}
+
+		return rest_ensure_response( array(
+			'ids' => array_column( $created_terms, 'id' ),
+			'terms' => $created_terms,
+		) );
+	}
+
+	private function get_term_post_count_by_status( $term_id, $status = 'publish' ) {
+		global $wpdb;
+
+		$count = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(p.ID)
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->term_relationships} tr ON p.ID = tr.object_id
+				INNER JOIN {$wpdb->term_taxonomy} tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
+				WHERE tt.term_id = %d
+				AND tt.taxonomy = 'post_tag'
+				AND p.post_status = %s",
+				$term_id,
+				$status
+			)
+		);
+
+		return absint( $count );
+	}
+
+	public function insert_tag_reusing_gap( $name ) {
+		global $wpdb;
+
+		// Find the lowest gap ID starting from 1.
+		$gap_id = $wpdb->get_var(
+			"SELECT MIN(t1.term_id + 1) AS gap_id
+			FROM {$wpdb->terms} t1
+			LEFT JOIN {$wpdb->terms} t2 ON t1.term_id + 1 = t2.term_id
+			WHERE t2.term_id IS NULL AND t1.term_id > 0"
+		);
+
+		$gap_id = absint( $gap_id );
+		if ( $gap_id === 0 ) {
+			$min_existing = $wpdb->get_var( "SELECT MIN(term_id) FROM {$wpdb->terms}" );
+			$gap_id = ( $min_existing && $min_existing > 1 ) ? 1 : 0;
+		}
+
+		$slug = sanitize_title( $name );
+
+		if ( $gap_id > 0 ) {
+			$inserted = $wpdb->insert(
+				$wpdb->terms,
+				array(
+					'term_id' => $gap_id,
+					'name' => $name,
+					'slug' => $slug,
+					'term_group' => 0,
+				),
+				array( '%d', '%s', '%s', '%d' )
+			);
+
+			if ( $inserted ) {
+				$wpdb->insert(
+					$wpdb->term_taxonomy,
+					array(
+						'term_id' => $gap_id,
+						'term_taxonomy_id' => $gap_id,
+						'taxonomy' => 'post_tag',
+						'description' => '',
+						'parent' => 0,
+						'count' => 0,
+					),
+					array( '%d', '%d', '%s', '%s', '%d', '%d' )
+				);
+
+				delete_option( 'post_tag_children' );
+				clean_term_cache( $gap_id, 'post_tag' );
+				wp_cache_flush();
+
+				return $gap_id;
+			}
+		}
+
+		$result = wp_insert_term( $name, 'post_tag' );
+		return ( ! is_wp_error( $result ) ) ? $result['term_id'] : false;
+	}
+}
+
+new PlusMagi_Tags_Reindex_Admin();
+new PlusMagi_Tags_Reindex_REST_API();

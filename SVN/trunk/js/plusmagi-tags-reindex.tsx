@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, FormTokenField, Spinner, Button } from '@wordpress/components';
-import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { registerPlugin } from '@wordpress/plugins';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { useState, useEffect, useRef } from '@wordpress/element';
@@ -43,7 +42,22 @@ const getInitialReindexState = (): boolean => {
 	return configVal === true || configVal === '1' || configVal === 1;
 };
 
+const getDocumentSettingPanel = () => {
+	const wpGlobal = window.wp as unknown as {
+		editPost?: { PluginDocumentSettingPanel?: React.ComponentType<any> };
+		editor?: { PluginDocumentSettingPanel?: React.ComponentType<any> };
+	};
+
+	return wpGlobal?.editPost?.PluginDocumentSettingPanel || wpGlobal?.editor?.PluginDocumentSettingPanel || null;
+};
+
 export const TagsReindexPanel: React.FC = () => {
+	const DocumentSettingPanel = getDocumentSettingPanel();
+
+	if (!DocumentSettingPanel) {
+		return null;
+	}
+
 	const [isGapFillEnabled, setIsGapFillEnabled] = useState<boolean>(getInitialReindexState);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [knownTerms, setKnownTerms] = useState<TagTerm[]>([]);
@@ -53,7 +67,7 @@ export const TagsReindexPanel: React.FC = () => {
 	const [statsList, setStatsList] = useState<TagStat[]>([]);
 	const [isLoadingStats, setIsLoadingStats] = useState<boolean>(false);
 
-	const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+	const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
 		setIsGapFillEnabled(getInitialReindexState());
@@ -64,7 +78,7 @@ export const TagsReindexPanel: React.FC = () => {
 		const { getEditedPostAttribute } = select('core/editor');
 		const tagIds: number[] = getEditedPostAttribute('tags') || [];
 		return {
-			postTags: tagIds,
+			postTags: Array.isArray(tagIds) ? tagIds : [],
 			hasLoadedInitial: true,
 		};
 	}, []);
@@ -72,9 +86,9 @@ export const TagsReindexPanel: React.FC = () => {
 	const { editPost } = useDispatch('core/editor');
 	const { invalidateResolution } = useDispatch('core');
 
-	// 2. Fetch terms and usage statistics from endpoint
+	// 2. Fetch missing terms details and stats list
 	useEffect(() => {
-		if (postTags.length === 0) {
+		if (!Array.isArray(postTags) || postTags.length === 0) {
 			setStatsList([]);
 			return;
 		}
@@ -85,7 +99,7 @@ export const TagsReindexPanel: React.FC = () => {
 				path: `/wp/v2/tags?include=${missingIds.join(',')}&_fields=id,name,count`,
 			})
 				.then((terms) => {
-					if (Array.isArray(terms)) {
+					if (Array.isArray(terms) && terms.length > 0) {
 						setKnownTerms((prev) => {
 							const combined = [...prev, ...terms];
 							return Array.from(new Map(combined.map((t) => [t.id, t])).values());
@@ -110,8 +124,8 @@ export const TagsReindexPanel: React.FC = () => {
 
 	// Calculate overall statistics for summary footer
 	const totalTagsCount = postTags.length;
-	const totalPublishedCount = statsList.reduce((acc, item) => acc + item.published, 0);
-	const totalDraftCount = statsList.reduce((acc, item) => acc + item.draft, 0);
+	const totalPublishedCount = statsList.reduce((acc, item) => acc + (item.published || 0), 0);
+	const totalDraftCount = statsList.reduce((acc, item) => acc + (item.draft || 0), 0);
 	const newTagsCount = statsList.filter((s) => s.all === 0).length;
 
 	const cleanTagName = (formattedName: string): string => {
@@ -157,11 +171,13 @@ export const TagsReindexPanel: React.FC = () => {
 		}, 300);
 	};
 
-	// 4. Handle tag addition via input
-	const handleTagsChange = async (newTokens: string[]) => {
-		if (newTokens.length === 0) return;
+	// 4. Handle tag addition/removal via FormTokenField
+	const handleTagsChange = async (newTokens: (string | TagTerm)[]) => {
+		if (!Array.isArray(newTokens)) return;
 
-		const cleanedNames = newTokens.map(cleanTagName);
+		const tokensList = newTokens.map((item) => (typeof item === 'string' ? item : item.name));
+		const cleanedNames = Array.from(new Set(tokensList.map(cleanTagName))).filter(Boolean);
+
 		const existingIds: number[] = [];
 		const namesToCreate: string[] = [];
 
@@ -176,13 +192,13 @@ export const TagsReindexPanel: React.FC = () => {
 			}
 		});
 
-		let finalTagIds = Array.from(new Set([...postTags, ...existingIds]));
+		let finalTagIds = Array.from(new Set(existingIds));
 
 		if (namesToCreate.length > 0) {
 			setIsSubmitting(true);
 			try {
-				const response = await apiFetch<{ ids: number[] }>({
-					path: 'plusmagi-tags/v1/add-tag',
+				const response = await apiFetch<{ ids: number[]; terms?: TagTerm[] }>({
+					path: '/plusmagi-tags/v1/add-tag',
 					method: 'POST',
 					data: {
 						name: namesToCreate.join(','),
@@ -193,13 +209,9 @@ export const TagsReindexPanel: React.FC = () => {
 				if (response && Array.isArray(response.ids)) {
 					finalTagIds = Array.from(new Set([...finalTagIds, ...response.ids]));
 
-					const newTerms = await apiFetch<TagTerm[]>({
-						path: `/wp/v2/tags?include=${response.ids.join(',')}&_fields=id,name,count`,
-					});
-
-					if (Array.isArray(newTerms)) {
+					if (Array.isArray(response.terms)) {
 						setKnownTerms((prev) => {
-							const combined = [...prev, ...newTerms];
+							const combined = [...prev, ...response.terms!];
 							return Array.from(new Map(combined.map((t) => [t.id, t])).values());
 						});
 					}
@@ -223,7 +235,7 @@ export const TagsReindexPanel: React.FC = () => {
 	};
 
 	return (
-		<PluginDocumentSettingPanel
+		<DocumentSettingPanel
 			name="plusmagi-tags-reindex-panel"
 			title={__('PlusMagi Tags Reindex', 'plusmagi-tags-reindex')}
 			className="plusmagi-tags-reindex-panel"
@@ -249,7 +261,10 @@ export const TagsReindexPanel: React.FC = () => {
 						label={__('TAGS', 'plusmagi-tags-reindex')}
 						value={[]}
 						suggestions={suggestions}
-						onChange={handleTagsChange}
+						onChange={(tokens) => {
+							handleTagsChange(tokens);
+							setSuggestions([]);
+						}}
 						onInputChange={handleInputChange}
 						placeholder={__('Add new tag', 'plusmagi-tags-reindex')}
 						__next40pxDefaultSize
@@ -334,7 +349,7 @@ export const TagsReindexPanel: React.FC = () => {
 					)}
 				</div>
 			)}
-		</PluginDocumentSettingPanel>
+		</DocumentSettingPanel>
 	);
 };
 
