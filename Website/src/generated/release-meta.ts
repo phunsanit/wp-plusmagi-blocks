@@ -4,15 +4,16 @@ export const releaseMeta = {
   "version": "1.0.0",
   "changelogVersion": "1.0.0",
   "changelogItems": [
-    "Initial public release of PlusMagi Tags Reindex.",
-    "Added selectable ID mode (gap fill or default auto-increment).",
-    "Added Tools page for JSON tag import.",
-    "Added custom Gutenberg tags panel with stats and quick tag actions.",
-    "Added protected REST endpoint for tag creation (`manage_categories`)."
+    "Initial public release",
+    "Smart gap filling with duplicate ID protection and transactions",
+    "Enhanced custom Gutenberg tags panel",
+    "Bulk JSON import tool",
+    "Full English i18n support",
+    "Improved security and error handling"
   ],
   "sources": {
     "pluginHeader": "SVN/trunk/plusmagi-tags-reindex.php",
     "readme": "SVN/trunk/readme.txt"
   },
-  "generatedAt": "2026-07-13T12:50:30.868Z"
+  "generatedAt": "2026-07-27T00:51:54.532Z"
 } as const;
