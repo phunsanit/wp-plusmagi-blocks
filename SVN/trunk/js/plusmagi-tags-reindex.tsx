@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { CheckboxControl, FormTokenField, Spinner, Button } from '@wordpress/components';
 import { registerPlugin } from '@wordpress/plugins';
-import { useSelect, useDispatch, dispatch } from '@wordpress/data';
-import { useState, useEffect, useRef } from '@wordpress/element';
+import { useSelect, useDispatch, dispatch, select } from '@wordpress/data';
+import { useState, useEffect, useRef, useCallback, useMemo } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 
 declare global {
@@ -58,7 +58,7 @@ export const TagsReindexPanel: React.FC = () => {
 		return null;
 	}
 
-	const [isGapFillEnabled, setIsGapFillEnabled] = useState<boolean>(getInitialReindexState);
+	const [isGapFillEnabled, setIsGapFillEnabled] = useState<boolean>(() => getInitialReindexState());
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const [knownTerms, setKnownTerms] = useState<TagTerm[]>([]);
 	const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -68,9 +68,36 @@ export const TagsReindexPanel: React.FC = () => {
 	const [isLoadingStats, setIsLoadingStats] = useState<boolean>(false);
 
 	const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const searchControllerRef = useRef<AbortController | null>(null);
+	const blurClearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const changeRequestSeq = useRef<number>(0);
+	const suggestionIdMapRef = useRef<Map<string, number>>(new Map());
 
 	useEffect(() => {
-		setIsGapFillEnabled(getInitialReindexState());
+		return () => {
+			if (debounceTimer.current) {
+				clearTimeout(debounceTimer.current);
+			}
+			if (searchControllerRef.current) {
+				searchControllerRef.current.abort();
+			}
+			if (blurClearTimerRef.current) {
+				clearTimeout(blurClearTimerRef.current);
+			}
+		};
+	}, []);
+
+	const mergeKnownTerms = useCallback((newTerms: TagTerm[]) => {
+		setKnownTerms((prev) => {
+			const combined = [...prev, ...newTerms];
+			return Array.from(new Map(combined.map((t) => [t.id, t])).values());
+		});
+	}, []);
+
+	const clearSuggestionState = useCallback(() => {
+		suggestionIdMapRef.current.clear();
+		setSuggestions([]);
+		setIsSearching(false);
 	}, []);
 
 	// 1. Fetch current post tag IDs
@@ -86,41 +113,50 @@ export const TagsReindexPanel: React.FC = () => {
 	const { editPost } = useDispatch('core/editor');
 	const { invalidateResolution } = useDispatch('core');
 
-	// 2. Fetch missing terms details and stats list
+	const tagIdsKey = useMemo(() => {
+		return [...postTags].sort((a, b) => a - b).join(',');
+	}, [postTags]);
+
+	// 2. Fetch stats list and hydrate known terms from the same endpoint
 	useEffect(() => {
-		if (!Array.isArray(postTags) || postTags.length === 0) {
+		if (!tagIdsKey) {
 			setStatsList([]);
 			return;
 		}
 
-		const missingIds = postTags.filter((id) => !knownTerms.some((term) => term.id === id));
-		if (missingIds.length > 0) {
-			apiFetch<TagTerm[]>({
-				path: `/wp/v2/tags?include=${missingIds.join(',')}&_fields=id,name,count`,
-			})
-				.then((terms) => {
-					if (Array.isArray(terms) && terms.length > 0) {
-						setKnownTerms((prev) => {
-							const combined = [...prev, ...terms];
-							return Array.from(new Map(combined.map((t) => [t.id, t])).values());
-						});
-					}
-				})
-				.catch((err) => console.error('Error fetching post tags:', err));
-		}
+		const controller = new AbortController();
 
 		setIsLoadingStats(true);
 		apiFetch<TagStat[]>({
-			path: `/plusmagi-tags/v1/terms-with-stats?ids=${postTags.join(',')}`,
+			path: `/plusmagi-tags/v1/terms-with-stats?ids=${tagIdsKey}`,
+			signal: controller.signal,
 		})
 			.then((res) => {
 				if (Array.isArray(res)) {
 					setStatsList(res);
+					const termsFromStats: TagTerm[] = res.map((item) => ({
+						id: item.id,
+						name: item.name,
+						count: item.all,
+					}));
+					mergeKnownTerms(termsFromStats);
 				}
 			})
-			.catch((err) => console.error('Error fetching tag stats:', err))
-			.finally(() => setIsLoadingStats(false));
-	}, [postTags]);
+			.catch((err) => {
+				if (err?.name !== 'AbortError') {
+					console.error('Error fetching tag stats:', err);
+				}
+			})
+			.finally(() => {
+				if (!controller.signal.aborted) {
+					setIsLoadingStats(false);
+				}
+			});
+
+		return () => {
+			controller.abort();
+		};
+	}, [tagIdsKey, mergeKnownTerms]);
 
 	// Calculate overall statistics for summary footer
 	const totalTagsCount = postTags.length;
@@ -129,7 +165,12 @@ export const TagsReindexPanel: React.FC = () => {
 	const newTagsCount = statsList.filter((s) => s.all === 0).length;
 
 	const cleanTagName = (formattedName: string): string => {
-		return formattedName.replace(/\s\(\d+\)$/, '').trim();
+		return formattedName
+			.normalize('NFKC')
+			.replace(/\s\(\d+\)$/, '')
+			.replace(/[\u200B-\u200D\uFEFF]/g, '')
+			.replace(/\s+/g, ' ')
+			.trim();
 	};
 
 	// 3. Search and suggestion autocomplete handler
@@ -138,82 +179,123 @@ export const TagsReindexPanel: React.FC = () => {
 
 		if (debounceTimer.current) {
 			clearTimeout(debounceTimer.current);
+			debounceTimer.current = null;
+		}
+
+		if (searchControllerRef.current) {
+			searchControllerRef.current.abort();
+			searchControllerRef.current = null;
 		}
 
 		if (!searchTerm) {
-			setSuggestions([]);
-			setIsSearching(false);
+			clearSuggestionState();
 			return;
 		}
 
 		setIsSearching(true);
 
 		debounceTimer.current = setTimeout(() => {
+			const controller = new AbortController();
+			searchControllerRef.current = controller;
+
 			apiFetch<TagTerm[]>({
 				path: `/wp/v2/tags?search=${encodeURIComponent(searchTerm)}&per_page=20&_fields=id,name,count`,
+				signal: controller.signal,
 			})
 				.then((terms) => {
 					if (Array.isArray(terms)) {
-						setKnownTerms((prev) => {
-							const combined = [...prev, ...terms];
-							return Array.from(new Map(combined.map((t) => [t.id, t])).values());
-						});
+						mergeKnownTerms(terms);
 
-						setSuggestions(
-							terms.map((term) =>
-								term.count !== undefined ? `${term.name} (${term.count})` : term.name
-							)
-						);
+						const nextSuggestionIdMap = new Map<string, number>();
+						const nextSuggestions = terms.map((term) => {
+							const label = term.count !== undefined ? `${term.name} (${term.count})` : term.name;
+							nextSuggestionIdMap.set(label.toLowerCase(), term.id);
+							nextSuggestionIdMap.set(term.name.toLowerCase(), term.id);
+							return label;
+						});
+						suggestionIdMapRef.current = nextSuggestionIdMap;
+
+						setSuggestions(nextSuggestions);
 					}
 				})
-				.catch((err) => console.error('Error searching tags:', err))
-				.finally(() => setIsSearching(false));
+				.catch((err) => {
+					if (err?.name !== 'AbortError') {
+						console.error('Error searching tags:', err);
+					}
+				})
+				.finally(() => {
+					if (searchControllerRef.current === controller) {
+						searchControllerRef.current = null;
+					}
+					if (!controller.signal.aborted) {
+						setIsSearching(false);
+					}
+				});
 		}, 300);
 	};
 
 	// 4. Handle tag addition/removal via FormTokenField
 	const handleTagsChange = async (newTokens: (string | TagTerm)[]) => {
-		if (!Array.isArray(newTokens)) return;
+		if (!Array.isArray(newTokens) || newTokens.length === 0) return;
 
-		const tokensList = newTokens.map((item) => (typeof item === 'string' ? item : item.name));
-		const cleanedNames = Array.from(new Set(tokensList.map(cleanTagName))).filter(Boolean);
-
-		const existingIds: number[] = [];
+		const existingIdsToAdd: number[] = [];
 		const namesToCreate: string[] = [];
 
-		cleanedNames.forEach((name) => {
+		newTokens.forEach((item) => {
+			if (typeof item === 'object' && item !== null && typeof item.id === 'number') {
+				existingIdsToAdd.push(item.id);
+				return;
+			}
+
+			const rawName = typeof item === 'string' ? item : item.name;
+			const cleanedName = cleanTagName(rawName);
+			if (!cleanedName) {
+				return;
+			}
+
+			if (typeof item === 'string') {
+				const mappedSuggestionId =
+					suggestionIdMapRef.current.get(item.toLowerCase()) ||
+					suggestionIdMapRef.current.get(cleanedName.toLowerCase());
+				if (typeof mappedSuggestionId === 'number') {
+					existingIdsToAdd.push(mappedSuggestionId);
+					return;
+				}
+			}
+
 			const matchedTerm = knownTerms.find(
-				(term) => term.name.toLowerCase() === name.toLowerCase()
+				(term) => term.name.toLowerCase() === cleanedName.toLowerCase()
 			);
 			if (matchedTerm) {
-				existingIds.push(matchedTerm.id);
+				existingIdsToAdd.push(matchedTerm.id);
 			} else {
-				namesToCreate.push(name);
+				namesToCreate.push(cleanedName);
 			}
 		});
 
-		let finalTagIds = Array.from(new Set(existingIds));
+		const uniqueExistingIds = Array.from(new Set(existingIdsToAdd));
+		const uniqueNamesToCreate = Array.from(new Set(namesToCreate));
 
-		if (namesToCreate.length > 0) {
+		let createdTagIds: number[] = [];
+
+		if (uniqueNamesToCreate.length > 0) {
+			const requestSeq = ++changeRequestSeq.current;
 			setIsSubmitting(true);
 			try {
 				const response = await apiFetch<{ ids: number[]; terms?: TagTerm[] }>({
 					path: '/plusmagi-tags/v1/add-tag',
 					method: 'POST',
 					data: {
-						name: namesToCreate.join(','),
+						name: uniqueNamesToCreate.join(','),
 						reindex_gaps: isGapFillEnabled,
 					},
 				});
 
 				if (response && Array.isArray(response.ids)) {
-					finalTagIds = Array.from(new Set([...finalTagIds, ...response.ids]));
+					createdTagIds = response.ids;
 
 					if (Array.isArray(response.terms)) {
-						setKnownTerms((prev) => {
-							const combined = [...prev, ...response.terms!];
-							return Array.from(new Map(combined.map((t) => [t.id, t])).values());
-						});
+						mergeKnownTerms(response.terms);
 					}
 				}
 
@@ -221,16 +303,30 @@ export const TagsReindexPanel: React.FC = () => {
 			} catch (error) {
 				console.error('Error adding reindexed tag:', error);
 			} finally {
-				setIsSubmitting(false);
+				if (requestSeq === changeRequestSeq.current) {
+					setIsSubmitting(false);
+				}
 			}
 		}
 
-		editPost({ tags: finalTagIds });
+		const freshEditor = select('core/editor') as unknown as {
+			getEditedPostAttribute?: (key: string) => number[];
+		};
+		const currentTags = freshEditor?.getEditedPostAttribute?.('tags') || [];
+		const updatedTagIds = Array.from(
+			new Set([...(Array.isArray(currentTags) ? currentTags : []), ...uniqueExistingIds, ...createdTagIds])
+		);
+
+		editPost({ tags: updatedTagIds });
 	};
 
 	// 5. Remove tag handler from summary list
 	const handleRemoveTag = (tagIdToRemove: number) => {
-		const updatedTagIds = postTags.filter((id) => id !== tagIdToRemove);
+		const freshEditor = select('core/editor') as unknown as {
+			getEditedPostAttribute?: (key: string) => number[];
+		};
+		const currentTags = freshEditor?.getEditedPostAttribute?.('tags') || [];
+		const updatedTagIds = currentTags.filter((id) => id !== tagIdToRemove);
 		editPost({ tags: updatedTagIds });
 	};
 
@@ -263,9 +359,22 @@ export const TagsReindexPanel: React.FC = () => {
 						suggestions={suggestions}
 						onChange={(tokens) => {
 							handleTagsChange(tokens);
-							setSuggestions([]);
+							clearSuggestionState();
 						}}
 						onInputChange={handleInputChange}
+						onBlur={() => {
+							if (debounceTimer.current) {
+								clearTimeout(debounceTimer.current);
+								debounceTimer.current = null;
+							}
+							if (blurClearTimerRef.current) {
+								clearTimeout(blurClearTimerRef.current);
+							}
+							blurClearTimerRef.current = setTimeout(() => {
+								clearSuggestionState();
+								blurClearTimerRef.current = null;
+							}, 150);
+						}}
 						placeholder={__('Add new tag', 'plusmagi-tags-reindex')}
 						__next40pxDefaultSize
 					/>
@@ -288,12 +397,12 @@ export const TagsReindexPanel: React.FC = () => {
 							</div>
 
 							{/* Tag Items List */}
-							<ul className="plusmagi-tags-list__items" style={{ border: 'none', borderRadius: 0 }}>
+							<ul className="plusmagi-tags-list__items" style={{ border: 'none', borderRadius: 0, margin: 0, padding: 0, listStyle: 'none' }}>
 								{statsList.map((stat) => {
 									const isNew = stat.all === 0;
 
 									return (
-										<li key={stat.id} className="plusmagi-tags-list__item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '2px', position: 'relative', padding: '8px 10px' }}>
+										<li key={stat.id} className="plusmagi-tags-list__item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '2px', position: 'relative', padding: '8px 10px', borderBottom: '1px solid #f0f0f1' }}>
 											<div className="plusmagi-tags-list__info" style={{ width: '100%', paddingRight: '24px' }}>
 												{/* Tag Name */}
 												<div className="plusmagi-tags-list__name" style={{ fontWeight: 600 }}>

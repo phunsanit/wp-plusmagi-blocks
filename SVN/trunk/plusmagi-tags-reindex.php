@@ -10,7 +10,6 @@
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: plusmagi-tags-reindex
- * Domain Path: /languages
  *
  * @package PlusMagi_Tags_Reindex
  */
@@ -175,8 +174,8 @@ class PlusMagi_Tags_Reindex_Admin {
 			if ( ! empty( $raw_tags_list ) ) {
 				$import_result = $this->import_tags_with_summary( $raw_tags_list );
 
-				/* translators: 1: Number of inserted tags, 2: Total processed tags, 3: Number of skipped/existing tags. */
 				$notice_message = sprintf(
+					/* translators: 1: Number of inserted tags, 2: Total processed tags, 3: Number of skipped/existing tags. */
 					__( 'Successfully inserted %1$d new tag(s) (Total processed: %2$d, Skipped/Existing: %3$d).', 'plusmagi-tags-reindex' ),
 					$import_result['inserted'],
 					$import_result['total'],
@@ -190,8 +189,8 @@ class PlusMagi_Tags_Reindex_Admin {
 			$fixed_result = $this->fix_conflicting_term_slugs();
 
 			if ( $fixed_result['count'] > 0 ) {
-				/* translators: 1: Number of fixed tags, 2: Comma-separated list of fixed slugs. */
 				$notice_message = sprintf(
+					/* translators: 1: Number of fixed tags, 2: Comma-separated list of fixed slugs. */
 					__( 'Successfully fixed %1$d conflicting tag slug(s): %2$s.', 'plusmagi-tags-reindex' ),
 					$fixed_result['count'],
 					implode( ', ', $fixed_result['fixed_slugs'] )
@@ -328,7 +327,7 @@ class PlusMagi_Tags_Reindex_Admin {
 		$fixed_slugs = array();
 
 		// This maintenance operation must query terms directly to detect slug conflicts efficiently.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$conflicting_terms = $wpdb->get_results(
 			"SELECT t.term_id, t.name, t.slug
 			FROM {$wpdb->terms} t
@@ -364,9 +363,24 @@ class PlusMagi_Tags_Reindex_Admin {
  * REST API Endpoints Class
  */
 class PlusMagi_Tags_Reindex_REST_API {
+	private const GAP_CACHE_KEY = 'plusmagi_tags_next_gap_id';
+	private const GAP_CACHE_TTL = 30;
+	private static $hooks_registered = false;
 
 	public function __construct() {
+		if ( self::$hooks_registered ) {
+			return;
+		}
+
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action( 'created_term', array( $this, 'delete_gap_cache' ) );
+		add_action( 'delete_term', array( $this, 'delete_gap_cache' ) );
+
+		self::$hooks_registered = true;
+	}
+
+	public function delete_gap_cache( ...$args ) {
+		delete_transient( self::GAP_CACHE_KEY );
 	}
 
 	public function register_routes() {
@@ -494,7 +508,12 @@ class PlusMagi_Tags_Reindex_REST_API {
 		return absint( $count );
 	}
 
-	public function insert_tag_reusing_gap( $name ) {
+	private function get_cached_gap_id() {
+		$cached_gap_id = get_transient( self::GAP_CACHE_KEY );
+		if ( false !== $cached_gap_id ) {
+			return absint( $cached_gap_id );
+		}
+
 		global $wpdb;
 
 		// Find the lowest gap ID starting from 1.
@@ -508,7 +527,7 @@ class PlusMagi_Tags_Reindex_REST_API {
 		);
 
 		$gap_id = absint( $gap_id );
-		if ( $gap_id === 0 ) {
+		if ( 0 === $gap_id ) {
 			// Reads smallest existing term_id to handle empty-leading gaps.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$min_existing = $wpdb->get_var( "SELECT MIN(term_id) FROM {$wpdb->terms}" );
@@ -522,65 +541,159 @@ class PlusMagi_Tags_Reindex_REST_API {
 			}
 		}
 
+		set_transient( self::GAP_CACHE_KEY, $gap_id, self::GAP_CACHE_TTL );
+
+		return $gap_id;
+	}
+
+	public function insert_tag_reusing_gap( $name ) {
+		$gap_id = $this->get_cached_gap_id();
 		$gap_id = $this->find_next_available_reindex_id( $gap_id );
 
 		$slug = sanitize_title( $name );
+		if ( '' === $slug ) {
+			$slug = sanitize_title( 'tag-' . wp_generate_password( 6, false, false ) );
+		}
+
+		$term_for_slug = (object) array(
+			'taxonomy' => 'post_tag',
+			'parent' => 0,
+		);
+		$slug = wp_unique_term_slug( $slug, $term_for_slug );
 
 		if ( $gap_id > 0 ) {
-			// Direct insert preserves the selected gap term_id.
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-			$inserted = $wpdb->insert(
-				$wpdb->terms,
-				array(
-					'term_id' => $gap_id,
-					'name' => $name,
-					'slug' => $slug,
-					'term_group' => 0,
-				),
-				array( '%d', '%s', '%s', '%d' )
-			);
-
-			if ( $inserted ) {
-				// Direct insert keeps term_taxonomy_id aligned with the reused gap term_id.
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-				$taxonomy_inserted = $wpdb->insert(
-					$wpdb->term_taxonomy,
-					array(
-						'term_id' => $gap_id,
-						'term_taxonomy_id' => $gap_id,
-						'taxonomy' => 'post_tag',
-						'description' => '',
-						'parent' => 0,
-						'count' => 0,
-					),
-					array( '%d', '%d', '%s', '%s', '%d', '%d' )
-				);
-
-				if ( ! $taxonomy_inserted ) {
-					// Roll back terms row if taxonomy insert fails to avoid orphan records.
-					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-					$wpdb->delete(
-						$wpdb->terms,
-						array( 'term_id' => $gap_id ),
-						array( '%d' )
-					);
-
-					$gap_id = 0;
-				}
-
-				if ( $gap_id > 0 ) {
-
-					delete_option( 'post_tag_children' );
-					clean_term_cache( $gap_id, 'post_tag' );
-					wp_cache_flush();
-
-					return $gap_id;
-				}
+			$inserted_gap_id = $this->try_insert_tag_with_aligned_id( $name, $slug, $gap_id, 25 );
+			if ( $inserted_gap_id ) {
+				$this->delete_gap_cache();
+				return $inserted_gap_id;
 			}
 		}
 
-		$result = wp_insert_term( $name, 'post_tag' );
-		return ( ! is_wp_error( $result ) ) ? $result['term_id'] : false;
+		// Keep aligned-ID behavior even when gap attempts fail to avoid term_id/term_taxonomy_id divergence.
+		$fallback_start_id = $this->get_aligned_reindex_fallback_start_id();
+		if ( $fallback_start_id > 0 ) {
+			$inserted_fallback_id = $this->try_insert_tag_with_aligned_id( $name, $slug, $fallback_start_id, 25 );
+			if ( $inserted_fallback_id ) {
+				$this->delete_gap_cache();
+				return $inserted_fallback_id;
+			}
+		}
+
+		return false;
+	}
+
+	private function try_insert_tag_with_aligned_id( $name, $slug, $start_id, $max_attempts = 25 ) {
+		global $wpdb;
+
+		$next_probe_id = max( 1, absint( $start_id ) );
+		$attempt = 0;
+
+		while ( $attempt < $max_attempts && $next_probe_id > 0 ) {
+			$candidate_id = $this->find_next_available_reindex_id( $next_probe_id );
+			if ( $candidate_id <= 0 ) {
+				return false;
+			}
+
+			$attempt++;
+			$next_probe_id = $candidate_id + 1;
+			$in_transaction = false;
+			$attempt_result = 'error';
+
+			try {
+				// Transaction control statements are required for atomic aligned-ID inserts.
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				if ( false !== $wpdb->query( 'START TRANSACTION' ) ) {
+					$in_transaction = true;
+				}
+
+				// Direct insert preserves the selected term_id for aligned mode.
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+				$term_inserted = $wpdb->insert(
+					$wpdb->terms,
+					array(
+						'term_id' => $candidate_id,
+						'name' => $name,
+						'slug' => $slug,
+						'term_group' => 0,
+					),
+					array( '%d', '%s', '%s', '%d' )
+				);
+
+				if ( ! $term_inserted ) {
+					$attempt_result = $this->is_duplicate_key_error() ? 'retry' : 'error';
+				} else {
+					// Direct insert keeps term_taxonomy_id aligned with term_id.
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+					$taxonomy_inserted = $wpdb->insert(
+						$wpdb->term_taxonomy,
+						array(
+							'term_id' => $candidate_id,
+							'term_taxonomy_id' => $candidate_id,
+							'taxonomy' => 'post_tag',
+							'description' => '',
+							'parent' => 0,
+							'count' => 0,
+						),
+						array( '%d', '%d', '%s', '%s', '%d', '%d' )
+					);
+
+					if ( ! $taxonomy_inserted ) {
+						if ( ! $in_transaction ) {
+							// Roll back terms row if taxonomy insert fails and transactions are unavailable.
+							// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+							$wpdb->delete(
+								$wpdb->terms,
+								array( 'term_id' => $candidate_id ),
+								array( '%d' )
+							);
+						}
+
+						$attempt_result = $this->is_duplicate_key_error() ? 'retry' : 'error';
+					} else {
+						if ( $in_transaction ) {
+							// Explicit commit finalizes both INSERTs as one atomic unit.
+							// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+							$wpdb->query( 'COMMIT' );
+							$in_transaction = false;
+						}
+
+						delete_option( 'post_tag_children' );
+						clean_term_cache( $candidate_id, 'post_tag' );
+						clean_taxonomy_cache( 'post_tag' );
+
+						return $candidate_id;
+					}
+				}
+			} finally {
+				if ( $in_transaction ) {
+					// Explicit rollback guarantees connection state is closed before retry.
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+					$wpdb->query( 'ROLLBACK' );
+				}
+			}
+
+			if ( 'retry' !== $attempt_result ) {
+				return false;
+			}
+		}
+
+		return false;
+	}
+
+	private function get_aligned_reindex_fallback_start_id() {
+		global $wpdb;
+
+		// Uses maxima from related ID columns so fallback inserts stay above the active ID horizon.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$max_seen_id = $wpdb->get_var(
+			"SELECT GREATEST(
+				COALESCE((SELECT MAX(term_id) FROM {$wpdb->terms}), 0),
+				COALESCE((SELECT MAX(term_id) FROM {$wpdb->term_taxonomy}), 0),
+				COALESCE((SELECT MAX(term_taxonomy_id) FROM {$wpdb->term_taxonomy}), 0)
+			)"
+		);
+
+		return absint( $max_seen_id ) + 1;
 	}
 
 	private function find_next_available_reindex_id( $start_id ) {
@@ -603,55 +716,38 @@ class PlusMagi_Tags_Reindex_REST_API {
 	private function is_reindex_id_conflicting( $candidate_id ) {
 		global $wpdb;
 
+		// Combined check across related tables to minimize per-ID query overhead.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$terms_hit = $wpdb->get_var(
+		$conflict = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT term_id FROM {$wpdb->terms} WHERE term_id = %d LIMIT 1",
-				$candidate_id
-			)
-		);
-
-		if ( null !== $terms_hit ) {
-			return true;
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$taxonomy_hit = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT term_taxonomy_id
-				FROM {$wpdb->term_taxonomy}
-				WHERE term_id = %d OR term_taxonomy_id = %d
+				"SELECT 1 FROM {$wpdb->terms} WHERE term_id = %d
+				UNION ALL
+				SELECT 1 FROM {$wpdb->term_taxonomy} WHERE term_id = %d OR term_taxonomy_id = %d
+				UNION ALL
+				SELECT 1 FROM {$wpdb->termmeta} WHERE term_id = %d
+				UNION ALL
+				SELECT 1 FROM {$wpdb->term_relationships} WHERE term_taxonomy_id = %d
 				LIMIT 1",
+				$candidate_id,
+				$candidate_id,
+				$candidate_id,
 				$candidate_id,
 				$candidate_id
 			)
 		);
 
-		if ( null !== $taxonomy_hit ) {
-			return true;
+		return null !== $conflict;
+	}
+
+	private function is_duplicate_key_error() {
+		global $wpdb;
+
+		if ( ! empty( $wpdb->last_error ) && is_string( $wpdb->last_error ) ) {
+			// Check duplicate-key errors using wpdb error text to satisfy WordPress scanner rules.
+			return false !== strpos( $wpdb->last_error, '1062' ) || false !== strpos( $wpdb->last_error, 'Duplicate entry' );
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$termmeta_hit = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT meta_id FROM {$wpdb->termmeta} WHERE term_id = %d LIMIT 1",
-				$candidate_id
-			)
-		);
-
-		if ( null !== $termmeta_hit ) {
-			return true;
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$relationship_hit = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT object_id FROM {$wpdb->term_relationships} WHERE term_taxonomy_id = %d LIMIT 1",
-				$candidate_id
-			)
-		);
-
-		return null !== $relationship_hit;
+		return false;
 	}
 }
 
