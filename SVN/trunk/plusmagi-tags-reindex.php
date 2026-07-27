@@ -1,13 +1,12 @@
 <?php
 /**
  * Plugin Name: PlusMagi Tags Reindex
- * Plugin URI: https://plusmagi.com/
  * Description: Manage and reindex post tags safely. Missing term_id gaps will be recycled when enabled.
  * Version: 1.0.0
  * Requires at least: 6.0
  * Requires PHP: 7.4
- * Author: PlusMagi
- * Author URI: https://plusmagi.com/
+ * Author: Pitt Phunsanit
+ * Author URI: https://pitt.plusmagi.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: plusmagi-tags-reindex
@@ -176,6 +175,7 @@ class PlusMagi_Tags_Reindex_Admin {
 			if ( ! empty( $raw_tags_list ) ) {
 				$import_result = $this->import_tags_with_summary( $raw_tags_list );
 
+				/* translators: 1: Number of inserted tags, 2: Total processed tags, 3: Number of skipped/existing tags. */
 				$notice_message = sprintf(
 					__( 'Successfully inserted %1$d new tag(s) (Total processed: %2$d, Skipped/Existing: %3$d).', 'plusmagi-tags-reindex' ),
 					$import_result['inserted'],
@@ -190,6 +190,7 @@ class PlusMagi_Tags_Reindex_Admin {
 			$fixed_result = $this->fix_conflicting_term_slugs();
 
 			if ( $fixed_result['count'] > 0 ) {
+				/* translators: 1: Number of fixed tags, 2: Comma-separated list of fixed slugs. */
 				$notice_message = sprintf(
 					__( 'Successfully fixed %1$d conflicting tag slug(s): %2$s.', 'plusmagi-tags-reindex' ),
 					$fixed_result['count'],
@@ -326,6 +327,8 @@ class PlusMagi_Tags_Reindex_Admin {
 
 		$fixed_slugs = array();
 
+		// This maintenance operation must query terms directly to detect slug conflicts efficiently.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$conflicting_terms = $wpdb->get_results(
 			"SELECT t.term_id, t.name, t.slug
 			FROM {$wpdb->terms} t
@@ -337,6 +340,8 @@ class PlusMagi_Tags_Reindex_Admin {
 			foreach ( $conflicting_terms as $term ) {
 				$new_slug = sanitize_title( $term->name );
 				if ( $new_slug !== $term->slug ) {
+					// Updating selected rows in wp_terms is required to normalize conflicting slugs.
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 					$wpdb->update(
 						$wpdb->terms,
 						array( 'slug' => $new_slug ),
@@ -470,6 +475,8 @@ class PlusMagi_Tags_Reindex_REST_API {
 	private function get_term_post_count_by_status( $term_id, $status = 'publish' ) {
 		global $wpdb;
 
+		// This query computes per-status tag counts that are not available from core term counters.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT COUNT(p.ID)
@@ -491,6 +498,8 @@ class PlusMagi_Tags_Reindex_REST_API {
 		global $wpdb;
 
 		// Find the lowest gap ID starting from 1.
+		// This query is required to discover reusable term_id gaps before insertion.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 		$gap_id = $wpdb->get_var(
 			"SELECT MIN(t1.term_id + 1) AS gap_id
 			FROM {$wpdb->terms} t1
@@ -500,6 +509,8 @@ class PlusMagi_Tags_Reindex_REST_API {
 
 		$gap_id = absint( $gap_id );
 		if ( $gap_id === 0 ) {
+			// Reads smallest existing term_id to handle empty-leading gaps.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$min_existing = $wpdb->get_var( "SELECT MIN(term_id) FROM {$wpdb->terms}" );
 			$gap_id = ( $min_existing && $min_existing > 1 ) ? 1 : 0;
 		}
@@ -507,6 +518,8 @@ class PlusMagi_Tags_Reindex_REST_API {
 		$slug = sanitize_title( $name );
 
 		if ( $gap_id > 0 ) {
+			// Direct insert preserves the selected gap term_id.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$inserted = $wpdb->insert(
 				$wpdb->terms,
 				array(
@@ -519,6 +532,8 @@ class PlusMagi_Tags_Reindex_REST_API {
 			);
 
 			if ( $inserted ) {
+				// Direct insert keeps term_taxonomy_id aligned with the reused gap term_id.
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 				$wpdb->insert(
 					$wpdb->term_taxonomy,
 					array(
