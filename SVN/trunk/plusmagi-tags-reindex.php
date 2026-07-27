@@ -512,8 +512,17 @@ class PlusMagi_Tags_Reindex_REST_API {
 			// Reads smallest existing term_id to handle empty-leading gaps.
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 			$min_existing = $wpdb->get_var( "SELECT MIN(term_id) FROM {$wpdb->terms}" );
-			$gap_id = ( $min_existing && $min_existing > 1 ) ? 1 : 0;
+			if ( $min_existing && $min_existing > 1 ) {
+				$gap_id = 1;
+			} else {
+				// Fallback start point when no gap is returned from the initial query.
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+				$max_existing = $wpdb->get_var( "SELECT MAX(term_id) FROM {$wpdb->terms}" );
+				$gap_id = absint( $max_existing ) + 1;
+			}
 		}
+
+		$gap_id = $this->find_next_available_reindex_id( $gap_id );
 
 		$slug = sanitize_title( $name );
 
@@ -534,7 +543,7 @@ class PlusMagi_Tags_Reindex_REST_API {
 			if ( $inserted ) {
 				// Direct insert keeps term_taxonomy_id aligned with the reused gap term_id.
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-				$wpdb->insert(
+				$taxonomy_inserted = $wpdb->insert(
 					$wpdb->term_taxonomy,
 					array(
 						'term_id' => $gap_id,
@@ -547,16 +556,102 @@ class PlusMagi_Tags_Reindex_REST_API {
 					array( '%d', '%d', '%s', '%s', '%d', '%d' )
 				);
 
-				delete_option( 'post_tag_children' );
-				clean_term_cache( $gap_id, 'post_tag' );
-				wp_cache_flush();
+				if ( ! $taxonomy_inserted ) {
+					// Roll back terms row if taxonomy insert fails to avoid orphan records.
+					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+					$wpdb->delete(
+						$wpdb->terms,
+						array( 'term_id' => $gap_id ),
+						array( '%d' )
+					);
 
-				return $gap_id;
+					$gap_id = 0;
+				}
+
+				if ( $gap_id > 0 ) {
+
+					delete_option( 'post_tag_children' );
+					clean_term_cache( $gap_id, 'post_tag' );
+					wp_cache_flush();
+
+					return $gap_id;
+				}
 			}
 		}
 
 		$result = wp_insert_term( $name, 'post_tag' );
 		return ( ! is_wp_error( $result ) ) ? $result['term_id'] : false;
+	}
+
+	private function find_next_available_reindex_id( $start_id ) {
+		$start_id = max( 1, absint( $start_id ) );
+		$candidate_id = $start_id;
+		$attempts = 0;
+
+		while ( $attempts < 5000 ) {
+			if ( ! $this->is_reindex_id_conflicting( $candidate_id ) ) {
+				return $candidate_id;
+			}
+
+			$candidate_id++;
+			$attempts++;
+		}
+
+		return 0;
+	}
+
+	private function is_reindex_id_conflicting( $candidate_id ) {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$terms_hit = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT term_id FROM {$wpdb->terms} WHERE term_id = %d LIMIT 1",
+				$candidate_id
+			)
+		);
+
+		if ( null !== $terms_hit ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$taxonomy_hit = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT term_taxonomy_id
+				FROM {$wpdb->term_taxonomy}
+				WHERE term_id = %d OR term_taxonomy_id = %d
+				LIMIT 1",
+				$candidate_id,
+				$candidate_id
+			)
+		);
+
+		if ( null !== $taxonomy_hit ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$termmeta_hit = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT meta_id FROM {$wpdb->termmeta} WHERE term_id = %d LIMIT 1",
+				$candidate_id
+			)
+		);
+
+		if ( null !== $termmeta_hit ) {
+			return true;
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+		$relationship_hit = $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT object_id FROM {$wpdb->term_relationships} WHERE term_taxonomy_id = %d LIMIT 1",
+				$candidate_id
+			)
+		);
+
+		return null !== $relationship_hit;
 	}
 }
 
