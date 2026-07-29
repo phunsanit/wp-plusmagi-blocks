@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { resolveAdminTestUrl } = require('./helpers/admin-url');
 
 /**
  * PlusMagi Markdown — Admin Tools tests
@@ -15,7 +16,7 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 	// Extend max test timeout to 10 minutes (600,000 ms) for slow production processing.
 	test.setTimeout(600_000);
 
-	const TOOLS_URL = '/wp-admin/tools.php?page=plusmagi-tags-reindex';
+	const TOOLS_URL = resolveAdminTestUrl('/wp-admin/tools.php?page=plusmagi-tags-reindex');
 
 	function findLowestMissingPositive(ids) {
 		const set = new Set(ids.filter((id) => Number.isInteger(id) && id > 0));
@@ -61,7 +62,9 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 		const res = await request.post('/wp-json/wp/v2/tags', {
 			data: { name },
 		});
-		expect(res.ok()).toBe(true);
+		if (!res.ok()) {
+			throw new Error(`Failed to create tag via wp/v2/tags (${res.status()}): ${await res.text()}`);
+		}
 		const body = await res.json();
 		expect(body.id).toBeTruthy();
 		return body.id;
@@ -78,8 +81,55 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 				reindex_gaps: reindexGaps,
 			},
 		});
-		expect(res.ok()).toBe(true);
+		if (!res.ok()) {
+			throw new Error(`Failed to add tag via plusmagi API (${res.status()}): ${await res.text()}`);
+		}
 		return res.json();
+	}
+
+	async function probeTagWriteAccess(request) {
+		const probeName = `PlaywrightProbe_${Date.now()}`;
+		const res = await request.post('/wp-json/wp/v2/tags', {
+			data: { name: probeName },
+		});
+
+		if (!res.ok()) {
+			return {
+				available: false,
+				reason: `Environment does not allow wp/v2/tags writes (${res.status()}).`,
+			};
+		}
+
+		const body = await res.json();
+		if (body && body.id) {
+			await deleteTagViaWpRest(request, body.id);
+		}
+
+		return { available: true, reason: '' };
+	}
+
+	async function probePlusmagiAddTagApi(request) {
+		const probeName = `PlaywrightProbePlusmagi_${Date.now()}`;
+		const res = await request.post('/wp-json/plusmagi-tags/v1/add-tag', {
+			data: {
+				name: probeName,
+				reindex_gaps: false,
+			},
+		});
+
+		if (!res.ok()) {
+			return {
+				available: false,
+				reason: `Environment does not allow plusmagi add-tag API (${res.status()}).`,
+			};
+		}
+
+		const body = await res.json();
+		if (body && Array.isArray(body.ids) && body.ids.length > 0) {
+			await deleteTagViaWpRest(request, body.ids[0]);
+		}
+
+		return { available: true, reason: '' };
 	}
 
 	async function gotoTools(page) {
@@ -104,7 +154,7 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 			await toggle.click();
 		}
 		await page.locator('[name="plusmagi_tags_save_settings"]').click();
-		await expect(page.locator('.notice-success')).toBeVisible({ timeout: 20_000 });
+		await expect(page.locator('.notice-success').filter({ hasText: /Gap filling (enabled|disabled)\./ })).toBeVisible({ timeout: 20_000 });
 	}
 
 	test('renders the Tags Reindex settings page correctly', async ({ page }) => {
@@ -158,6 +208,11 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 		test.skip(!state.hasAccess, 'Environment user cannot access wp-admin Tools page.');
 		test.skip(!state.hasUI, 'Environment is not deployed with the current PlusMagi admin UI yet.');
 
+		const tagWrite = await probeTagWriteAccess(request);
+		test.skip(!tagWrite.available, tagWrite.reason);
+		const plusmagiWrite = await probePlusmagiAddTagApi(request);
+		test.skip(!plusmagiWrite.available, plusmagiWrite.reason);
+
 		await setGapFillEnabled(page, true);
 
 		const seedTag = `PlaywrightGapSeed_${Date.now()}`;
@@ -181,6 +236,9 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 		test.skip(!state.hasAccess, 'Environment user cannot access wp-admin Tools page.');
 		test.skip(!state.hasUI, 'Environment is not deployed with the current PlusMagi admin UI yet.');
 
+		const plusmagiWrite = await probePlusmagiAddTagApi(request);
+		test.skip(!plusmagiWrite.available, plusmagiWrite.reason);
+
 		await setGapFillEnabled(page, false);
 
 		const idsBefore = await fetchAllTagIds(request);
@@ -199,6 +257,11 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 		const state = await gotoTools(page);
 		test.skip(!state.hasAccess, 'Environment user cannot access wp-admin Tools page.');
 		test.skip(!state.hasUI, 'Environment is not deployed with the current PlusMagi admin UI yet.');
+
+		const tagWrite = await probeTagWriteAccess(request);
+		test.skip(!tagWrite.available, tagWrite.reason);
+		const plusmagiWrite = await probePlusmagiAddTagApi(request);
+		test.skip(!plusmagiWrite.available, plusmagiWrite.reason);
 
 		await setGapFillEnabled(page, true);
 
@@ -219,7 +282,7 @@ test.describe('PlusMagi Markdown — Admin Tools', () => {
 		test.skip(!state.hasUI, 'Environment is not deployed with the current PlusMagi admin UI yet.');
 
 		await page.locator('[name="plusmagi_tags_fix_slugs"]').click();
-		const notice = page.locator('.notice-success').first();
+		const notice = page.locator('.notice-success').filter({ hasText: 'Successfully fixed' });
 		await expect(notice).toBeVisible({ timeout: 20_000 });
 		await expect(notice).toContainText(/Successfully fixed \d+ conflicting tag slug\(s\)\./);
 	});

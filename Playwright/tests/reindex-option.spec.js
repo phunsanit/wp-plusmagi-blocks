@@ -1,10 +1,11 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { resolveAdminTestUrl } = require('./helpers/admin-url');
 
 test.describe('PlusMagi Markdown — Reindex option toggle', () => {
 	test.setTimeout(180_000);
 
-	const TOOLS_URL = '/wp-admin/tools.php?page=plusmagi-tags-reindex';
+	const TOOLS_URL = resolveAdminTestUrl('/wp-admin/tools.php?page=plusmagi-tags-reindex');
 
 	async function canAccessAdmin(page) {
 		return (await page.locator('#wpadminbar').count()) > 0;
@@ -34,13 +35,13 @@ test.describe('PlusMagi Markdown — Reindex option toggle', () => {
 			await toggle.click();
 		}
 
-		await page.locator('button[name="plusmagi_tags_save_settings"]').click();
-		await expect(page.locator('.notice-success')).toBeVisible({ timeout: 20_000 });
+		await page.locator('[name="plusmagi_tags_save_settings"]').first().click();
+		await expect(page.locator('.notice-success').filter({ hasText: /Gap filling (enabled|disabled)\./ })).toBeVisible({ timeout: 20_000 });
 		await expect(page.locator('#enable_gap_fill')).toHaveJSProperty('checked', enabled);
 	}
 
 	async function readEditorConfigFlag(page) {
-		await page.goto('/wp-admin/post-new.php', { waitUntil: 'domcontentloaded', timeout: 60_000 });
+		await page.goto(resolveAdminTestUrl('/wp-admin/post-new.php'), { waitUntil: 'domcontentloaded', timeout: 60_000 });
 		if (!(await canAccessAdmin(page))) {
 			return null;
 		}
