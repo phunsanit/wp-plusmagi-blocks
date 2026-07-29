@@ -68,3 +68,13 @@
 	color: #991b1b;
 	font-size: 13px;
 }
+
+.plusmagi-markdown-front-mermaid.plusmagi-markdown-front-mermaid-amp-svg {
+	overflow-x: auto;
+}
+
+.plusmagi-markdown-front-mermaid.plusmagi-markdown-front-mermaid-amp-svg amp-img.plusmagi-mermaid-amp-image {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}

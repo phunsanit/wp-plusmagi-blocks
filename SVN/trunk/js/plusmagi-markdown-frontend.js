@@ -101,7 +101,10 @@
 			api.initialize({
 				startOnLoad: false,
 				securityLevel: 'strict',
-				theme: 'default'
+				theme: 'default',
+				flowchart: {
+					htmlLabels: false
+				}
 			});
 
 			if (typeof api.render === 'function') {

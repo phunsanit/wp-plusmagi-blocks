@@ -113,6 +113,9 @@ function getMermaidApi(): MermaidApi {
 			startOnLoad: false,
 			securityLevel: 'strict',
 			theme: 'default',
+			flowchart: {
+				htmlLabels: false,
+			},
 		});
 		runtimeWindow.plusmagiMermaidInitialized = true;
 	}

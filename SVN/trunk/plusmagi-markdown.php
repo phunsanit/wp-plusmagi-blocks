@@ -518,7 +518,7 @@ function plusmagi_markdown_build_amp_svg_image( $svg_url, $svg_markup ) {
 
 	$size = plusmagi_markdown_extract_svg_dimensions( $svg_markup );
 
-	return '<amp-img src="' . esc_url( $svg_url ) . '" width="' . (int) $size['width'] . '" height="' . (int) $size['height'] . '" layout="intrinsic" alt="Mermaid diagram"></amp-img>';
+	return '<amp-img src="' . esc_url( $svg_url ) . '" width="' . (int) $size['width'] . '" height="' . (int) $size['height'] . '" layout="intrinsic" alt="Mermaid diagram" class="plusmagi-mermaid-amp-image skip-lazy no-lazy" data-skip-lazy="1" data-no-lazy="1"></amp-img>';
 }
 
 function plusmagi_markdown_register_menu() {
