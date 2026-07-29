@@ -1,10 +1,13 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
+const { resolveAdminTestUrl } = require('./helpers/admin-url');
 
 test.describe('PlusMagi Markdown — Block Editor', () => {
 
 	// Increase timeout to handle slow page loads.
 	test.setTimeout(600_000);
+
+	const ADMIN_TEST_URL = resolveAdminTestUrl('/wp-admin/post-new.php');
 
 	const addTagEndpointPattern = /\/wp-json\/plusmagi-tags\/v1\/add-tag/;
 
@@ -73,7 +76,7 @@ test.describe('PlusMagi Markdown — Block Editor', () => {
 
 	test.beforeEach(async ({ page }) => {
 		// Navigate to the new post editor page.
-		await page.goto('/wp-admin/post-new.php', { waitUntil: 'domcontentloaded', timeout: 600_000 });
+		await page.goto(ADMIN_TEST_URL, { waitUntil: 'domcontentloaded', timeout: 600_000 });
 
 		// Skip fast if this environment user cannot access wp-admin content editing.
 		test.skip(

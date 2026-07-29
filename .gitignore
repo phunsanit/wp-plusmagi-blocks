@@ -30,6 +30,6 @@ wp-assets/*.zip
 # Playwright generated test artifacts
 Playwright/playwright-report/
 Playwright/test-results/
-Playwright/auth/admin-state.json
+Playwright/auth/
 
 .env

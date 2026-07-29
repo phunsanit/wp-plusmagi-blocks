@@ -6,10 +6,10 @@ const { chromium } = require('playwright');
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-const BASE = (process.env.WP_BASE_URL || 'https://pitt.plusmagi.com').replace(/\/$/, '');
+const BASE = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
 const TARGET_URL = `${BASE}/wp-admin/post.php?post=660&action=edit`;
 const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD || process.env.WP_ADMIN_PASS;
+const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD;
 
 const SAMPLE_TAGS = ',Ancestral,Chaco Culture National Historical Park,Equinox,Heating,High Desert,Kiva,Orientation,Passive,Passive Solar,Pueblo Bonito,Puebloans,Solar,Terraced Structure,Thermal Mass,กลางคืน,กลางวัน,กักเก็บ,กักเก็บความร้อน,กันความร้อน,การค้า,การปกครอง,กำแพง,ขนาดใหญ่,ครึ่งวงกลม,ความร้อน,คายความร้อน,โคจร,โคลอสเซียม,จิตวิญญาณ,ชั้น,ชาโค,ชาโคแคนยอน,เชื้อเพลิงใด,ดวงอาทิตย์,ดาราศาสตร์,ดูดซับ,เดี่ยว,ติดลบ,ใต้ดิน,โถงทรงกลม,ทะเลทรายสูง,ทิศใต้,ทิศทาง,ธรรมชาติ,นวัตกรรม,บังลม,โบราณ,ผู้ที่อยู่อาศัย,พลังงาน,พวยโบล,พวยโบล โบนิโต,พาสซีฟ,พิธีกรรมทางศาสนา,ภัยหนาว,ภูมิปัญญา,มวลสาร,เย็นสบาย,ร้อนจัด,รัฐนิวเม็กซิโก,รับแสง,ฤดูร้อน,ฤดูหนาว,ไล่ระดับ,วันวิษุวัต,วางผัง,วิทยาการ,วิทยาศาสตร์,ศตวรรษ,ศูนย์รวมจิตวิญญาณ,สถาปัตยกรรม,สเปน,สภาพอากาศ,สหรัฐอเมริกา,สุดขั้ว,แสงแดด,แสงอาทิตย์,หนาวจัด,หมู่บ้าน,หมู่บ้านที่สวยงาม,ห้อง,ห้องพัก,หิน,หุบเขา,ใหญ่,อบอุ่น,อพาร์ตเมนต์,อเมริกาเหนือ,อยู่อาศัย,อากาศ,อาคาร,อารยธรรม,อาศัย,อุณหภูมิ,อุทยานประวัติศาสตร์แห่งชาติ';
 
@@ -98,7 +98,7 @@ async function saveGutenbergPost(page) {
 
 async function run() {
 	if (!hasValue(ADMIN_PASS)) {
-		throw new Error('Missing WP_ADMIN_PASSWORD or WP_ADMIN_PASS in .env');
+		throw new Error('Missing WP_ADMIN_PASSWORD in .env');
 	}
 
 	const browser = await chromium.launch({ headless: true });

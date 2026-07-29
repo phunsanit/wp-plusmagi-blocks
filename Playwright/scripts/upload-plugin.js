@@ -9,9 +9,9 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 const ROOT_DIR = path.resolve(__dirname, '../../');
 const ZIP_DIR = path.join(ROOT_DIR, 'wp-assets');
-const BASE_URL = (process.env.WP_BASE_URL || 'https://pitt.plusmagi.com').replace(/\/$/, '');
+const BASE_URL = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
 const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD || process.env.WP_ADMIN_PASS;
+const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD;
 const ZIP_ARG = process.argv[2] ? path.resolve(process.argv[2]) : '';
 
 function isInsideDir(filePath, dirPath) {
@@ -97,7 +97,7 @@ async function uploadAndOverwriteIfNeeded(page, zipPath) {
 
 async function main() {
 	if (!ADMIN_PASS) {
-	throw new Error('Missing WP_ADMIN_PASSWORD (or WP_ADMIN_PASS) in environment.');
+	throw new Error('Missing WP_ADMIN_PASSWORD in environment.');
 	}
 
 	const zipPath = ZIP_ARG || pickLatestZip(ZIP_DIR);

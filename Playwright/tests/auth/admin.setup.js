@@ -6,13 +6,13 @@ const fs = require('fs');
 /**
  * Setup project: log in to WordPress admin and save storage state
  * for the admin test project.
- * Skips automatically when admin-state.json already exists and WP_ADMIN_PASS is unset.
+ * Skips automatically when admin-state.json already exists and WP_ADMIN_PASSWORD is unset.
  */
 const STATE_PATH = path.resolve(__dirname, '../../auth/admin-state.json');
 
 setup('authenticate as WordPress admin', async ({ page }) => {
     const user = process.env.WP_ADMIN_USER || 'admin';
-    const pass = process.env.WP_ADMIN_PASSWORD || process.env.WP_ADMIN_PASS;
+    const pass = process.env.WP_ADMIN_PASSWORD;
 
     if (!pass) {
         // If state file already exists, reuse it without re-logging in.

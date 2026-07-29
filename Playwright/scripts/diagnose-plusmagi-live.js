@@ -4,9 +4,9 @@ const { chromium } = require('playwright');
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-const base = (process.env.WP_BASE_URL || 'https://pitt.plusmagi.com').replace(/\/$/, '');
+const base = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
 const user = process.env.WP_ADMIN_USER || 'admin';
-const pass = process.env.WP_ADMIN_PASSWORD || process.env.WP_ADMIN_PASS;
+const pass = process.env.WP_ADMIN_PASSWORD;
 
 function isEmpty(val) {
 	return val == null || val === '';
@@ -14,7 +14,7 @@ function isEmpty(val) {
 
 async function run() {
 	if (isEmpty(pass)) {
-	throw new Error('Missing WP_ADMIN_PASSWORD/WP_ADMIN_PASS in .env');
+	throw new Error('Missing WP_ADMIN_PASSWORD in .env');
 	}
 
 	const browser = await chromium.launch({ headless: true });
