@@ -65,27 +65,27 @@ module.exports = defineConfig({
         // ------------------------------------------------------------------
         {
             name: 'chromium',
-            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
             use: { ...devices['Desktop Chrome'] },
         },
         {
             name: 'firefox',
-            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
             use: { ...devices['Desktop Firefox'] },
         },
         {
             name: 'webkit',
-            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
             use: { ...devices['Desktop Safari'] },
         },
 
         // ------------------------------------------------------------------
-        // Admin tests — Gutenberg block tests (requires WP_ADMIN_PASS)
+        // Admin tests — Gutenberg block tests (requires WP_ADMIN_PASSWORD)
         // Depends on 'setup' project having run first.
         // ------------------------------------------------------------------
         {
             name: 'admin',
-            testMatch: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
+            testMatch: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
             dependencies: ['setup'],
             use: {
                 ...devices['Desktop Chrome'],
