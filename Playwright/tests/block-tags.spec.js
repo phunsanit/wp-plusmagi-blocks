@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-test.describe('PlusMagi Tags Reindex — Block Editor', () => {
+test.describe('PlusMagi Markdown — Block Editor', () => {
 
 	// Increase timeout to handle slow page loads.
 	test.setTimeout(600_000);

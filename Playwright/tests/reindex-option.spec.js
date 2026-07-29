@@ -1,7 +1,7 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-test.describe('PlusMagi Tags Reindex — Reindex option toggle', () => {
+test.describe('PlusMagi Markdown — Reindex option toggle', () => {
 	test.setTimeout(180_000);
 
 	const TOOLS_URL = '/wp-admin/tools.php?page=plusmagi-tags-reindex';

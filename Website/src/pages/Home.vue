@@ -92,10 +92,10 @@
           <article class="reveal-up rounded-3xl border border-[#355d63]/20 bg-[#fffefb] p-6 md:p-7">
             <h2 class="section-title text-2xl font-black text-[#16363d]">Reindex Terms Safely</h2>
             <p class="mt-3 text-[#3a5f65]">
-              After slug cleanup, use PlusMagi Tags Reindex to normalize term creation flow and avoid recycled mistakes.
+              After slug cleanup, use PlusMagi Markdown to normalize term creation flow and avoid recycled mistakes.
             </p>
             <ul class="mt-4 space-y-3 text-sm text-[#355b61]">
-              <li class="diag-row"><span class="dot bg-[#cb4f2d]"></span>Open Tools > Tags Reindex in wp-admin.</li>
+              <li class="diag-row"><span class="dot bg-[#cb4f2d]"></span>Open the PlusMagi Markdown admin page in wp-admin.</li>
               <li class="diag-row"><span class="dot bg-[#2f7e6a]"></span>Run Fix Conflicting Term Slugs once to normalize <strong>-2</strong> style leftovers.</li>
               <li class="diag-row"><span class="dot bg-[#2f5f9f]"></span>Choose ID mode: reuse gaps or default auto-increment.</li>
               <li class="diag-row"><span class="dot bg-[#e78f2f]"></span>Import or add terms and validate term URLs immediately.</li>

@@ -2,7 +2,7 @@
 const { test, expect } = require('@playwright/test');
 
 /**
- * PlusMagi Tags Reindex — Admin Tools tests
+ * PlusMagi Markdown — Admin Tools tests
  *
  * Tests cover:
  *  1. Admin page renders correctly
@@ -10,7 +10,7 @@ const { test, expect } = require('@playwright/test');
  *  3. Valid comma/newline input inserts tags and shows a success notice
  */
 
-test.describe('PlusMagi Tags Reindex — Admin Tools', () => {
+test.describe('PlusMagi Markdown — Admin Tools', () => {
 
 	// Extend max test timeout to 10 minutes (600,000 ms) for slow production processing.
 	test.setTimeout(600_000);

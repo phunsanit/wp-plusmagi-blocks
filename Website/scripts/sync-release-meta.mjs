@@ -6,7 +6,7 @@ const scriptFile = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptFile);
 const websiteRoot = path.resolve(scriptDir, '..');
 const repoRoot = path.resolve(websiteRoot, '..');
-const pluginMainPath = path.join(repoRoot, 'SVN', 'trunk', 'plusmagi-tags-reindex.php');
+const pluginMainPath = path.join(repoRoot, 'SVN', 'trunk', 'plusmagi-markdown.php');
 const readmePath = path.join(repoRoot, 'SVN', 'trunk', 'readme.txt');
 const outputPath = path.join(websiteRoot, 'src', 'generated', 'release-meta.ts');
 
@@ -15,7 +15,7 @@ function readText(filePath) {
 }
 
 function parsePluginHeader(headerText) {
-  const pluginName = headerText.match(/^ \* Plugin Name:\s*(.+)$/m)?.[1]?.trim() || 'PlusMagi Tags Reindex';
+  const pluginName = headerText.match(/^ \* Plugin Name:\s*(.+)$/m)?.[1]?.trim() || 'PlusMagi Markdown';
   const version = headerText.match(/^ \* Version:\s*(.+)$/m)?.[1]?.trim() || '0.0.0';
   return { pluginName, version };
 }
@@ -74,7 +74,7 @@ function buildReleaseMeta() {
     changelogVersion: selected.version,
     changelogItems: selected.items.length > 0 ? selected.items : ['Release notes are not available in readme.txt yet.'],
     sources: {
-      pluginHeader: 'SVN/trunk/plusmagi-tags-reindex.php',
+      pluginHeader: 'SVN/trunk/plusmagi-markdown.php',
       readme: 'SVN/trunk/readme.txt',
     },
     generatedAt: new Date().toISOString(),

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>Mermaid JS Example</title>
+</head>
+<body>
+<h1>My Mermaid Diagram</h1>
+
+<!-- 1. เขียน Diagram ด้วย class="mermaid" -->
+<pre class="mermaid">
+graph TD
+A[เริ่มต้น] --> B{มีปัญหาไหม?}
+B -- มี --> C[แก้ไข]
+B -- ไม่มี --> D[เสร็จสิ้น]
+</pre>
+
+<!-- 2. Import Mermaid.js ผ่าน CDN (ESM) - Recommended placement is right before closing body tag -->
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+// Initialize Mermaid and tell it to start on load, which processes all elements with class="mermaid"
+mermaid.initialize({ 
+    startOnLoad: true 
+});
+</script>
+
+</body>
+</html>

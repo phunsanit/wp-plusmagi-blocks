@@ -47,7 +47,7 @@ async function closeWelcomeDialogIfPresent(page) {
 }
 
 async function findTagInput(page, runtimeErrors) {
-	const panelToggle = page.locator('button.components-panel__body-toggle').filter({ hasText: /PlusMagi Tags Reindex/i });
+	const panelToggle = page.locator('button.components-panel__body-toggle').filter({ hasText: /PlusMagi Markdown/i });
 	const panelCount = await panelToggle.count();
 
 	if (panelCount > 0) {
@@ -57,7 +57,7 @@ async function findTagInput(page, runtimeErrors) {
 		}
 
 		const customInput = page
-			.locator('.plusmagi-tags-reindex-panel .components-form-token-field__input, .plusmagi-tags-reindex-panel input[type="text"]')
+			.locator('.plusmagi-markdown-panel .components-form-token-field__input, .plusmagi-markdown-panel input[type="text"]')
 			.first();
 		await customInput.waitFor({ state: 'visible', timeout: 30000 });
 		return { input: customInput, mode: 'custom-panel' };

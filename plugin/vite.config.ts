@@ -6,10 +6,10 @@ export default defineConfig({
 		outDir: '../SVN/trunk/js', // Output to the folder loaded by PHP
 		emptyOutDir: false, // Do not remove other files in this folder
 		lib: {
-			entry: '../SVN/trunk/js/plusmagi-tags-reindex.tsx',
-			name: 'plusmagiTagsReindex',
+			entry: '../SVN/trunk/js/plusmagi-markdown.tsx',
+			name: 'plusmagiMarkdown',
 			formats: ['iife'],
-			fileName: () => 'plusmagi-tags-reindex.js',
+			fileName: () => 'plusmagi-markdown.js',
 		},
 		rollupOptions: {
 			external: [

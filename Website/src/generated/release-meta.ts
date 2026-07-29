@@ -12,7 +12,7 @@ export const releaseMeta = {
     "Improved security and error handling"
   ],
   "sources": {
-    "pluginHeader": "SVN/trunk/plusmagi-tags-reindex.php",
+    "pluginHeader": "SVN/trunk/plusmagi-markdown.php",
     "readme": "SVN/trunk/readme.txt"
   },
   "generatedAt": "2026-07-27T00:51:54.532Z"

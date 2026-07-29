@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "vite": "^5.4.11"
+  },
+  "dependencies": {
+    "mermaid": "^11.16.0"
   }
 }

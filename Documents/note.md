@@ -1,11 +1,11 @@
-# PlusMagi Tags Reindex - Project Details & Requirements
+# PlusMagi Markdown - Project Details & Requirements
 
 ## 📌 Project Overview
-**PlusMagi Tags Reindex** เป็นปลั๊กอิน WordPress ที่ออกแบบมาเพื่อบริหารจัดการ Tag (`wp_terms`) อย่างมีประสิทธิภาพ โดยมีฟีเจอร์หลักในการ "อุดรูรั่ว" (Reindexing) ของ `term_id` ที่ว่างอยู่ในฐานข้อมูล เพื่อป้องกันปัญหาตัวเลข Auto Increment กระโดดข้าม พร้อมทั้งปรับปรุงหน้าต่างจัดการ Tag ใน Block Editor (Gutenberg) ให้ฉลาดและแสดงสถิติแบบ Real-time
+**PlusMagi Markdown** เป็นปลั๊กอิน WordPress ที่ออกแบบมาเพื่อสร้างประสบการณ์ Markdown ที่เรียบง่ายและสะดวกใน WordPress โดยเตรียมโครงสร้างสำหรับการขยายฟีเจอร์ Markdown ต่อไปในอนาคต
 
 ## 🎯 Core Requirements (ฟีเจอร์หลัก)
 
-1. plguins/plusmagi-tags-reindex ควรทำอย่างที่ Tag ใน Block Editor (Gutenberg) ทำได้
+1. plguins/plusmagi-markdown ควรทำอย่างที่ Tag ใน Block Editor (Gutenberg) ทำได้
 
 2. **Auto ID Filler (ถมรูรั่ว ID อัตโนมัติ)**
 	- ระบบจะค้นหา `term_id` ที่ต่ำที่สุดที่ยังว่างอยู่ (Gap) ในตาราง `wp_terms`
@@ -72,7 +72,7 @@ svn update
 **การ Clone SVN สำหรับ Plugin ใหม่ (ทำแค่ครั้งแรก):**
 ```bash
 cd SVN
-svn checkout https://plugins.svn.wordpress.org/plusmagi-tags-reindex
+svn checkout https://plugins.svn.wordpress.org/plusmagi-markdown
 # หมายเหตุ: SVN จะสร้างโฟลเดอร์ .svn ให้อัตโนมัติ ไม่ต้องสร้างเอง
 ```
 *อ้างอิง: https://wordpress.org/plugins/developers/add/*

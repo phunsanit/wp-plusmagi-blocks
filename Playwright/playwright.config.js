@@ -4,7 +4,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 
 /**
- * Playwright configuration for PlusMagi Tags Reindex plugin tests.
+ * Playwright configuration for PlusMagi Markdown plugin tests.
  * Target: https://pitt.plusmagi.com  (live WordPress site with plugin installed)
  *
  * Run all guest tests:       npx playwright test
@@ -33,7 +33,7 @@ module.exports = defineConfig({
 
     /* Shared settings for every test */
     use: {
-        baseURL: 'https://pitt.plusmagi.com',
+        baseURL: process.env.WP_URL ? `https://${process.env.WP_URL}` : 'https://pitt.plusmagi.com',
 
         /* Allow up to 60s for any navigation on this ad-heavy live site */
         navigationTimeout: 60_000,
@@ -65,17 +65,17 @@ module.exports = defineConfig({
         // ------------------------------------------------------------------
         {
             name: 'chromium',
-            testIgnore: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
             use: { ...devices['Desktop Chrome'] },
         },
         {
             name: 'firefox',
-            testIgnore: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
             use: { ...devices['Desktop Firefox'] },
         },
         {
             name: 'webkit',
-            testIgnore: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
+            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
             use: { ...devices['Desktop Safari'] },
         },
 
@@ -85,7 +85,7 @@ module.exports = defineConfig({
         // ------------------------------------------------------------------
         {
             name: 'admin',
-            testMatch: /(block-tags|reindex-option|tags-reindex)\.spec\.js/,
+            testMatch: /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/,
             dependencies: ['setup'],
             use: {
                 ...devices['Desktop Chrome'],

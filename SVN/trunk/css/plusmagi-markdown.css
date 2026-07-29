@@ -1,0 +1,70 @@
+.plusmagi-markdown-page {
+	padding: 20px 0;
+}
+
+.plusmagi-markdown-page ul {
+	list-style: disc;
+	margin-left: 20px;
+}
+
+.plusmagi-markdown-editor-wrapper {
+	padding: 16px;
+	border: 1px solid #d0d5dd;
+	background: #f8fafc;
+	border-radius: 8px;
+}
+
+.plusmagi-markdown-editor-title {
+	display: block;
+	margin-bottom: 10px;
+	font-size: 14px;
+}
+
+.plusmagi-markdown-preview {
+	margin-top: 12px;
+	padding: 12px;
+	border: 1px solid #e5e7eb;
+	border-radius: 6px;
+	background: #ffffff;
+}
+
+.plusmagi-markdown-preview-label {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: #475467;
+	margin-bottom: 8px;
+}
+
+.plusmagi-markdown-preview-body p {
+	margin: 0 0 8px;
+}
+
+.plusmagi-markdown-preview-body ul {
+	margin: 0 0 8px 18px;
+}
+
+.plusmagi-markdown-mermaid-preview {
+	margin: 0 0 12px;
+	padding: 10px;
+	border: 1px solid #e5e7eb;
+	border-radius: 6px;
+	overflow-x: auto;
+	background: #ffffff;
+}
+
+.plusmagi-markdown-mermaid-preview svg {
+	max-width: 100%;
+	height: auto;
+}
+
+.plusmagi-markdown-mermaid-error {
+	margin: 0 0 12px;
+	padding: 10px;
+	border-left: 3px solid #dc2626;
+	border-radius: 4px;
+	background: #fef2f2;
+	color: #991b1b;
+	font-size: 13px;
+}
