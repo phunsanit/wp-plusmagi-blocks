@@ -1193,6 +1193,16 @@
 				"Required": "Required",
 				"Type": "Merged"
 			},
+			"nodeSpacing": {
+				"constraints": {
+					"minimum": 0
+				},
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-class-diagram-config-properties-nodespacing.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "integer"
+			},
 			"packet": {
 				"definedIn": "Mermaid Config",
 				"details": "https://mermaid.js.org/config/schema-docs/config-defs-packet-diagram-config.html",
@@ -1220,6 +1230,16 @@
 				"Nullable": "cannot be null",
 				"Required": "Required",
 				"Type": "Merged"
+			},
+			"rankSpacing": {
+				"constraints": {
+					"minimum": 0
+				},
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-class-diagram-config-properties-rankspacing.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "integer"
 			},
 			"railroad": {
 				"definedIn": "Mermaid Config",
