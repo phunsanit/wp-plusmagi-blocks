@@ -30,6 +30,9 @@ wp-assets/*.zip
 # Playwright generated test artifacts
 Playwright/playwright-report/
 Playwright/test-results/
+Playwright/mermaid-artifacts/
 Playwright/auth/
+Playwright/tests-results/*
+!Playwright/tests-results/.gitkeep
 
 .env
