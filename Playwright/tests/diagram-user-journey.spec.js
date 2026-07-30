@@ -1,8 +1,8 @@
 const { test, renderMermaidDiagram } = require('./helpers/mermaid-editor');
 
 test.describe('Mermaid diagram - User Journey', () => {
-	test('renders a basic user journey', async ({ page }) => {
-		await renderMermaidDiagram(page, `journey
+  test('renders a basic user journey', async ({ page }) => {
+    await renderMermaidDiagram(page, `journey
     title My working day
     section Go to work
       Make tea: 5: Me
@@ -11,5 +11,5 @@ test.describe('Mermaid diagram - User Journey', () => {
     section Go home
       Go downstairs: 5: Me
       Sit down: 5: Me`);
-	});
+  });
 });

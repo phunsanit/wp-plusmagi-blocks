@@ -272,68 +272,68 @@ function plusmagi_markdown_extract_mermaid_code( $markdown ) {
 
 function plusmagi_markdown_get_allowed_svg_tags() {
 	$global_attributes = array(
-		'class'                => true,
-		'id'                   => true,
-		'transform'            => true,
-		'style'                => true,
-		'fill'                 => true,
-		'stroke'               => true,
-		'stroke-width'         => true,
-		'stroke-linecap'       => true,
-		'stroke-linejoin'      => true,
-		'stroke-miterlimit'    => true,
-		'stroke-dasharray'     => true,
-		'stroke-dashoffset'    => true,
-		'stroke-opacity'       => true,
-		'fill-opacity'         => true,
-		'opacity'              => true,
-		'font-family'          => true,
-		'font-size'            => true,
-		'font-weight'          => true,
-		'text-anchor'          => true,
-		'dominant-baseline'    => true,
-		'clip-path'            => true,
-		'mask'                 => true,
-		'filter'               => true,
-		'aria-label'           => true,
-		'role'                 => true,
+		'class'								=> true,
+		'id'									 => true,
+		'transform'						=> true,
+		'style'								=> true,
+		'fill'								 => true,
+		'stroke'							 => true,
+		'stroke-width'				 => true,
+		'stroke-linecap'			 => true,
+		'stroke-linejoin'			=> true,
+		'stroke-miterlimit'		=> true,
+		'stroke-dasharray'		 => true,
+		'stroke-dashoffset'		=> true,
+		'stroke-opacity'			 => true,
+		'fill-opacity'				 => true,
+		'opacity'							=> true,
+		'font-family'					=> true,
+		'font-size'						=> true,
+		'font-weight'					=> true,
+		'text-anchor'					=> true,
+		'dominant-baseline'		=> true,
+		'clip-path'						=> true,
+		'mask'								 => true,
+		'filter'							 => true,
+		'aria-label'					 => true,
+		'role'								 => true,
 	);
 
 	$tags = array(
 		'svg' => array_merge(
 			$global_attributes,
 			array(
-				'xmlns'               => true,
-				'xmlns:xlink'         => true,
-				'viewbox'             => true,
-				'width'               => true,
-				'height'              => true,
+				'xmlns'							 => true,
+				'xmlns:xlink'				 => true,
+				'viewbox'						 => true,
+				'width'							 => true,
+				'height'							=> true,
 				'preserveaspectratio' => true,
 			)
 		),
-		'g'              => $global_attributes,
-		'path'           => array_merge( $global_attributes, array( 'd' => true ) ),
-		'rect'           => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'rx' => true, 'ry' => true, 'width' => true, 'height' => true ) ),
-		'circle'         => array_merge( $global_attributes, array( 'cx' => true, 'cy' => true, 'r' => true ) ),
-		'ellipse'        => array_merge( $global_attributes, array( 'cx' => true, 'cy' => true, 'rx' => true, 'ry' => true ) ),
-		'line'           => array_merge( $global_attributes, array( 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true ) ),
-		'polyline'       => array_merge( $global_attributes, array( 'points' => true ) ),
-		'polygon'        => array_merge( $global_attributes, array( 'points' => true ) ),
-		'text'           => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'dx' => true, 'dy' => true ) ),
-		'tspan'          => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'dx' => true, 'dy' => true ) ),
-		'defs'           => $global_attributes,
-		'marker'         => array_merge( $global_attributes, array( 'markerwidth' => true, 'markerheight' => true, 'refx' => true, 'refy' => true, 'orient' => true, 'viewbox' => true ) ),
-		'use'            => array_merge( $global_attributes, array( 'href' => true, 'xlink:href' => true, 'x' => true, 'y' => true ) ),
-		'symbol'         => array_merge( $global_attributes, array( 'viewbox' => true ) ),
-		'title'          => array(),
-		'desc'           => array(),
-		'style'          => array( 'type' => true ),
-		'clippath'       => array_merge( $global_attributes, array( 'clipPathUnits' => true ) ),
-		'mask'           => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'width' => true, 'height' => true ) ),
-		'pattern'        => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'width' => true, 'height' => true, 'patternUnits' => true, 'patternTransform' => true ) ),
+		'g'							=> $global_attributes,
+		'path'					 => array_merge( $global_attributes, array( 'd' => true ) ),
+		'rect'					 => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'rx' => true, 'ry' => true, 'width' => true, 'height' => true ) ),
+		'circle'				 => array_merge( $global_attributes, array( 'cx' => true, 'cy' => true, 'r' => true ) ),
+		'ellipse'				=> array_merge( $global_attributes, array( 'cx' => true, 'cy' => true, 'rx' => true, 'ry' => true ) ),
+		'line'					 => array_merge( $global_attributes, array( 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true ) ),
+		'polyline'			 => array_merge( $global_attributes, array( 'points' => true ) ),
+		'polygon'				=> array_merge( $global_attributes, array( 'points' => true ) ),
+		'text'					 => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'dx' => true, 'dy' => true ) ),
+		'tspan'					=> array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'dx' => true, 'dy' => true ) ),
+		'defs'					 => $global_attributes,
+		'marker'				 => array_merge( $global_attributes, array( 'markerwidth' => true, 'markerheight' => true, 'refx' => true, 'refy' => true, 'orient' => true, 'viewbox' => true ) ),
+		'use'						=> array_merge( $global_attributes, array( 'href' => true, 'xlink:href' => true, 'x' => true, 'y' => true ) ),
+		'symbol'				 => array_merge( $global_attributes, array( 'viewbox' => true ) ),
+		'title'					=> array(),
+		'desc'					 => array(),
+		'style'					=> array( 'type' => true ),
+		'clippath'			 => array_merge( $global_attributes, array( 'clipPathUnits' => true ) ),
+		'mask'					 => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'width' => true, 'height' => true ) ),
+		'pattern'				=> array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'width' => true, 'height' => true, 'patternUnits' => true, 'patternTransform' => true ) ),
 		'lineargradient' => array_merge( $global_attributes, array( 'id' => true, 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true, 'gradientUnits' => true, 'gradientTransform' => true ) ),
 		'radialgradient' => array_merge( $global_attributes, array( 'id' => true, 'cx' => true, 'cy' => true, 'r' => true, 'fx' => true, 'fy' => true, 'gradientUnits' => true, 'gradientTransform' => true ) ),
-		'stop'           => array_merge( $global_attributes, array( 'offset' => true, 'stop-color' => true, 'stop-opacity' => true ) ),
+		'stop'					 => array_merge( $global_attributes, array( 'offset' => true, 'stop-color' => true, 'stop-opacity' => true ) ),
 	);
 
 	return $tags;
@@ -365,7 +365,7 @@ function plusmagi_markdown_sanitize_svg( $svg ) {
 
 function plusmagi_markdown_extract_svg_dimensions( $svg ) {
 	$default = array(
-		'width'  => 1200,
+		'width'	=> 1200,
 		'height' => 800,
 	);
 
@@ -379,7 +379,7 @@ function plusmagi_markdown_extract_svg_dimensions( $svg ) {
 
 		if ( $width > 0 && $height > 0 ) {
 			return array(
-				'width'  => $width,
+				'width'	=> $width,
 				'height' => $height,
 			);
 		}
@@ -391,7 +391,7 @@ function plusmagi_markdown_extract_svg_dimensions( $svg ) {
 
 		if ( $width > 0 && $height > 0 ) {
 			return array(
-				'width'  => $width,
+				'width'	=> $width,
 				'height' => $height,
 			);
 		}
@@ -404,7 +404,7 @@ function plusmagi_markdown_store_svg_file( $svg, $mermaid_code ) {
 	if ( ! is_string( $svg ) || '' === trim( $svg ) ) {
 		return array(
 			'path' => '',
-			'url'  => '',
+			'url'	=> '',
 			'error' => 'empty-svg',
 		);
 	}
@@ -432,7 +432,7 @@ function plusmagi_markdown_store_svg_file( $svg, $mermaid_code ) {
 	if ( ! is_array( $uploads ) || ! empty( $uploads['error'] ) ) {
 		return array(
 			'path' => '',
-			'url'  => '',
+			'url'	=> '',
 			'error' => 'uploads-unavailable',
 		);
 	}
@@ -443,7 +443,7 @@ function plusmagi_markdown_store_svg_file( $svg, $mermaid_code ) {
 	if ( ! is_string( $base_dir ) || ! is_string( $base_url ) || '' === $base_dir || '' === $base_url ) {
 		return array(
 			'path' => '',
-			'url'  => '',
+			'url'	=> '',
 			'error' => 'uploads-base-missing',
 		);
 	}
@@ -454,7 +454,7 @@ function plusmagi_markdown_store_svg_file( $svg, $mermaid_code ) {
 	if ( ! wp_mkdir_p( $base_dir ) ) {
 		return array(
 			'path' => '',
-			'url'  => '',
+			'url'	=> '',
 			'error' => 'mkdir-failed',
 			'target_dir' => $base_dir,
 		);
@@ -472,7 +472,7 @@ function plusmagi_markdown_store_svg_file( $svg, $mermaid_code ) {
 		if ( false === $result ) {
 			return array(
 				'path' => '',
-				'url'  => '',
+				'url'	=> '',
 				'error' => 'write-failed',
 				'target_file' => $file_path,
 			);
@@ -481,7 +481,7 @@ function plusmagi_markdown_store_svg_file( $svg, $mermaid_code ) {
 
 	return array(
 		'path' => $file_path,
-		'url'  => $file_url,
+		'url'	=> $file_url,
 		'error' => '',
 	);
 }
@@ -626,7 +626,7 @@ function plusmagi_markdown_render_mermaid_block( $attributes = array() ) {
 					array(
 						'store_error' => isset( $stored_svg['error'] ) ? $stored_svg['error'] : '',
 						'target_path' => isset( $stored_svg['path'] ) ? $stored_svg['path'] : '',
-						'target_url'  => isset( $stored_svg['url'] ) ? $stored_svg['url'] : '',
+						'target_url'	=> isset( $stored_svg['url'] ) ? $stored_svg['url'] : '',
 					)
 				);
 
@@ -662,7 +662,7 @@ function plusmagi_markdown_render_mermaid_block( $attributes = array() ) {
 						array(
 							'store_error' => isset( $stored_svg['error'] ) ? $stored_svg['error'] : '',
 							'target_path' => isset( $stored_svg['path'] ) ? $stored_svg['path'] : '',
-							'target_url'  => isset( $stored_svg['url'] ) ? $stored_svg['url'] : '',
+							'target_url'	=> isset( $stored_svg['url'] ) ? $stored_svg['url'] : '',
 						)
 					);
 

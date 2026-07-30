@@ -1,8 +1,8 @@
 const { test, renderMermaidDiagram } = require('./helpers/mermaid-editor');
 
 test.describe('Mermaid diagram - Swimlanes', () => {
-	test('renders a basic swimlane diagram', async ({ page }) => {
-		await renderMermaidDiagram(page, `swimlane-beta LR
+  test('renders a basic swimlane diagram', async ({ page }) => {
+    await renderMermaidDiagram(page, `swimlane-beta LR
   subgraph Customer
     request[Request service]
     receive[Receive update]
@@ -16,5 +16,5 @@ test.describe('Mermaid diagram - Swimlanes', () => {
   request --> triage
   triage -->|Known issue| answer
   answer --> receive`);
-	});
+  });
 });

@@ -1,5 +1,5 @@
+.DS_Store
 .git/
 node_modules/
-wp-assets/
 temp_build/
-.DS_Store
+wp-assets/

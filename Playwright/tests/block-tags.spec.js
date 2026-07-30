@@ -343,7 +343,7 @@ test.describe('PlusMagi Markdown — Block Editor', () => {
 			{ timeout: 30_000 }
 		);
 
-		const responsePromise = addTagsAndWait(page, tagInput, '  Word\u200BPress   Tags  ', 'Enter');
+		const responsePromise = addTagsAndWait(page, tagInput, '	Word\u200BPress	 Tags	', 'Enter');
 		const addTagRequest = await addTagRequestPromise;
 		const payload = addTagRequest.postDataJSON();
 

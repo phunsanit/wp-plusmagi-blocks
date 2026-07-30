@@ -29,7 +29,7 @@ main() {
 
 	# 1. Sync SourceCode -> Trunk
 	if [ "$SOURCE_DIR" = "$SVN_TRUNK" ]; then
-		echo "⏭️  Skip trunk sync (source and destination are the same: $SOURCE_DIR)"
+		echo "⏭️	Skip trunk sync (source and destination are the same: $SOURCE_DIR)"
 	else
 		echo "🔄 Syncing trunk..."
 		rsync -av --delete --exclude='.svn/' --exclude='.git/' "$SOURCE_DIR/" "$SVN_TRUNK/"
@@ -51,23 +51,23 @@ main() {
 
 	# 4. Create Tag Automatically (idempotent)
 	if [ -d "tags/$VERSION" ]; then
-		echo "⏭️  Skip tag creation (already exists: tags/$VERSION)"
+		echo "⏭️	Skip tag creation (already exists: tags/$VERSION)"
 	else
-		echo "🏷️  Creating SVN tag: tags/$VERSION"
+		echo "🏷️	Creating SVN tag: tags/$VERSION"
 		svn copy trunk "tags/$VERSION"
 	fi
 
 	# 5. Create/push Git tag from plugin version (idempotent)
 	cd "$REPO_ROOT" || exit
 	if git show-ref --verify --quiet "refs/tags/$VERSION"; then
-		echo "⏭️  Skip local git tag creation (already exists: $VERSION)"
+		echo "⏭️	Skip local git tag creation (already exists: $VERSION)"
 	else
-		echo "🏷️  Creating git tag: $VERSION"
+		echo "🏷️	Creating git tag: $VERSION"
 		git tag -a "$VERSION" -m "Release $VERSION"
 	fi
 
 	if git ls-remote --exit-code --tags origin "refs/tags/$VERSION" >/dev/null 2>&1; then
-		echo "⏭️  Skip pushing git tag (already on origin: $VERSION)"
+		echo "⏭️	Skip pushing git tag (already on origin: $VERSION)"
 	else
 		echo "🚀 Pushing git tag to origin: $VERSION"
 		git push origin "$VERSION"

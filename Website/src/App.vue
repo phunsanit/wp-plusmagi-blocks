@@ -1,5 +1,5 @@
 <template>
-  <router-view />
+	<router-view />
 </template>
 
 <script setup lang="ts">
@@ -8,6 +8,6 @@
 
 <style scoped>
 body {
-  background: #f8fafc;
+	background: #f8fafc;
 }
 </style>

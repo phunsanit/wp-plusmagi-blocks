@@ -7,90 +7,104 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
  * Playwright configuration for PlusMagi Markdown plugin tests.
  * Target: https://pitt.plusmagi.com  (live WordPress site with plugin installed)
  *
- * Run all guest tests:       npx playwright test
- * Run with UI:               npx playwright test --ui
- * Run admin/block tests:     npx playwright test --project=admin  (uses .env)
- * Show HTML report:          npx playwright show-report
+ * Run all guest tests:	   npx playwright test
+ * Run with UI:			   npx playwright test --ui
+ * Run admin/block tests:	 npx playwright test --project=admin  (uses .env)
+ * Show HTML report:		  npx playwright show-report
  */
 
 const ADMIN_STATE = path.join(__dirname, 'auth/admin-state.json');
+const FULL_WORDPRESS_TEST = process.env.PLUSMAGI_FULL_TEST === '1';
+const ADMIN_ONLY_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/;
+const MERMAID_LOCAL_MATCH = /(diagram-.*|config-.*)\.spec\.js/;
+const ADMIN_FULL_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/;
 
 module.exports = defineConfig({
-    testDir: './tests',
-    timeout: 60_000,
+	testDir: './tests',
+	timeout: 60_000,
 
-    /* Retry once on CI, never locally */
-    retries: process.env.CI ? 1 : 0,
+	/* Retry once on CI, never locally */
+	retries: process.env.CI ? 1 : 0,
 
-    /* Run tests in parallel by default */
-    fullyParallel: true,
+	/* Run tests in parallel by default */
+	fullyParallel: true,
 
-    /* Reporter */
-    reporter: [
-        ['html', { outputFolder: 'playwright-report', open: 'never' }],
-        ['list'],
-    ],
+	/* Reporter */
+	reporter: [
+		['html', { outputFolder: 'playwright-report', open: 'never' }],
+		['list'],
+	],
 
-    /* Shared settings for every test */
-    use: {
-        baseURL: process.env.WP_URL ? `https://${process.env.WP_URL}` : 'https://pitt.plusmagi.com',
+	/* Shared settings for every test */
+	use: {
+		baseURL: process.env.WP_URL ? `https://${process.env.WP_URL}` : 'https://pitt.plusmagi.com',
 
-        /* Allow up to 60s for any navigation on this ad-heavy live site */
-        navigationTimeout: 60_000,
-        actionTimeout: 15_000,
+		/* Allow up to 60s for any navigation on this ad-heavy live site */
+		navigationTimeout: 60_000,
+		actionTimeout: 15_000,
 
-        /* Capture screenshot only on failure */
-        screenshot: 'only-on-failure',
+		/* Capture screenshot only on failure */
+		screenshot: 'only-on-failure',
 
-        /* Record a video only when retrying a failed test */
-        video: 'on-first-retry',
+		/* Record a video only when retrying a failed test */
+		video: 'on-first-retry',
 
-        /* Keep traces on failures for debugging */
-        trace: 'on-first-retry',
-    },
+		/* Keep traces on failures for debugging */
+		trace: 'on-first-retry',
+	},
 
-    projects: [
-        // ------------------------------------------------------------------
-        // Setup: log in to WP admin and save cookies for the admin project
-        // Run: npx playwright test --project=setup  (uses .env)
-        // ------------------------------------------------------------------
-        {
-            name: 'setup',
-            testMatch: /auth\/admin\.setup\.js/,
-            use: { ...devices['Desktop Chrome'] },
-        },
+	projects: [
+		// ------------------------------------------------------------------
+		// Setup: log in to WP admin and save cookies for the admin project
+		// Run: npx playwright test --project=setup  (uses .env)
+		// ------------------------------------------------------------------
+		{
+			name: 'setup',
+			testMatch: /auth\/admin\.setup\.js/,
+			use: { ...devices['Desktop Chrome'] },
+		},
 
-        // ------------------------------------------------------------------
-        // Guest tests — no authentication required (3 browsers)
-        // ------------------------------------------------------------------
-        {
-            name: 'chromium',
-            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
-            use: { ...devices['Desktop Chrome'] },
-        },
-        {
-            name: 'firefox',
-            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
-            use: { ...devices['Desktop Firefox'] },
-        },
-        {
-            name: 'webkit',
-            testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
-            use: { ...devices['Desktop Safari'] },
-        },
+		// ------------------------------------------------------------------
+		// Guest tests — no authentication required (3 browsers)
+		// ------------------------------------------------------------------
+		{
+			name: 'chromium',
+			testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
+			use: { ...devices['Desktop Chrome'] },
+		},
+		{
+			name: 'firefox',
+			testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
+			use: { ...devices['Desktop Firefox'] },
+		},
+		{
+			name: 'webkit',
+			testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
+			use: { ...devices['Desktop Safari'] },
+		},
 
-        // ------------------------------------------------------------------
-        // Admin tests — Gutenberg block tests (requires WP_ADMIN_PASSWORD)
-        // Depends on 'setup' project having run first.
-        // ------------------------------------------------------------------
-        {
-            name: 'admin',
-            testMatch: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
-            dependencies: ['setup'],
-            use: {
-                ...devices['Desktop Chrome'],
-                storageState: ADMIN_STATE,
-            },
-        },
-    ],
+		// ------------------------------------------------------------------
+		// Admin tests — Gutenberg block tests (requires WP_ADMIN_PASSWORD)
+		// Depends on 'setup' project having run first.
+		// ------------------------------------------------------------------
+		{
+			name: 'admin',
+			testMatch: FULL_WORDPRESS_TEST ? ADMIN_FULL_MATCH : ADMIN_ONLY_MATCH,
+			dependencies: ['setup'],
+			use: {
+				...devices['Desktop Chrome'],
+				storageState: ADMIN_STATE,
+			},
+		},
+
+		...(FULL_WORDPRESS_TEST
+			? []
+			: [
+				{
+					name: 'mermaid-local',
+					testMatch: MERMAID_LOCAL_MATCH,
+					use: { ...devices['Desktop Chrome'] },
+				},
+			]),
+	],
 });

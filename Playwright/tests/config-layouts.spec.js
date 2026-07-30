@@ -7,8 +7,8 @@ config:
   layout: elk
 ---
 graph TD;
-  A-->B;
-  B-->C;`);
+	A-->B;
+	B-->C;`);
 
 			await expect(preview.locator('svg')).toBeVisible();
 			await expect(preview.getByText('A', { exact: true })).toBeVisible();

@@ -1,23 +1,23 @@
 {
-  "apiVersion": 3,
-  "name": "plusmagi-markdown/mermaid",
-  "title": "PlusMagi Markdown + Mermaid",
-  "category": "widgets",
-  "icon": "editor-textcolor",
-  "description": "A Mermaid-ready markdown block for PlusMagi Markdown.",
-  "keywords": ["markdown", "mermaid", "plusmagi"],
-  "version": "1.0.0",
-  "textdomain": "plusmagi-markdown",
-  "attributes": {
-    "markdown": {
-      "type": "string",
-      "default": ""
-    },
-    "ampSvg": {
-      "type": "string",
-      "default": ""
-    }
-  },
-  "editorScript": "file:./js/plusmagi-markdown.js",
-  "style": "file:./css/plusmagi-markdown.css"
+	"apiVersion": 3,
+	"name": "plusmagi-markdown/mermaid",
+	"title": "PlusMagi Markdown + Mermaid",
+	"category": "widgets",
+	"icon": "editor-textcolor",
+	"description": "A Mermaid-ready markdown block for PlusMagi Markdown.",
+	"keywords": ["markdown", "mermaid", "plusmagi"],
+	"version": "1.0.0",
+	"textdomain": "plusmagi-markdown",
+	"attributes": {
+		"markdown": {
+			"type": "string",
+			"default": ""
+		},
+		"ampSvg": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"editorScript": "file:./js/plusmagi-markdown.js",
+	"style": "file:./css/plusmagi-markdown.css"
 }

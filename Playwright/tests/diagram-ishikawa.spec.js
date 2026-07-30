@@ -1,8 +1,8 @@
 const { test, renderMermaidSourcePreview } = require('./helpers/mermaid-editor');
 
 test.describe('Mermaid diagram - Ishikawa', () => {
-	test('renders a basic ishikawa diagram', async ({ page }) => {
-		await renderMermaidSourcePreview(page, `ishikawa-beta
+  test('renders a basic ishikawa diagram', async ({ page }) => {
+    await renderMermaidSourcePreview(page, `ishikawa-beta
     Blurry Photo
     Process
         Out of focus
@@ -16,5 +16,5 @@ test.describe('Mermaid diagram - Ishikawa', () => {
             Damaged sensor
     Environment
         Too dark`);
-	});
+  });
 });

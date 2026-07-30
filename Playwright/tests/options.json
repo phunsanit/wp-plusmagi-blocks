@@ -1,0 +1,1436 @@
+{
+	"classColor": {
+		"variables": [
+			{
+				"defaultValue": "textColor",
+				"description": "Color of Text in class diagrams",
+				"variable": "classText"
+			}
+		]
+	},
+	"configAccessibility": {
+		"diagramCases": [
+			{
+				"description": "My Class Diagram Description",
+				"diagramBody": "classDiagram\n\t\t\tVehicle <|-- Car",
+				"name": "class diagram sample",
+				"title": "My Class Diagram"
+			},
+			{
+				"description": "My Entity Relationship Diagram Description",
+				"diagramBody": "erDiagram\n\t\t\tCUSTOMER ||--o{ ORDER : places\n\t\t\tORDER ||--|{ LINE-ITEM : contains",
+				"name": "entity relationship sample",
+				"title": "My Entity Relationship Diagram"
+			},
+			{
+				"description": "My Gantt Chart Accessibility Description",
+				"diagramBody": "gantt\n\t\t\ttitle A Gantt Diagram\n\t\t\tdateFormat\tYYYY-MM-DD\n\t\t\tsection Section\n\t\t\tA task\t\t\t\t  :a1, 2014-01-01, 30d",
+				"name": "gantt sample",
+				"title": "My Gantt Chart Accessibility Title"
+			},
+			{
+				"description": "My GitGraph Accessibility Description",
+				"diagramBody": "gitGraph\n\t\t\tcommit\n\t\t\tcommit\n\t\t\tbranch develop",
+				"name": "gitgraph sample",
+				"title": "My GitGraph Accessibility Title"
+			},
+			{
+				"description": "My Pie Chart Accessibility Description",
+				"diagramBody": "pie\n\t\t\ttitle Key elements in Product X\n\t\t\t\"Calcium\" : 42.96\n\t\t\t\"Potassium\" : 50.05",
+				"name": "pie sample",
+				"title": "My Pie Chart Accessibility Title"
+			},
+			{
+				"description": "My Requirement Diagram Description",
+				"diagramBody": "requirementDiagram\n\t\t\trequirement test_req {\n\t\t\tid: 1\n\t\t\ttext: the test text.\n\t\t\trisk: high\n\t\t\tverifymethod: test\n\t\t\t}\n\t\t\telement test_entity {\n\t\t\ttype: simulation\n\t\t\t}\n\t\t\ttest_entity - satisfies -> test_req",
+				"name": "requirement diagram sample",
+				"title": "My Requirement Diagram"
+			},
+			{
+				"description": "My Sequence Diagram Description",
+				"diagramBody": "sequenceDiagram\n\t\t\tAlice->>John: Hello John, how are you?\n\t\t\tJohn-->>Alice: Great!",
+				"name": "sequence diagram sample",
+				"title": "My Sequence Diagram"
+			},
+			{
+				"description": "My State Diagram Description",
+				"diagramBody": "stateDiagram\n\t\t\ts1 --> s2",
+				"name": "state diagram sample",
+				"title": "My State Diagram"
+			},
+			{
+				"description": "My User Journey Diagram Description",
+				"diagramBody": "journey\n\t\t\ttitle My working day\n\t\t\tsection Go to work\n\t\t\tMake tea: 5: Me",
+				"name": "journey diagram sample",
+				"skipStrictTitleCheck": true,
+				"title": "My User Journey Diagram"
+			}
+		]
+	},
+	"configConfiguration": {
+		"flowchartOptionCases": [
+			{
+				"line": "nodeSpacing: 60",
+				"name": "nodeSpacing"
+			},
+			{
+				"line": "rankSpacing: 70",
+				"name": "rankSpacing"
+			},
+			{
+				"line": "curve: linear",
+				"name": "curve"
+			},
+			{
+				"line": "wrappingWidth: 180",
+				"name": "wrappingWidth"
+			},
+			{
+				"line": "inheritDir: true",
+				"name": "inheritDir"
+			}
+		],
+		"rootOptionCases": [
+			{
+				"line": "theme: base",
+				"name": "theme"
+			},
+			{
+				"line": "look: handDrawn",
+				"name": "look"
+			},
+			{
+				"line": "handDrawnSeed: 42",
+				"name": "handDrawnSeed"
+			},
+			{
+				"line": "layout: dagre",
+				"name": "layout"
+			},
+			{
+				"line": "htmlLabels: true",
+				"name": "htmlLabels"
+			},
+			{
+				"line": "logLevel: info",
+				"name": "logLevel"
+			},
+			{
+				"line": "startOnLoad: true",
+				"name": "startOnLoad"
+			},
+			{
+				"line": "arrowMarkerAbsolute: false",
+				"name": "arrowMarkerAbsolute"
+			},
+			{
+				"line": "deterministicIds: true",
+				"name": "deterministicIds"
+			},
+			{
+				"line": "deterministicIDSeed: plusmagi-seed",
+				"name": "deterministicIDSeed"
+			},
+			{
+				"line": "markdownAutoWrap: true",
+				"name": "markdownAutoWrap"
+			},
+			{
+				"line": "fontFamily: 'trebuchet ms, verdana, arial'",
+				"name": "fontFamily"
+			}
+		],
+		"sequenceOptionCases": [
+			{
+				"line": "showSequenceNumbers: true",
+				"name": "showSequenceNumbers"
+			},
+			{
+				"line": "hideUnusedParticipants: true",
+				"name": "hideUnusedParticipants"
+			},
+			{
+				"line": "rightAngles: true",
+				"name": "rightAngles"
+			},
+			{
+				"line": "messageAlign: left",
+				"name": "messageAlign"
+			},
+			{
+				"line": "actorMargin: 70",
+				"name": "actorMargin"
+			},
+			{
+				"line": "noteAlign: left",
+				"name": "noteAlign"
+			}
+		]
+	},
+	"configMath": {
+		"mathConfigCases": [
+			{
+				"line": "legacyMathML: true",
+				"name": "legacyMathML"
+			},
+			{
+				"line": "forceLegacyMathML: true",
+				"name": "forceLegacyMathML"
+			}
+		]
+	},
+	"configSchemaDocs": {
+		"rootOptionCases": [
+			{
+				"line": "maxTextSize: 50000",
+				"name": "maxTextSize"
+			},
+			{
+				"line": "maxEdges: 500",
+				"name": "maxEdges"
+			},
+			{
+				"line": "htmlLabels: true",
+				"name": "htmlLabels"
+			},
+			{
+				"line": "deterministicIds: true",
+				"name": "deterministicIds"
+			},
+			{
+				"line": "deterministicIDSeed: schema-seed",
+				"name": "deterministicIDSeed"
+			},
+			{
+				"line": "suppressErrorRendering: false",
+				"name": "suppressErrorRendering"
+			},
+			{
+				"line": "arrowMarkerAbsolute: false",
+				"name": "arrowMarkerAbsolute"
+			},
+			{
+				"line": "wrap: true",
+				"name": "wrap"
+			},
+			{
+				"line": "fontSize: 16",
+				"name": "fontSize"
+			},
+			{
+				"line": "legacyMathML: true",
+				"name": "legacyMathML"
+			},
+			{
+				"line": "forceLegacyMathML: false",
+				"name": "forceLegacyMathML"
+			}
+		],
+		"sankeyOptionCases": [
+			{
+				"line": "showValues: false",
+				"name": "showValues"
+			},
+			{
+				"line": "nodeAlignment: left",
+				"name": "nodeAlignment"
+			},
+			{
+				"line": "linkColor: source",
+				"name": "linkColor"
+			},
+			{
+				"line": "nodeWidth: 15",
+				"name": "nodeWidth"
+			},
+			{
+				"line": "nodePadding: 20",
+				"name": "nodePadding"
+			},
+			{
+				"line": "labelStyle: outlined",
+				"name": "labelStyle"
+			},
+			{
+				"line": "prefix: '$'",
+				"name": "prefix"
+			},
+			{
+				"line": "suffix: ' kWh'",
+				"name": "suffix"
+			}
+		]
+	},
+	"configSyntaxReference": {
+		"syntaxConfigCases": [
+			{
+				"expectedText": "section Waffle",
+				"name": "frontmatter config example",
+				"source": "---\ntitle: Frontmatter Example\ndisplayMode: compact\nconfig:\n theme: forest\n gantt:\n\t\tuseWidth: 400\n---\ngantt\n\tsection Waffle\n\t\tIron   : 1982, 3y\n\t\tHouse : 1986, 3y"
+			},
+			{
+				"expectedText": "Start",
+				"name": "look handDrawn with neutral theme",
+				"source": "---\nconfig:\n   look: handDrawn\n   theme: neutral\n---\nflowchart LR\n\tA[Start] --> B{Decision}\n\tB -->|Yes| C[Continue]\n\tB -->|No| D[Stop]"
+			},
+			{
+				"expectedText": "Decision",
+				"name": "elk layout selection",
+				"source": "---\nconfig:\n   layout: elk\n   look: handDrawn\n   theme: dark\n---\nflowchart TB\n\tA[Start] --> B{Decision}\n\tB -->|Yes| C[Continue]\n\tB -->|No| D[Stop]"
+			},
+			{
+				"expectedText": "Choose Path",
+				"name": "elk customized options",
+				"source": "---\nconfig:\n   layout: elk\n   elk:\n\t  mergeEdges: true\n\t  nodePlacementStrategy: LINEAR_SEGMENTS\n---\nflowchart LR\n\tA[Start] --> B{Choose Path}\n\tB -->|Option 1| C[Path 1]\n\tB -->|Option 2| D[Path 2]"
+			},
+			{
+				"expectedText": "Path 1",
+				"name": "dagre with classic look",
+				"source": "---\nconfig:\n   layout: dagre\n look: classic\n theme: default\n---\nflowchart LR\n\tA[Start] --> B{Choose Path}\n\tB -->|Option 1| C[Path 1]\n\tB -->|Option 2| D[Path 2]"
+			}
+		]
+	},
+	"configTheming": {
+		"themeNames": [
+			"default",
+			"neutral",
+			"dark",
+			"forest",
+			"base"
+		]
+	},
+	"diagramSankey": {
+		"sankeyOptionCases": [
+			{
+				"line": "showValues: false",
+				"name": "showValues"
+			},
+			{
+				"line": "linkColor: source",
+				"name": "linkColor source"
+			},
+			{
+				"line": "linkColor: target",
+				"name": "linkColor target"
+			},
+			{
+				"line": "linkColor: gradient",
+				"name": "linkColor gradient"
+			},
+			{
+				"line": "nodeAlignment: left",
+				"name": "nodeAlignment left"
+			},
+			{
+				"line": "nodeAlignment: right",
+				"name": "nodeAlignment right"
+			},
+			{
+				"line": "nodeAlignment: center",
+				"name": "nodeAlignment center"
+			},
+			{
+				"line": "nodeAlignment: justify",
+				"name": "nodeAlignment justify"
+			},
+			{
+				"line": "labelStyle: outlined",
+				"name": "labelStyle outlined"
+			},
+			{
+				"line": "nodeWidth: 15",
+				"name": "nodeWidth"
+			},
+			{
+				"line": "nodePadding: 20",
+				"name": "nodePadding"
+			},
+			{
+				"line": "prefix: '$'",
+				"name": "prefix"
+			},
+			{
+				"line": "suffix: ' kWh'",
+				"name": "suffix"
+			}
+		],
+		"syntaxCases": [
+			{
+				"expectedText": "Electricity grid",
+				"name": "basic csv rows",
+				"source": "sankey\n\nElectricity grid,Heating and cooling - homes,113.726\nElectricity grid,Industry,342.165\nElectricity grid,Losses,56.691"
+			},
+			{
+				"expectedText": "Bio-conversion",
+				"name": "empty lines",
+				"source": "sankey\n\nBio-conversion,Losses,26.862\n\nBio-conversion,Solid,280.322\n\nBio-conversion,Gas,81.144"
+			},
+			{
+				"expectedText": "Pumped heat",
+				"name": "quoted commas",
+				"source": "sankey\n\nPumped heat,\"Heating and cooling, homes\",193.026\nPumped heat,\"Heating and cooling, commercial\",70.672"
+			},
+			{
+				"expectedText": "Pumped heat",
+				"name": "escaped double quotes",
+				"source": "sankey\n\nPumped heat,\"Heating and cooling, \"\"homes\"\"\",193.026\nPumped heat,\"Heating and cooling, \"\"commercial\"\"\",70.672"
+			}
+		]
+	},
+	"flowchartVariable": {
+		"diagrams": [
+			"flowchart"
+		],
+		"variables": [
+			{
+				"defaultValue": "primaryBorderColor",
+				"description": "Node Border Color",
+				"variable": "nodeBorder"
+			},
+			{
+				"defaultValue": "tertiaryColor",
+				"description": "Background in subgraphs",
+				"variable": "clusterBkg"
+			},
+			{
+				"defaultValue": "tertiaryBorderColor",
+				"description": "Cluster Border Color",
+				"variable": "clusterBorder"
+			},
+			{
+				"defaultValue": "lineColor",
+				"description": "Link Color",
+				"variable": "defaultLinkColor"
+			},
+			{
+				"defaultValue": "tertiaryTextColor",
+				"description": "Title Color",
+				"variable": "titleColor"
+			},
+			{
+				"defaultValue": "calculated from secondaryColor",
+				"description": "",
+				"variable": "edgeLabelBackground"
+			},
+			{
+				"defaultValue": "primaryTextColor",
+				"description": "Color for text inside Nodes",
+				"variable": "nodeTextColor"
+			}
+		]
+	},
+	"journey": {
+		"diagrams": [
+			"sequenceDiagram"
+		],
+		"variables": [
+			{
+				"defaultValue": "primaryColor",
+				"description": "Fill for 1st section in journey diagram",
+				"variable": "fillType0"
+			},
+			{
+				"defaultValue": "secondaryColor",
+				"description": "Fill for 2nd section in journey diagram",
+				"variable": "fillType1"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 3rd section in journey diagram",
+				"variable": "fillType2"
+			},
+			{
+				"defaultValue": "calculated from secondaryColor",
+				"description": "Fill for 4th section in journey diagram",
+				"variable": "fillType3"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 5th section in journey diagram",
+				"variable": "fillType4"
+			},
+			{
+				"defaultValue": "calculated from secondaryColor",
+				"description": "Fill for 6th section in journey diagram",
+				"variable": "fillType5"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 7th section in journey diagram",
+				"variable": "fillType6"
+			},
+			{
+				"defaultValue": "calculated from secondaryColor",
+				"description": "Fill for 8th section in journey diagram",
+				"variable": "fillType7"
+			}
+		]
+	},
+	"pieDiagramVariables": {
+		"diagrams": [
+			"sequenceDiagram"
+		],
+		"variables": [
+			{
+				"defaultValue": "primaryColor",
+				"description": "Fill for 1st section in pie diagram",
+				"variable": "pie1"
+			},
+			{
+				"defaultValue": "secondaryColor",
+				"description": "Fill for 2nd section in pie diagram",
+				"variable": "pie2"
+			},
+			{
+				"defaultValue": "calculated from tertiary",
+				"description": "Fill for 3rd section in pie diagram",
+				"variable": "pie3"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 4th section in pie diagram",
+				"variable": "pie4"
+			},
+			{
+				"defaultValue": "calculated from secondaryColor",
+				"description": "Fill for 5th section in pie diagram",
+				"variable": "pie5"
+			},
+			{
+				"defaultValue": "calculated from tertiaryColor",
+				"description": "Fill for 6th section in pie diagram",
+				"variable": "pie6"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 7th section in pie diagram",
+				"variable": "pie7"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 8th section in pie diagram",
+				"variable": "pie8"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 9th section in pie diagram",
+				"variable": "pie9"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 10th section in pie diagram",
+				"variable": "pie10"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 11th section in pie diagram",
+				"variable": "pie11"
+			},
+			{
+				"defaultValue": "calculated from primaryColor",
+				"description": "Fill for 12th section in pie diagram",
+				"variable": "pie12"
+			},
+			{
+				"defaultValue": "25px",
+				"description": "Title text size",
+				"variable": "pieTitleTextSize"
+			},
+			{
+				"defaultValue": "taskTextDarkColor",
+				"description": "Title text color",
+				"variable": "pieTitleTextColor"
+			},
+			{
+				"defaultValue": "17px",
+				"description": "Text size of individual section labels",
+				"variable": "pieSectionTextSize"
+			},
+			{
+				"defaultValue": "textColor",
+				"description": "Text color of individual section labels",
+				"variable": "pieSectionTextColor"
+			},
+			{
+				"defaultValue": "17px",
+				"description": "Text size of labels in diagram legend",
+				"variable": "pieLegendTextSize"
+			},
+			{
+				"defaultValue": "taskTextDarkColor",
+				"description": "Text color of labels in diagram legend",
+				"variable": "pieLegendTextColor"
+			},
+			{
+				"defaultValue": "black",
+				"description": "Border color of individual pie sections",
+				"variable": "pieStrokeColor"
+			},
+			{
+				"defaultValue": "2px",
+				"description": "Border width of individual pie sections",
+				"variable": "pieStrokeWidth"
+			},
+			{
+				"defaultValue": "2px",
+				"description": "Border width of pie diagram's outer circle",
+				"variable": "pieOuterStrokeWidth"
+			},
+			{
+				"defaultValue": "black",
+				"description": "Border color of pie diagram's outer circle",
+				"variable": "pieOuterStrokeColor"
+			},
+			{
+				"defaultValue": "0.7",
+				"description": "Opacity of individual pie sections",
+				"variable": "pieOpacity"
+			}
+		]
+	},
+	"sequenceDiagramVariables": {
+		"diagrams": [
+			"sequenceDiagram"
+		],
+		"variables": [
+			{
+				"defaultValue": "mainBkg",
+				"description": "Actor Background Color",
+				"variable": "actorBkg"
+			},
+			{
+				"defaultValue": "primaryBorderColor",
+				"description": "Actor Border Color",
+				"variable": "actorBorder"
+			},
+			{
+				"defaultValue": "primaryTextColor",
+				"description": "Actor Text Color",
+				"variable": "actorTextColor"
+			},
+			{
+				"defaultValue": "actorBorder",
+				"description": "Actor Line Color",
+				"variable": "actorLineColor"
+			},
+			{
+				"defaultValue": "textColor",
+				"description": "Signal Color",
+				"variable": "signalColor"
+			},
+			{
+				"defaultValue": "textColor",
+				"description": "Signal Text Color",
+				"variable": "signalTextColor"
+			},
+			{
+				"defaultValue": "actorBkg",
+				"description": "Label Box Background Color",
+				"variable": "labelBoxBkgColor"
+			},
+			{
+				"defaultValue": "actorBorder",
+				"description": "Label Box Border Color",
+				"variable": "labelBoxBorderColor"
+			},
+			{
+				"defaultValue": "actorTextColor",
+				"description": "Label Text Color",
+				"variable": "labelTextColor"
+			},
+			{
+				"defaultValue": "actorTextColor",
+				"description": "Loop Text Color",
+				"variable": "loopTextColor"
+			},
+			{
+				"defaultValue": "calculated from secondaryColor",
+				"description": "Activation Border Color",
+				"variable": "activationBorderColor"
+			},
+			{
+				"defaultValue": "secondaryColor",
+				"description": "Activation Background Color",
+				"variable": "activationBkgColor"
+			},
+			{
+				"defaultValue": "calculated from lineColor",
+				"description": "Sequence Number Color",
+				"variable": "sequenceNumberColor"
+			}
+		]
+	},
+	"stateColor": {
+		"variables": [
+			{
+				"defaultValue": "primaryTextColor",
+				"description": "",
+				"variable": "labelColor"
+			},
+			{
+				"defaultValue": "tertiaryColor",
+				"description": "Used for background in deep composite states",
+				"variable": "altBackground"
+			}
+		]
+	},
+	"theme": [
+		{
+			"value": "base"
+		},
+		{
+			"value": "dark"
+		},
+		{
+			"default": true,
+			"value": "default"
+		},
+		{
+			"value": "forest"
+		},
+		{
+			"value": "neutral"
+		}
+	],
+	"themeCSS": {
+		"abstract": "Can be instantiated",
+		"accessRestrictions": "none",
+		"additionalProperties": "Allowed",
+		"customProperties": "Forbidden",
+		"definedIn": "config.schema.json*",
+		"extensible": "No",
+		"identifiable": "Unknown identifiability",
+		"status": "Unknown status"
+	},
+	"themeVariableCases": [
+		{
+			"name": "primaryBorderColor",
+			"value": "'#1e40af'"
+		},
+		{
+			"name": "secondaryBorderColor",
+			"value": "'#0284c7'"
+		},
+		{
+			"name": "secondaryTextColor",
+			"value": "'#e0f2fe'"
+		},
+		{
+			"name": "tertiaryColor",
+			"value": "'#22c55e'"
+		},
+		{
+			"name": "tertiaryBorderColor",
+			"value": "'#16a34a'"
+		},
+		{
+			"name": "tertiaryTextColor",
+			"value": "'#dcfce7'"
+		},
+		{
+			"name": "noteBkgColor",
+			"value": "'#fef08a'"
+		},
+		{
+			"name": "noteTextColor",
+			"value": "'#1f2937'"
+		},
+		{
+			"name": "noteBorderColor",
+			"value": "'#f59e0b'"
+		},
+		{
+			"name": "lineColor",
+			"value": "'#38bdf8'"
+		},
+		{
+			"name": "textColor",
+			"value": "'#e2e8f0'"
+		},
+		{
+			"name": "mainBkg",
+			"value": "'#1e293b'"
+		},
+		{
+			"name": "errorBkgColor",
+			"value": "'#7f1d1d'"
+		},
+		{
+			"name": "errorTextColor",
+			"value": "'#fecaca'"
+		}
+	],
+	"themeVariables": [
+		{
+			"defaultValue": "false",
+			"description": "Affects how derived colors are calculated. Set value to true for dark mode.",
+			"variable": "darkMode"
+		},
+		{
+			"defaultValue": "#f4f4f4",
+			"description": "Used to calculate color for items that should either be background colored or contrasting to the background",
+			"variable": "background"
+		},
+		{
+			"defaultValue": "trebuchet ms, verdana, arial",
+			"description": "Font family for diagram text",
+			"variable": "fontFamily"
+		},
+		{
+			"defaultValue": "16px",
+			"description": "Font size in pixels",
+			"variable": "fontSize"
+		},
+		{
+			"defaultValue": "#fff4dd",
+			"description": "Color to be used as background in nodes, other colors will be derived from this",
+			"variable": "primaryColor"
+		},
+		{
+			"defaultValue": "calculated from darkMode #ddd/#333",
+			"description": "Color to be used as text color in nodes using primaryColor",
+			"variable": "primaryTextColor"
+		},
+		{
+			"defaultValue": "calculated from primaryColor",
+			"description": "",
+			"variable": "secondaryColor"
+		},
+		{
+			"defaultValue": "calculated from primaryColor",
+			"description": "Color to be used as border in nodes using primaryColor",
+			"variable": "primaryBorderColor"
+		},
+		{
+			"defaultValue": "calculated from secondaryColor",
+			"description": "Color to be used as border in nodes using secondaryColor",
+			"variable": "secondaryBorderColor"
+		},
+		{
+			"defaultValue": "calculated from secondaryColor",
+			"description": "Color to be used as text color in nodes using secondaryColor",
+			"variable": "secondaryTextColor"
+		},
+		{
+			"defaultValue": "calculated from primaryColor",
+			"description": "",
+			"variable": "tertiaryColor"
+		},
+		{
+			"defaultValue": "calculated from tertiaryColor",
+			"description": "Color to be used as border in nodes using tertiaryColor",
+			"variable": "tertiaryBorderColor"
+		},
+		{
+			"defaultValue": "calculated from tertiaryColor",
+			"description": "Color to be used as text color in nodes using tertiaryColor",
+			"variable": "tertiaryTextColor"
+		},
+		{
+			"defaultValue": "#fff5ad",
+			"description": "Color used as background in notes",
+			"variable": "noteBkgColor"
+		},
+		{
+			"defaultValue": "#333",
+			"description": "Text color in note rectangles",
+			"variable": "noteTextColor"
+		},
+		{
+			"defaultValue": "calculated from noteBkgColor",
+			"description": "Border color in note rectangles",
+			"variable": "noteBorderColor"
+		},
+		{
+			"defaultValue": "calculated from background",
+			"description": "",
+			"variable": "lineColor"
+		},
+		{
+			"defaultValue": "calculated from primaryTextColor",
+			"description": "Text in diagram over the background for instance text on labels and on signals in sequence diagram or the title in Gantt diagram",
+			"variable": "textColor"
+		},
+		{
+			"defaultValue": "calculated from primaryColor",
+			"description": "Background in flowchart objects like rects/circles, class diagram classes, sequence diagram etc",
+			"variable": "mainBkg"
+		},
+		{
+			"defaultValue": "tertiaryColor",
+			"description": "Color for syntax error message",
+			"variable": "errorBkgColor"
+		},
+		{
+			"defaultValue": "tertiaryTextColor",
+			"description": "Color for syntax error message",
+			"variable": "errorTextColor"
+		}
+	],
+	"Usage": {
+		"Property": {
+			"altFontFamily": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-altfontfamily.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "string"
+			},
+			"architecture": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-architecture-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"arrowMarkerAbsolute": {
+				"defaultValue": false,
+				"definedIn": "Mermaid Config",
+				"description": "Controls whether or arrow markers in html code are absolute paths or anchors.\nThis matters if you are using base tag settings.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-arrowmarkerabsolute.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "boolean"
+			},
+			"block": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-block-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"c4": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-c4-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"class": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-class-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"cynefin": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-cynefin-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "Merged"
+			},
+			"darkMode": {
+				"defaultValue": false,
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-darkmode.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"deterministicIds": {
+				"defaultValue": false,
+				"definedIn": "Mermaid Config",
+				"description": "This option controls if the generated ids of nodes in the SVG are\ngenerated randomly or based on a seed.\nIf set to `false`, the IDs are generated based on the current date and\nthus are not deterministic. This is the default behavior.\n\nThis matters if your files are checked into source control e.g. git and\nshould not change unless content is changed.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-deterministicids.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"deterministicIDSeed": {
+				"definedIn": "Mermaid Config",
+				"description": "This option is the optional seed for deterministic ids.\nIf set to `undefined` but deterministicIds is `true`, a simple number iterator is used.\nYou can set this attribute to base the seed on a static string.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-deterministicidseed.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "string"
+			},
+			"dompurifyConfig": {
+				"definedIn": "Mermaid Config",
+				"description": "Configuration options to pass to the `dompurify` library.",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-dom-purify-configuration.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"tsType": "import('dompurify').Config",
+				"Type": "object"
+			},
+			"elk": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-elk.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "object"
+			},
+			"er": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-er-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"eventmodeling": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-event-modeling-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"flowchart": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-flowchart-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"fontFamily": {
+				"defaultValue": "\"trebuchet ms\", verdana, arial, sans-serif;",
+				"definedIn": "Mermaid Config",
+				"description": "Specifies the font to be used in the rendered diagrams.\nCan be any possible CSS `font-family`.\nSee https://developer.mozilla.org/en-US/docs/Web/CSS/font-family\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-fontfamily.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "string"
+			},
+			"fontSize": {
+				"defaultValue": 16,
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-fontsize.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "number"
+			},
+			"forceLegacyMathML": {
+				"defaultValue": false,
+				"definedIn": "Mermaid Config",
+				"description": "This option forces Mermaid to rely on KaTeX's own stylesheet for rendering MathML. Due to differences between OS\nfonts and browser's MathML implementation, this option is recommended if consistent rendering is important.\nIf set to true, ignores legacyMathML.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-forcelegacymathml.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"gantt": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-gantt-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"gitGraph": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-git-graph-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"handDrawnSeed": {
+				"defaultValue": 0,
+				"definedIn": "Mermaid Config",
+				"description": "Defines the seed to be used when using handDrawn look. This is important for the automated tests as they will always find differences without the seed. The default value is 0 which gives a random seed.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-handdrawnseed.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "number"
+			},
+			"htmlLabels": {
+				"definedIn": "Mermaid Config",
+				"description": "Flag for setting whether or not a html tag should be used for rendering labels on nodes and edges.\n**Note:** Diagram-specific `htmlLabels` settings (e.g., `flowchart.htmlLabels`) are deprecated.\nUse this root-level `htmlLabels` setting instead. The root-level `htmlLabels` takes precedence\nover any diagram-specific settings.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-htmllabels.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"ishikawa": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-ishikawa-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "Merged"
+			},
+			"journey": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-journey-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"kanban": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-kanban-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"layout": {
+				"defaultValue": "dagre",
+				"definedIn": "Mermaid Config",
+				"description": "Defines which layout algorithm to use for rendering the diagram.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-layout.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "string"
+			},
+			"legacyMathML": {
+				"defaultValue": false,
+				"definedIn": "Mermaid Config",
+				"description": "This option specifies if Mermaid can expect the dependent to include KaTeX stylesheets for browsers\nwithout their own MathML implementation. If this option is disabled and MathML is not supported, the math\nequations are replaced with a warning. If this option is enabled and MathML is not supported, Mermaid will\nfall back to legacy rendering for KaTeX.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-legacymathml.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"logLevel": {
+				"defaultValue": 5,
+				"definedIn": "Mermaid Config",
+				"description": "This option decides the amount of logging to be used by mermaid.",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-loglevel.html",
+				"enum": [
+					{
+						"explanation": "Equivalent to 0",
+						"value": "trace"
+					},
+					{
+						"explanation": "Equivalent to \"trace\"",
+						"value": 0
+					},
+					{
+						"explanation": "Equivalent to 1",
+						"value": "debug"
+					},
+					{
+						"explanation": "Equivalent to \"debug\"",
+						"value": 1
+					},
+					{
+						"explanation": "Equivalent to 2",
+						"value": "info"
+					},
+					{
+						"explanation": "Equivalent to \"info\"",
+						"value": 2
+					},
+					{
+						"explanation": "Equivalent to 3",
+						"value": "warn"
+					},
+					{
+						"explanation": "Equivalent to \"warn\"",
+						"value": 3
+					},
+					{
+						"explanation": "Equivalent to 4",
+						"value": "error"
+					},
+					{
+						"explanation": "Equivalent to \"error\"",
+						"value": 4
+					},
+					{
+						"explanation": "Equivalent to 5 (default)",
+						"value": "fatal"
+					},
+					{
+						"explanation": "Equivalent to \"fatal\" (default)",
+						"value": 5
+					}
+				],
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "string | number"
+			},
+			"look": {
+				"defaultValue": "classic",
+				"definedIn": "Mermaid Config",
+				"description": "Defines which main look to use for the diagram.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-look.html",
+				"enum": [
+					{
+						"value": "classic"
+					},
+					{
+						"value": "handDrawn"
+					},
+					{
+						"value": "neo"
+					}
+				],
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "string"
+			},
+			"markdownAutoWrap": {
+				"defaultValue": true,
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-markdownautowrap.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"maxEdges": {
+				"constraints": {
+					"minimum": 0
+				},
+				"defaultValue": 500,
+				"definedIn": "Mermaid Config",
+				"description": "Defines the maximum number of edges that can be drawn in a graph.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-maxedges.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "integer"
+			},
+			"maxTextSize": {
+				"defaultValue": 50000,
+				"definedIn": "Mermaid Config",
+				"description": "The maximum allowed size of the users text diagram",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-maxtextsize.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "number"
+			},
+			"mindmap": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-mindmap-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"packet": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-packet-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"pie": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-pie-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"quadrantChart": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-quadrant-chart-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"radar": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-radar-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"railroad": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-railroad-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "Merged"
+			},
+			"requirement": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-requirement-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"sankey": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-sankey-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"secure": {
+				"constraints": {
+					"uniqueItems": false
+				},
+				"defaultValue": [
+					"secure",
+					"securityLevel",
+					"startOnLoad",
+					"maxTextSize",
+					"suppressErrorRendering",
+					"maxEdges"
+				],
+				"definedIn": "Mermaid Config",
+				"description": "This option controls which `currentConfig` keys are considered secure and\ncan only be changed via call to `mermaid.initialize`.\nThis prevents malicious graph directives from overriding a site's default security.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-secure.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "array"
+			},
+			"securityLevel": {
+				"defaultValue": "strict",
+				"definedIn": "Mermaid Config",
+				"description": "Level of trust for parsed diagram",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-securitylevel.html",
+				"enum": [
+					{
+						"explanation": "(default) HTML tags in the text are encoded and click functionality is disabled.",
+						"value": "strict"
+					},
+					{
+						"explanation": "HTML tags in text are allowed and click functionality is enabled.",
+						"value": "loose"
+					},
+					{
+						"explanation": "HTML tags in text are allowed (only script elements are removed), and click functionality is enabled.",
+						"value": "antiscript"
+					},
+					{
+						"explanation": "Rendering takes place in a sandboxed iframe, preventing JavaScript from running in context and potentially limiting interactive features.",
+						"value": "sandbox"
+					}
+				],
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "string"
+			},
+			"sequence": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-sequence-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"startOnLoad": {
+				"defaultValue": true,
+				"definedIn": "Mermaid Config",
+				"description": "Dictates whether mermaid starts on Page load",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-startonload.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "boolean"
+			},
+			"state": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-state-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"suppressErrorRendering": {
+				"defaultValue": false,
+				"definedIn": "Mermaid Config",
+				"description": "Suppresses inserting 'Syntax error' diagram in the DOM.\nThis is useful when you want to control how to handle syntax errors in your application.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-suppresserrorrendering.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"swimlane": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-swimlane-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "Merged"
+			},
+			"theme": {
+				"defaultValue": "default",
+				"definedIn": "Mermaid Config",
+				"description": "Theme, the CSS style sheet.\nYou may also use `themeCSS` to override this value.\n",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-theme.html",
+				"enum": [
+					{
+						"value": "default"
+					},
+					{
+						"value": "base"
+					},
+					{
+						"value": "dark"
+					},
+					{
+						"value": "forest"
+					},
+					{
+						"value": "neutral"
+					},
+					{
+						"value": "neo"
+					},
+					{
+						"value": "neo-dark"
+					},
+					{
+						"value": "redux"
+					},
+					{
+						"value": "redux-dark"
+					},
+					{
+						"value": "redux-color"
+					},
+					{
+						"value": "redux-dark-color"
+					},
+					{
+						"value": "null"
+					}
+				],
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "string"
+			},
+			"themeCSS": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-themecss.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "string"
+			},
+			"themeVariables": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-themevariables.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"tsType": "any",
+				"Type": "Not specified"
+			},
+			"timeline": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-timeline-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "Merged"
+			},
+			"treeView": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-treeview-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"venn": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-venn-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			},
+			"wardley-beta": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-wardley-diagram-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "Merged"
+			},
+			"wrap": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-properties-wrap.html",
+				"Nullable": "cannot be null",
+				"Required": "Optional",
+				"Type": "boolean"
+			},
+			"xyChart": {
+				"definedIn": "Mermaid Config",
+				"details": "https://mermaid.js.org/config/schema-docs/config-defs-xychart-config.html",
+				"Nullable": "cannot be null",
+				"Required": "Required",
+				"Type": "Merged"
+			}
+		}
+	}
+}
