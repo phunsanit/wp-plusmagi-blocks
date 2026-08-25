@@ -1,5 +1,9 @@
 // @ts-check
-const { test, expect, renderMermaidSourcePreview, renderLocalPreview } = require('./helpers/mermaid-editor');
+const { test, expect, renderMermaidDiagram } = require('./helpers/mermaid-editor');
+
+async function renderSyntaxCase(page, code) {
+	await renderMermaidDiagram(page, code);
+}
 
 test.describe('Mermaid - Syntax Validation', () => {
 	/**
@@ -15,7 +19,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 		no keywords`;
 
 		try {
-			await renderLocalPreview(page, invalidSyntax);
+			await renderSyntaxCase(page, invalidSyntax);
 		} catch (err) {
 			// Expected: preview should show error or empty state
 			expect(err.message).toMatch(/timeout|not found|error/i);
@@ -35,7 +39,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 			B[End]`;
 
 		try {
-			await renderLocalPreview(page, unclosedDiagram);
+			await renderSyntaxCase(page, unclosedDiagram);
 		} catch (err) {
 			// Syntax error should be caught
 			expect(err.message).toBeDefined();
@@ -56,7 +60,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 
 		// First: render incomplete (should show error or partial)
 		try {
-			await renderLocalPreview(page, incompleteDiagram, { timeout: 5000 });
+			await renderSyntaxCase(page, incompleteDiagram);
 		} catch (err) {
 			// Error expected
 		}
@@ -71,7 +75,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 
 		// After fix, should render successfully
 		try {
-			await renderLocalPreview(page, fixedDiagram);
+			await renderSyntaxCase(page, fixedDiagram);
 			// If we get here, recovery was successful
 			expect(true).toBe(true);
 		} catch (err) {
@@ -87,7 +91,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 			A --> B`;
 
 		try {
-			await renderLocalPreview(page, noDiagramType);
+			await renderSyntaxCase(page, noDiagramType);
 		} catch (err) {
 			// Expected: needs graph/flowchart/sequence keywords
 			expect(err.message).toMatch(/syntax|parse|error|invalid/i);
@@ -99,7 +103,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 			A[Start] ==> B[End]`;  // ==> is invalid, should be -->
 
 		try {
-			await renderLocalPreview(page, wrongKeyword);
+			await renderSyntaxCase(page, wrongKeyword);
 		} catch (err) {
 			// Syntax error expected
 			expect(err).toBeDefined();
@@ -122,7 +126,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 			Bob-->>Alice: Hi`;
 
 		try {
-			await renderLocalPreview(page, mixedDiagrams);
+			await renderSyntaxCase(page, mixedDiagrams);
 		} catch (err) {
 			// Multiple diagram types should cause error
 			expect(err.message).toMatch(/multiple|invalid|syntax/i);
@@ -138,7 +142,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 
 		for (let i = 0; i < attempts.length; i++) {
 			try {
-				await renderLocalPreview(page, attempts[i], { timeout: 3000 });
+				await renderSyntaxCase(page, attempts[i]);
 
 				// If we get here on valid attempt, success!
 				if (i === attempts.length - 1) {
@@ -157,7 +161,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 		const emptyDiagram = '';
 
 		try {
-			await renderLocalPreview(page, emptyDiagram);
+			await renderSyntaxCase(page, emptyDiagram);
 		} catch (err) {
 			// Empty should be handled (error or empty state)
 			expect(err.message).toBeDefined();
@@ -175,7 +179,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 
 		// First attempt: invalid
 		try {
-			await renderLocalPreview(page, invalidThenValid, { timeout: 2000 });
+			await renderSyntaxCase(page, invalidThenValid);
 		} catch (err) {
 			expect(err).toBeDefined();
 		}
@@ -187,7 +191,7 @@ test.describe('Mermaid - Syntax Validation', () => {
 			A --> B`;
 
 		try {
-			await renderLocalPreview(page, corrected, { timeout: 5000 });
+			await renderSyntaxCase(page, corrected);
 			// Success on correction
 			expect(true).toBe(true);
 		} catch (err) {
