@@ -15,9 +15,9 @@ require('dotenv').config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.e
 
 const ADMIN_STATE = path.join(__dirname, 'auth/admin-state.json');
 const FULL_WORDPRESS_TEST = process.env.PLUSMAGI_FULL_TEST === '1';
-const ADMIN_ONLY_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/;
+const ADMIN_ONLY_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|block-thesaurus-live-semantic)\.spec\.js/;
 const MERMAID_LOCAL_MATCH = /(diagram-.*|config-.*|block-description-list)\.spec\.js/;
-const ADMIN_FULL_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*|block-description-list)\.spec\.js/;
+const ADMIN_FULL_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|block-thesaurus|block-thesaurus-live-semantic|diagram-.*|config-.*|block-description-list)\.spec\.js/;
 
 module.exports = defineConfig({
 	testDir: './tests',

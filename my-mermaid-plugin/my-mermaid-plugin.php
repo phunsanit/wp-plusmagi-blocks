@@ -16,6 +16,7 @@ define('MM_PLUGIN_URL', plugin_dir_url(__FILE__));
  */
 require_once MM_PLUGIN_DIR . 'includes/class-frontend-renderer.php';
 require_once MM_PLUGIN_DIR . 'includes/class-editor-handler.php';
+require_once MM_PLUGIN_DIR . 'includes/class-thesaurus-renderer.php';
 
 /**
  * Main Plugin Class to initialize components.
@@ -35,6 +36,7 @@ final class MermaidRenderer {
 		// Initialize components that handle core WordPress actions
 		new \Mermaid\FrontendRenderer(); // Handles frontend rendering hooks
 		new \Mermaid\EditorHandler();   // Handles editor block registration and saving logic
+		new \Mermaid\ThesaurusRenderer(); // Handles thesaurus block registration and rendering
 	}
 
 	/**

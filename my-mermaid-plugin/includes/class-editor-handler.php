@@ -51,5 +51,20 @@ class EditorHandler {
 			'1.0',
 			true
 		);
+
+		wp_enqueue_script(
+			'thesaurus-block',
+			MM_PLUGIN_URL . 'js/thesaurus-block.js',
+			array( 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-i18n', 'wp-block-editor' ),
+			'1.0',
+			true
+		);
+
+		wp_enqueue_style(
+			'thesaurus-block-editor',
+			MM_PLUGIN_URL . 'js/thesaurus-block.css',
+			array(),
+			'1.0'
+		);
 	}
 }
