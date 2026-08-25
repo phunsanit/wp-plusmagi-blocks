@@ -2,7 +2,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const { chromium } = require('playwright');
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.env' });
 
 const base = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
 const user = process.env.WP_ADMIN_USER || 'admin';
@@ -14,7 +14,7 @@ function isEmpty(val) {
 
 async function run() {
 	if (isEmpty(pass)) {
-	throw new Error('Missing WP_ADMIN_PASSWORD in .env');
+	throw new Error('Missing WP_ADMIN_PASSWORD in /Users/common/Gits/wp-plusmagi-tags-reindex/.env');
 	}
 
 	const browser = await chromium.launch({ headless: true });

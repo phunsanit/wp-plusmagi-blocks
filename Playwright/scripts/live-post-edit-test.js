@@ -4,7 +4,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const { chromium } = require('playwright');
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.env' });
 
 const BASE = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
 const TARGET_URL = `${BASE}/wp-admin/post.php?post=660&action=edit`;

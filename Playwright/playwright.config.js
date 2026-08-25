@@ -1,7 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+require('dotenv').config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.env' });
 
 /**
  * Playwright configuration for PlusMagi Markdown plugin tests.
@@ -9,7 +9,7 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
  *
  * Run all guest tests:	   npx playwright test
  * Run with UI:			   npx playwright test --ui
- * Run admin/block tests:	 npx playwright test --project=admin  (uses .env)
+	 * Run admin/block tests:	 npx playwright test --project=admin  (uses wp-plusmagi-tags-reindex/.env)
  * Show HTML report:		  npx playwright show-report
  */
 
@@ -56,7 +56,7 @@ module.exports = defineConfig({
 	projects: [
 		// ------------------------------------------------------------------
 		// Setup: log in to WP admin and save cookies for the admin project
-		// Run: npx playwright test --project=setup  (uses .env)
+		// Run: npx playwright test --project=setup  (uses wp-plusmagi-tags-reindex/.env)
 		// ------------------------------------------------------------------
 		{
 			name: 'setup',

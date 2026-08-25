@@ -5,7 +5,7 @@ const path = require('path');
 const { chromium } = require('playwright');
 const dotenv = require('dotenv');
 
-dotenv.config({ path: path.join(__dirname, '../../.env') });
+dotenv.config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.env' });
 
 const ROOT_DIR = path.resolve(__dirname, '../../');
 const ZIP_DIR = path.join(ROOT_DIR, 'wp-assets');
