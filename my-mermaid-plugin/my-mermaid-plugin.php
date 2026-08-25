@@ -1,8 +1,9 @@
 <?php
 /**
  * Plugin Name: Mermaid Diagram Renderer
+ * Plugin URI: https://plusmagi-blocks.plusmagi.com/
  * Description: Adds support for writing, saving, and rendering Mermaid diagrams in WordPress posts and on the frontend.
- * Version: 1.0
+ * Version: 1.0.0
  * Author: Your Name
  */
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: PlusMagi Blocks
- * Plugin URI: https://wordpress.org/plugins/plusmagi-blocks/
+ * Plugin URI: https://plusmagi-blocks.plusmagi.com/
  * Description: Adds custom Gutenberg blocks (Mermaid diagrams, Description Lists, and more) for WordPress content authors.
  * Version: 1.0.2
  * Author: Pitt Phunsanit
