@@ -27,7 +27,7 @@ async function run() {
 	await page.locator('#wp-submit').click();
 	await page.waitForURL('**/wp-admin/**', { timeout: 60000 });
 
-	await page.goto(`${base}/wp-admin/tools.php?page=plusmagi-markdown`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+	await page.goto(`${base}/wp-admin/tools.php?page=plusmagi-blocks`, { waitUntil: 'domcontentloaded', timeout: 60000 });
 	const hasSettings = await page.locator('#enable_gap_fill').count();
 	const deniedTools = (await page.locator('#wpadminbar').count()) === 0;
 

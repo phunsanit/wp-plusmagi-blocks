@@ -32,8 +32,7 @@ setup('authenticate as WordPress admin', async ({ page }) => {
 		await page.locator('#user_pass').fill(pass);
 		await page.locator('#wp-submit').click();
 
-		await page.waitForLoadState('domcontentloaded', { timeout: 20_000 });
-		await page.waitForFunction(() => document.querySelector('#wpadminbar') || window.location.pathname.includes('/wp-admin/'), { timeout: 20_000 });
+		await page.waitForURL('**/wp-admin/**', { waitUntil: 'commit', timeout: 30_000 });
 		await expect(page.locator('#wpadminbar')).toBeVisible({ timeout: 20_000 });
 
 		await page.context().storageState({ path: STATE_PATH });

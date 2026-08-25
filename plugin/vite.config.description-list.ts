@@ -1,4 +1,4 @@
-// plugin/vite.config.ts
+// plugin/vite.config.description-list.ts
 import { defineConfig } from 'vite';
 
 export default defineConfig({
@@ -9,10 +9,10 @@ export default defineConfig({
 		outDir: '../SVN/trunk/js', // Output to the folder loaded by PHP
 		emptyOutDir: false, // Do not remove other files in this folder
 		lib: {
-			entry: '../SVN/trunk/js/plusmagi-markdown.tsx',
-			name: 'plusmagiMarkdown',
+			entry: '../SVN/trunk/js/plusmagi-description-list.tsx',
+			name: 'plusmagiDescriptionList',
 			formats: ['iife'],
-			fileName: () => 'plusmagi-markdown.js',
+			fileName: () => 'plusmagi-description-list.js',
 		},
 		rollupOptions: {
 			external: [

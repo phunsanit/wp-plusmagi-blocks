@@ -1,0 +1,24 @@
+{
+	"apiVersion": 3,
+	"name": "plusmagi-blocks/description-list",
+	"title": "Description List",
+	"category": "text",
+	"icon": "editor-ul",
+	"description": "Add a definition list (<dl>, <dt>, <dd>) and add or remove terms as needed.",
+	"keywords": ["description list", "definition list", "dl", "dt", "dd"],
+	"version": "1.0.2",
+	"textdomain": "plusmagi-blocks",
+	"attributes": {
+		"items": {
+			"type": "array",
+			"default": [
+				{ "term": "", "description": "" }
+			]
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorScript": "file:./js/plusmagi-description-list.js",
+	"style": "file:./css/plusmagi-description-list.css"
+}

@@ -7,6 +7,14 @@ const SVG_OUTPUT_DIR = path.resolve(__dirname, '../../tests-results');
 const LOCAL_MERMAID_RUNTIME_PATH = path.resolve(__dirname, '../../../SVN/trunk/js/vendor/mermaid.min.js');
 const AUTO_SAVE_HTML5_ARTIFACT = process.env.PLUSMAGI_SAVE_MERMAID_HTML5 === '1';
 const USE_WORDPRESS_EDITOR = process.env.PLUSMAGI_FULL_TEST === '1' || process.env.PLUSMAGI_USE_WORDPRESS === '1';
+const MERMAID_BLOCK_SEARCH_TERMS = ['PlusMagi', 'Mermaid'];
+const MERMAID_BLOCK_BUTTON_SELECTOR = [
+	'button:has-text("PlusMagi Blocks + Mermaid")',
+	'button:has-text("PlusMagi")',
+	'button:has-text("Mermaid Diagram")',
+	'button:has-text("Mermaid")',
+].join(', ');
+const MERMAID_PREVIEW_SELECTOR = '.plusmagi-markdown-mermaid-preview, .my-mermaid-preview';
 const artifactSequenceByTest = new Map();
 const htmlArtifactsByTestId = new Map();
 
@@ -436,16 +444,35 @@ async function openMermaidBlockEditor(page) {
 	await page.waitForLoadState('load', { timeout: 30_000 });
 	await page.waitForTimeout(5000);
 
-	const editorFrame = page.frameLocator('iframe').first();
-	const editorBody = editorFrame.locator('body').first();
+	const exitCodeEditorButton = page.getByRole('button', { name: /Exit code editor|ออกจากตัวแก้ไขโค้ด/i }).first();
+	if (await exitCodeEditorButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+		await exitCodeEditorButton.click();
+		await expect(exitCodeEditorButton).not.toBeVisible({ timeout: 10_000 });
+	}
+
+	const inlineEditorRoot = page.locator('.editor-styles-wrapper, .block-editor-writing-flow').first();
+	const hasInlineEditor = await inlineEditorRoot.isVisible({ timeout: 3000 }).catch(() => false);
+	const editorFrame = hasInlineEditor ? page : page.frameLocator('iframe').first();
+	const editorBody = hasInlineEditor
+		? page.locator('.editor-styles-wrapper, .block-editor-writing-flow').first()
+		: editorFrame.locator('body').first();
 
 	await expect(editorBody).toBeVisible({ timeout: 20_000 });
 	await editorBody.click();
-	await page.keyboard.type('/PlusMagi');
-	await page.keyboard.press('Enter');
+
+	let blockInserted = false;
+	for (const term of MERMAID_BLOCK_SEARCH_TERMS) {
+		await page.keyboard.type(`/${term}`);
+		await page.keyboard.press('Enter');
+		const quickInsertedTextarea = editorFrame.locator('textarea').first();
+		if (await quickInsertedTextarea.isVisible({ timeout: 1500 }).catch(() => false)) {
+			blockInserted = true;
+			break;
+		}
+	}
 
 	const textarea = editorFrame.locator('textarea').first();
-	if (!(await textarea.isVisible().catch(() => false))) {
+	if (!blockInserted && !(await textarea.isVisible().catch(() => false))) {
 		const inserterButton = page
 			.locator('button[aria-label="Block Inserter"], button[aria-label="Add block"], button[aria-label="Add Block"]')
 			.first();
@@ -456,18 +483,24 @@ async function openMermaidBlockEditor(page) {
 
 		const searchInput = page.locator('.block-editor-inserter__search input, .components-search-control__input').first();
 		await expect(searchInput).toBeVisible({ timeout: 15_000 });
-		await searchInput.fill('PlusMagi');
 
-		const blockItem = page.locator('button:has-text("PlusMagi Markdown + Mermaid"), button:has-text("Mermaid")').first();
-		await expect(blockItem).toBeVisible({ timeout: 15_000 });
-		await blockItem.click();
+		for (const term of MERMAID_BLOCK_SEARCH_TERMS) {
+			await searchInput.fill(term);
+			const blockItem = page.locator(MERMAID_BLOCK_BUTTON_SELECTOR).first();
+			if (await blockItem.isVisible({ timeout: 1500 }).catch(() => false)) {
+				await blockItem.click();
+				blockInserted = true;
+				break;
+			}
+		}
 	}
 
 	await expect(textarea).toBeVisible({ timeout: 20_000 });
+	await expect(editorFrame.locator(MERMAID_PREVIEW_SELECTOR).first()).toBeVisible({ timeout: 20_000 });
 	return {
 		editorFrame,
 		textarea,
-		preview: editorFrame.locator('.plusmagi-markdown-mermaid-preview').first(),
+		preview: editorFrame.locator(MERMAID_PREVIEW_SELECTOR).first(),
 	};
 }
 

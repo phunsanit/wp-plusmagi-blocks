@@ -6,7 +6,9 @@ test.describe('Public AMP Mermaid smoke @smoke', () => {
   const TEST_URL = process.env.WP_URL_TEST_FRONT || '/test-plugin-plusmagi-markdown/';
 
   test('renders exactly 2 AMP Mermaid images and both are replaced', async ({ page }) => {
-    await page.goto(TEST_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+    const fixtureUrl = new URL(TEST_URL, 'https://pitt.plusmagi.com/');
+    fixtureUrl.searchParams.set('fixture_run', String(Date.now()));
+    await page.goto(fixtureUrl.toString(), { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
     // This page can include many third-party requests; do not fail if network never goes idle.
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {});

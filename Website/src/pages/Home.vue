@@ -1,127 +1,96 @@
 <template>
-	<div class="page-shell min-h-screen text-[#1f2b2d]">
+	<div class="page-shell min-h-screen text-[#17262a]">
 		<div class="ambient-bg" aria-hidden="true"></div>
 
-		<header class="sticky top-0 z-30 border-b border-[#2f5f60]/20 bg-[#f8f5ef]/80 backdrop-blur-md">
+		<header class="sticky top-0 z-30 border-b border-[#245963]/20 bg-[#f7f6f1]/85 backdrop-blur-md">
 			<div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-				<a href="#top" class="brand text-lg font-black tracking-tight text-[#16353b]">PlusMagi Tags Reindex</a>
-				<nav class="hidden items-center gap-5 text-sm font-semibold text-[#355b61] md:flex">
-					<a href="#what" class="hover:text-[#17353a]">What</a>
-					<a href="#causes" class="hover:text-[#17353a]">Causes</a>
-					<a href="#fix" class="hover:text-[#17353a]">Fix Flow</a>
-					<a href="#reindex" class="hover:text-[#17353a]">Reindex</a>
-					<a href="#prevention" class="hover:text-[#17353a]">Prevention</a>
+				<a href="#top" class="brand text-lg font-black tracking-tight text-[#0f3840]">PlusMagi Blocks</a>
+				<nav class="hidden items-center gap-5 text-sm font-semibold text-[#355e67] md:flex">
+					<a href="#plugin" class="hover:text-[#0f3840]">Plugin</a>
+					<a href="#steps" class="hover:text-[#0f3840]">Mermaid Block Steps</a>
+					<a href="#examples" class="hover:text-[#0f3840]">Examples</a>
+					<a href="#faq" class="hover:text-[#0f3840]">FAQ</a>
 				</nav>
 			</div>
 		</header>
 
 		<main id="top" class="relative z-10">
-			<section class="mx-auto grid max-w-6xl gap-8 px-4 pb-12 pt-12 md:grid-cols-[1.2fr_0.8fr] md:pb-16 md:pt-16">
-				<div class="reveal-up">
-					<p class="eyebrow">WordPress Troubleshooting Guide</p>
-					<h1 class="hero-title mt-4 text-4xl leading-tight sm:text-5xl md:text-6xl">
-						Fix Conflicting Term Slugs
-						<span class="block text-[#cb4f2d]">Without Breaking URLs</span>
-					</h1>
-					<p class="mt-6 max-w-2xl text-base leading-relaxed text-[#365b61] sm:text-lg">
-						Conflicting Term Slugs happen when multiple terms compete for the same slug path and WordPress cannot resolve the right archive URL.
-						This page gives you a practical fix workflow plus a safe term reindex routine.
-					</p>
-					<div class="mt-7 flex flex-col gap-3 sm:flex-row">
-						<a href="#fix" class="inline-flex justify-center rounded-full bg-[#173a3f] px-6 py-3 text-sm font-bold text-[#f9f5ee] transition hover:bg-[#0f2b2f]">
-							Start Fix Steps
-						</a>
-						<a href="#reindex" class="inline-flex justify-center rounded-full border border-[#173a3f]/30 bg-[#fffdf8] px-6 py-3 text-sm font-bold text-[#173a3f] transition hover:border-[#173a3f]/60">
-							Jump to Reindex
-						</a>
-					</div>
+			<section id="plugin" class="mx-auto max-w-6xl px-4 pb-12 pt-10 md:pb-16 md:pt-14">
+				<div class="reveal-up rounded-[1.7rem] border border-[#2f5a64]/20 bg-white/85 p-4 shadow-[0_28px_80px_-40px_rgba(15,56,64,0.55)] md:p-6">
+					<img src="/images/plugin-banner-1544x500.png" alt="PlusMagi Blocks plugin header" class="h-auto w-full rounded-2xl border border-[#dbe8ea]" />
 				</div>
 
-				<aside class="reveal-up delay-1 rounded-3xl border border-[#1c4d56]/15 bg-[#fffef9] p-5 shadow-[0_24px_70px_-35px_rgba(23,58,63,0.45)]">
-					<h2 class="panel-title text-lg font-extrabold text-[#1a3c43]">Fast Diagnostic</h2>
-					<ul class="mt-4 space-y-3 text-sm text-[#33575d]">
-						<li class="diag-row"><span class="dot bg-[#cb4f2d]"></span>Category and Tag share the same slug</li>
-						<li class="diag-row"><span class="dot bg-[#e78f2f]"></span>Old term still exists in Trash</li>
-						<li class="diag-row"><span class="dot bg-[#2f7e6a]"></span>SEO plugin flags duplicate archive path</li>
-						<li class="diag-row"><span class="dot bg-[#2f5f9f]"></span>WordPress auto-appends <strong>-2</strong> repeatedly</li>
-					</ul>
-					<div class="mt-5 rounded-2xl border border-[#2f7e6a]/20 bg-[#2f7e6a]/10 p-4 text-sm text-[#1f4f42]">
-						Rule of thumb: if a slug conflict appears, resolve slug clarity first, then run a controlled reindex to normalize terms.
+				<div class="mt-7 grid gap-8 md:grid-cols-[1.15fr_0.85fr]">
+					<div class="reveal-up delay-1">
+						<p class="eyebrow">WordPress Plugin Page Style</p>
+						<h1 class="hero-title mt-4 text-4xl leading-tight sm:text-5xl md:text-6xl">
+							Build Mermaid Diagrams
+							<span class="block text-[#d25730]">Directly in Gutenberg</span>
+						</h1>
+						<p class="mt-5 max-w-2xl text-base leading-relaxed text-[#365d67] sm:text-lg">
+							PlusMagi Blocks adds a Mermaid block for technical writing and a Description List block for structured documentation.
+							This page mirrors a plugin-directory landing layout and explains how to place Mermaid blocks step by step.
+						</p>
+						<div class="mt-7 flex flex-col gap-3 sm:flex-row">
+							<a href="#steps" class="inline-flex justify-center rounded-full bg-[#113f47] px-6 py-3 text-sm font-bold text-[#f7f6f1] transition hover:bg-[#0b2f35]">
+								Start Placement Guide
+							</a>
+							<a href="#examples" class="inline-flex justify-center rounded-full border border-[#113f47]/30 bg-[#fffdf8] px-6 py-3 text-sm font-bold text-[#113f47] transition hover:border-[#113f47]/65">
+								View Example Output
+							</a>
+						</div>
 					</div>
-				</aside>
-			</section>
 
-			<section id="what" class="mx-auto max-w-6xl px-4 pb-10 md:pb-14">
-				<article class="reveal-up rounded-3xl border border-[#274e53]/15 bg-[#fffef9] p-6 md:p-8">
-					<h2 class="section-title text-2xl font-black text-[#16363d] md:text-3xl">What Is a Conflicting Term Slug?</h2>
-					<p class="mt-4 text-[#395d62]">
-						In WordPress, a term is an entry inside a taxonomy such as Categories, Tags, or Product Categories. A slug is the URL-safe identifier.
-						A conflict occurs when two terms map to the same slug shape and routing becomes ambiguous.
-					</p>
-					<p class="mt-3 text-[#395d62]">
-						Result: warning notices, forced suffixes like <strong>-2</strong>, wrong archive landing pages, or SEO duplicate-path alerts.
-					</p>
-				</article>
-			</section>
-
-			<section id="causes" class="mx-auto max-w-6xl px-4 pb-10 md:pb-14">
-				<h2 class="section-title reveal-up text-2xl font-black text-[#16363d] md:text-3xl">Common Causes</h2>
-				<div class="mt-5 grid gap-4 md:grid-cols-2">
-					<article v-for="(cause, index) in causes" :key="cause.title" class="reveal-up card p-5" :style="{ animationDelay: `${index * 90}ms` }">
-						<h3 class="text-lg font-extrabold text-[#1b3f46]">{{ cause.title }}</h3>
-						<p class="mt-2 text-sm leading-relaxed text-[#3b5f64]">{{ cause.text }}</p>
-					</article>
+					<aside class="reveal-up delay-2 rounded-3xl border border-[#245963]/15 bg-[#f8fbfb] p-5">
+						<h2 class="panel-title text-lg font-extrabold text-[#173e46]">Inside This Plugin</h2>
+						<ul class="mt-4 space-y-3 text-sm text-[#355d65]">
+							<li class="diag-row"><span class="dot bg-[#d25730]"></span>Mermaid block with live SVG preview</li>
+							<li class="diag-row"><span class="dot bg-[#2f866d]"></span>Description List block for docs and glossaries</li>
+							<li class="diag-row"><span class="dot bg-[#3272a6]"></span>Frontend Mermaid rendering support</li>
+							<li class="diag-row"><span class="dot bg-[#d8a233]"></span>WordPress + AMP friendly output strategy</li>
+						</ul>
+					</aside>
 				</div>
 			</section>
 
-			<section id="fix" class="mx-auto max-w-6xl px-4 pb-10 md:pb-14">
-				<div class="rounded-3xl border border-[#1f4a50]/15 bg-[#13343a] p-6 text-[#ecf4f2] md:p-8">
-					<h2 class="section-title text-2xl font-black md:text-3xl">Fix Workflow (Step by Step)</h2>
+			<section id="steps" class="mx-auto max-w-6xl px-4 pb-10 md:pb-14">
+				<div class="rounded-3xl border border-[#164650]/15 bg-[#123941] p-6 text-[#ecf7f7] md:p-8">
+					<h2 class="section-title text-2xl font-black md:text-3xl">How To Place Mermaid Block</h2>
 					<ol class="mt-5 grid gap-4 md:grid-cols-2">
-						<li v-for="(step, index) in fixSteps" :key="step.title" class="step-card reveal-up" :style="{ animationDelay: `${index * 110}ms` }">
-							<p class="text-xs font-extrabold tracking-[0.16em] text-[#f3b24f]">STEP {{ index + 1 }}</p>
+						<li v-for="(step, index) in mermaidSteps" :key="step.title" class="step-card reveal-up" :style="{ animationDelay: `${index * 90}ms` }">
+							<p class="text-xs font-extrabold tracking-[0.16em] text-[#ffd074]">STEP {{ index + 1 }}</p>
 							<h3 class="mt-1 text-lg font-black text-white">{{ step.title }}</h3>
-							<p class="mt-2 text-sm text-[#d2e2df]">{{ step.text }}</p>
+							<p class="mt-2 text-sm text-[#d2e5e7]">{{ step.text }}</p>
 						</li>
 					</ol>
 				</div>
 			</section>
 
-			<section id="reindex" class="mx-auto max-w-6xl px-4 pb-10 md:pb-14">
-				<div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-					<article class="reveal-up rounded-3xl border border-[#355d63]/20 bg-[#fffefb] p-6 md:p-7">
-						<h2 class="section-title text-2xl font-black text-[#16363d]">Reindex Terms Safely</h2>
-						<p class="mt-3 text-[#3a5f65]">
-							After slug cleanup, use PlusMagi Markdown to normalize term creation flow and avoid recycled mistakes.
-						</p>
-						<ul class="mt-4 space-y-3 text-sm text-[#355b61]">
-							<li class="diag-row"><span class="dot bg-[#cb4f2d]"></span>Open the PlusMagi Markdown admin page in wp-admin.</li>
-							<li class="diag-row"><span class="dot bg-[#2f7e6a]"></span>Run Fix Conflicting Term Slugs once to normalize <strong>-2</strong> style leftovers.</li>
-							<li class="diag-row"><span class="dot bg-[#2f5f9f]"></span>Choose ID mode: reuse gaps or default auto-increment.</li>
-							<li class="diag-row"><span class="dot bg-[#e78f2f]"></span>Import or add terms and validate term URLs immediately.</li>
-						</ul>
-					</article>
-
-					<aside class="reveal-up delay-1 rounded-3xl border border-[#cb4f2d]/20 bg-[#fff6f2] p-6">
-						<h3 class="text-lg font-black text-[#7e2a16]">SEO Safety Reminder</h3>
-						<p class="mt-2 text-sm text-[#8a3a24]">
-							If a changed slug was already indexed, add a 301 redirect from the old URL to the new canonical term URL.
-							This protects rankings and prevents user-facing 404s.
-						</p>
-						<div class="mt-4 rounded-2xl border border-[#cb4f2d]/25 bg-white p-4 text-sm text-[#6f2d1b]">
-							Redirect target should be the final slug you plan to keep long-term. Avoid chained redirects.
+			<section id="examples" class="mx-auto max-w-6xl px-4 pb-10 md:pb-14">
+				<h2 class="section-title reveal-up text-2xl font-black text-[#153d44] md:text-3xl">Plugin Page Visuals</h2>
+				<div class="mt-5 grid gap-5 md:grid-cols-3">
+					<article v-for="shot in screenshots" :key="shot.title" class="card reveal-up overflow-hidden" :style="{ animationDelay: `${shot.delay}ms` }">
+						<img :src="shot.path" :alt="shot.title" class="h-48 w-full object-cover" />
+						<div class="p-4">
+							<h3 class="text-base font-black text-[#1c444c]">{{ shot.title }}</h3>
+							<p class="mt-2 text-sm text-[#3c626a]">{{ shot.text }}</p>
 						</div>
-					</aside>
+					</article>
+				</div>
+
+				<div class="reveal-up mt-6 rounded-2xl border border-[#2a5560]/15 bg-white/85 p-5">
+					<p class="code-label">Mermaid example</p>
+					<pre class="mt-3 overflow-x-auto rounded-xl bg-[#0f252a] p-4 text-sm text-[#cce4e8]"><code>{{ mermaidSample }}</code></pre>
 				</div>
 			</section>
 
-			<section id="prevention" class="mx-auto max-w-6xl px-4 pb-20">
-				<div class="rounded-3xl border border-[#23474d]/20 bg-[#f2f8f7] p-6 md:p-8">
-					<h2 class="section-title text-2xl font-black text-[#16363d] md:text-3xl">Prevention for the Long Run</h2>
-					<div class="mt-5 grid gap-4 md:grid-cols-3">
-						<article v-for="item in prevention" :key="item.title" class="card reveal-up p-5">
-							<h3 class="text-base font-black text-[#1b3f46]">{{ item.title }}</h3>
-							<p class="mt-2 text-sm text-[#3b5f64]">{{ item.text }}</p>
+			<section id="faq" class="mx-auto max-w-6xl px-4 pb-20">
+				<div class="rounded-3xl border border-[#1f4f58]/18 bg-[#eff7f7] p-6 md:p-8">
+					<h2 class="section-title text-2xl font-black text-[#153d44] md:text-3xl">Mermaid Block Quick FAQ</h2>
+					<div class="mt-5 grid gap-4 md:grid-cols-2">
+						<article v-for="qa in faqItems" :key="qa.q" class="card reveal-up p-5">
+							<h3 class="text-base font-black text-[#1c444c]">{{ qa.q }}</h3>
+							<p class="mt-2 text-sm text-[#3c626a]">{{ qa.a }}</p>
 						</article>
 					</div>
 				</div>
@@ -131,74 +100,87 @@
 </template>
 
 <script setup lang="ts">
-const causes = [
+const mermaidSteps = [
 	{
-		title: 'Category and Tag Share the Same Slug',
-		text: 'Two taxonomies can accidentally produce the same URL segment. WordPress then needs to guess which archive should answer that path.',
+		title: 'Open The Block Inserter',
+		text: 'Create or edit a post, click + Add Block, then search for Mermaid or PlusMagi Blocks + Mermaid.',
 	},
 	{
-		title: 'Parent and Child Structures Become Ambiguous',
-		text: 'Nested terms with similar slug paths can create routing confusion, especially after restructuring taxonomy trees.',
+		title: 'Insert Mermaid Block',
+		text: 'Choose the Mermaid block and focus the editor area. A text area appears for Mermaid syntax input.',
 	},
 	{
-		title: 'Deleted Terms Still in Trash',
-		text: 'A deleted term that remains in Trash can still reserve slug history, causing forced suffixes like -2 when recreating names.',
+		title: 'Paste Diagram Code',
+		text: 'Paste code such as flowchart or sequence diagram syntax. Keep one diagram per block for clean rendering.',
 	},
 	{
-		title: 'SEO and Commerce Plugin Validation',
-		text: 'Plugins such as Rank Math, Yoast, and WooCommerce often detect permalink duplication earlier and surface warnings immediately.',
-	},
-];
-
-const fixSteps = [
-	{
-		title: 'Create a Full Backup First',
-		text: 'Take a database backup or snapshot before changing taxonomy structure. This gives you a clean rollback point.',
+		title: 'Check Live Preview',
+		text: 'The block renders SVG preview in editor. If syntax has errors, fix the Mermaid code and recheck immediately.',
 	},
 	{
-		title: 'Empty Term Trash Completely',
-		text: 'Check Categories, Tags, and Product Categories trash bins. Permanently delete stale items that may reserve old slugs.',
+		title: 'Publish And Verify Frontend',
+		text: 'Publish or update the post, then open the frontend page to confirm the diagram is rendered and responsive.',
 	},
 	{
-		title: 'Find Duplicate or Colliding Slugs',
-		text: 'Search terms by slug and identify all entries sharing the same path pattern, even across different taxonomies.',
-	},
-	{
-		title: 'Rename Slugs with Clear Intent',
-		text: 'Use distinct, descriptive slugs such as mobile-phones and mobile-news instead of generic duplicates.',
-	},
-	{
-		title: 'Apply 301 Redirects for Old URLs',
-		text: 'If old slugs were indexed or linked, add redirects from old paths to final term URLs before going live.',
-	},
-	{
-		title: 'Run Term Reindex and Verify',
-		text: 'Use the plugin maintenance flow to normalize terms, then test affected archive URLs and editor tag behavior.',
+		title: 'Use Multiple Blocks For Sections',
+		text: 'For long documents, split diagrams into several Mermaid blocks to keep each topic readable and maintainable.',
 	},
 ];
 
-const prevention = [
+const screenshots = [
 	{
-		title: 'Define Taxonomy Rules Early',
-		text: 'Separate category naming from tag naming so editorial teams do not reuse the same high-level words everywhere.',
+		title: 'Plugin Header Banner',
+		text: 'Header area in plugin-page style similar to WordPress plugin directory listings.',
+		path: '/images/plugin-banner-772x250.png',
+		delay: 0,
 	},
 	{
-		title: 'Audit URL Prefix Settings',
-		text: 'Be careful with removing category base prefixes. Flat URL structures can increase collision risk with pages and posts.',
+		title: 'Mermaid Block Editor',
+		text: 'Editing Mermaid syntax and checking preview directly in Gutenberg.',
+		path: '/images/plugin-screenshot-1.png',
+		delay: 90,
 	},
 	{
-		title: 'Validate Before Recreating Terms',
-		text: 'Before recreating a deleted term, confirm it is fully removed from Trash and no redirect points to conflicting paths.',
+		title: 'Frontend Mermaid Result',
+		text: 'Published post output with rendered Mermaid diagram for readers.',
+		path: '/images/plugin-screenshot-2.png',
+		delay: 180,
+	},
+];
+
+const mermaidSample = `graph TD
+    A[Start] --> B{Need Mermaid Block?}
+    B -- Yes --> C[Insert PlusMagi Mermaid Block]
+    C --> D[Paste Mermaid Code]
+    D --> E[Preview SVG]
+    E --> F[Publish Post]`;
+
+const faqItems = [
+	{
+		q: 'Can I add more than one Mermaid block in a post?',
+		a: 'Yes. Add as many Mermaid blocks as needed. This is recommended for long technical documents.',
+	},
+	{
+		q: 'What if preview does not render?',
+		a: 'Check Mermaid syntax first. Most issues come from missing arrows, invalid keywords, or unmatched brackets.',
+	},
+	{
+		q: 'Is the Mermaid output responsive?',
+		a: 'Yes. The plugin output is designed to scale in normal WordPress content width and mobile layouts.',
+	},
+	{
+		q: 'Which keywords should users search in inserter?',
+		a: 'Search with Mermaid or PlusMagi to find the block quickly in Gutenberg inserter.',
 	},
 ];
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Alfa+Slab+One&display=swap');
 
 .page-shell {
 	font-family: 'Sora', sans-serif;
-	background: #f8f5ef;
+	background: #f7f6f1;
 }
 
 .ambient-bg {
@@ -206,16 +188,17 @@ const prevention = [
 	inset: 0;
 	pointer-events: none;
 	background-image:
-		radial-gradient(circle at 5% 8%, rgba(203, 79, 45, 0.22), transparent 25%),
-		radial-gradient(circle at 88% 18%, rgba(47, 126, 106, 0.2), transparent 22%),
-		radial-gradient(circle at 58% 85%, rgba(47, 95, 159, 0.15), transparent 26%);
+		radial-gradient(circle at 8% 14%, rgba(210, 87, 48, 0.2), transparent 25%),
+		radial-gradient(circle at 86% 12%, rgba(34, 114, 135, 0.18), transparent 24%),
+		radial-gradient(circle at 52% 86%, rgba(52, 138, 113, 0.14), transparent 28%);
 }
 
 .brand,
 .hero-title,
 .section-title,
 .panel-title {
-	font-family: 'Fraunces', serif;
+	font-family: 'Alfa Slab One', serif;
+	font-weight: 400;
 }
 
 .eyebrow {
@@ -233,7 +216,7 @@ const prevention = [
 
 .card {
 	border-radius: 1.1rem;
-	border: 1px solid rgba(38, 75, 82, 0.18);
+	border: 1px solid rgba(36, 89, 99, 0.16);
 	background: rgba(255, 255, 255, 0.88);
 }
 
@@ -242,6 +225,14 @@ const prevention = [
 	border: 1px solid rgba(255, 255, 255, 0.16);
 	background: rgba(255, 255, 255, 0.06);
 	padding: 1rem;
+}
+
+.code-label {
+	font-size: 0.73rem;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: #2d5d66;
 }
 
 .diag-row {

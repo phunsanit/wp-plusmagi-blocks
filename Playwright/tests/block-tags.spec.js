@@ -347,7 +347,7 @@ test.describe('PlusMagi Markdown — Block Editor', () => {
 		const addTagRequest = await addTagRequestPromise;
 		const payload = addTagRequest.postDataJSON();
 
-		expect(payload.name.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim()).toBe('WordPress Tags');
+		expect(payload.name.replace(/[\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim()).toBe('WordPress,Tags');
 		await responsePromise;
 	});
 

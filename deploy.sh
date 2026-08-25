@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- Configuration ---
-PM_ORG_SLUG="plusmagi-markdown"
+PM_ORG_SLUG="plusmagi-blocks"
 SOURCE_DIR="./SVN/trunk"
 PM_ASSETS_SRC="./wp-assets"
 SVN_ROOT="./SVN"
@@ -12,9 +12,9 @@ SVN_TAGS="${SVN_ROOT}/tags"
 main() {
 	cd "$(dirname "$0")" || exit
 
-	VERSION=$(grep -i "Version:" "$SOURCE_DIR/plusmagi-markdown.php" | awk -F: '{print $2}' | xargs)
+	VERSION=$(grep -i "Version:" "$SOURCE_DIR/plusmagi-blocks.php" | awk -F: '{print $2}' | xargs)
 	if [ -z "$VERSION" ]; then
-		echo "❌ Error: Could not find version in $SOURCE_DIR/plusmagi-markdown.php"
+		echo "❌ Error: Could not find version in $SOURCE_DIR/plusmagi-blocks.php"
 		exit 1
 	fi
 

@@ -1,9 +1,9 @@
-# PlusMagi Markdown
+# PlusMagi Blocks
 
-[![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/plugins/plusmagi-markdown)
+[![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/plugins/plusmagi-blocks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**PlusMagi Markdown** is a WordPress plugin for creating a clean, lightweight markdown experience inside the admin and editor workflows.
+**PlusMagi Blocks** is a WordPress plugin that adds custom content blocks (Mermaid diagrams, Description Lists, and more) to the admin and editor workflows.
 
 ---
 

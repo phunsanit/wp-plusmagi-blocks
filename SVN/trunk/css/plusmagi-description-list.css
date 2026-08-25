@@ -1,0 +1,35 @@
+.wp-block-plusmagi-markdown-description-list {
+	margin: 0;
+}
+
+.wp-block-plusmagi-markdown-description-list dt {
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-markdown-description-list dd {
+	margin: 0 0 1em;
+}
+
+.plusmagi-description-list-editor-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 12px;
+}
+
+.plusmagi-description-list-editor-title {
+	display: block;
+}
+
+.plusmagi-description-list-item {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px;
+	border: 1px solid #e0e0e0;
+	border-radius: 4px;
+}
+
+.plusmagi-description-list-add-item {
+	align-self: flex-start;
+}

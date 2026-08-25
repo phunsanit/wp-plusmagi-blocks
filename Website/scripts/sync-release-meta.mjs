@@ -6,7 +6,7 @@ const scriptFile = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptFile);
 const websiteRoot = path.resolve(scriptDir, '..');
 const repoRoot = path.resolve(websiteRoot, '..');
-const pluginMainPath = path.join(repoRoot, 'SVN', 'trunk', 'plusmagi-markdown.php');
+const pluginMainPath = path.join(repoRoot, 'SVN', 'trunk', 'plusmagi-blocks.php');
 const readmePath = path.join(repoRoot, 'SVN', 'trunk', 'readme.txt');
 const outputPath = path.join(websiteRoot, 'src', 'generated', 'release-meta.ts');
 
@@ -15,7 +15,7 @@ function readText(filePath) {
 }
 
 function parsePluginHeader(headerText) {
-	const pluginName = headerText.match(/^ \* Plugin Name:\s*(.+)$/m)?.[1]?.trim() || 'PlusMagi Markdown';
+	const pluginName = headerText.match(/^ \* Plugin Name:\s*(.+)$/m)?.[1]?.trim() || 'PlusMagi Blocks';
 	const version = headerText.match(/^ \* Version:\s*(.+)$/m)?.[1]?.trim() || '0.0.0';
 	return { pluginName, version };
 }

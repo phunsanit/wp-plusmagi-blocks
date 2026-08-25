@@ -224,7 +224,7 @@ function MarkdownBlockEditor({ attributes, setAttributes }: MarkdownBlockProps) 
 
 	return (
 		<div className="plusmagi-markdown-editor-wrapper">
-			<strong className="plusmagi-markdown-editor-title">PlusMagi Markdown + Mermaid</strong>
+			<strong className="plusmagi-markdown-editor-title">PlusMagi Blocks + Mermaid</strong>
 			<TextareaControl
 				label="Mermaid.js Markdown Editor"
 				value={markdown}
@@ -245,7 +245,7 @@ function MarkdownBlockEditor({ attributes, setAttributes }: MarkdownBlockProps) 
 const blockType = (window as typeof window & { wp?: { blocks?: { registerBlockType?: (name: string, config: Record<string, unknown>) => void } } }).wp?.blocks?.registerBlockType;
 
 if (typeof blockType === 'function') {
-	blockType('plusmagi-markdown/mermaid', {
+	blockType('plusmagi-blocks/mermaid', {
 		attributes: {
 			markdown: {
 				type: 'string',

@@ -16,8 +16,8 @@ require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const ADMIN_STATE = path.join(__dirname, 'auth/admin-state.json');
 const FULL_WORDPRESS_TEST = process.env.PLUSMAGI_FULL_TEST === '1';
 const ADMIN_ONLY_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block)\.spec\.js/;
-const MERMAID_LOCAL_MATCH = /(diagram-.*|config-.*)\.spec\.js/;
-const ADMIN_FULL_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/;
+const MERMAID_LOCAL_MATCH = /(diagram-.*|config-.*|block-description-list)\.spec\.js/;
+const ADMIN_FULL_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*|block-description-list)\.spec\.js/;
 
 module.exports = defineConfig({
 	testDir: './tests',
@@ -69,17 +69,17 @@ module.exports = defineConfig({
 		// ------------------------------------------------------------------
 		{
 			name: 'chromium',
-			testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
+			testIgnore: ADMIN_FULL_MATCH,
 			use: { ...devices['Desktop Chrome'] },
 		},
 		{
 			name: 'firefox',
-			testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
+			testIgnore: ADMIN_FULL_MATCH,
 			use: { ...devices['Desktop Firefox'] },
 		},
 		{
 			name: 'webkit',
-			testIgnore: /(block-tags|reindex-option|tags-reindex|mermaid-block|diagram-.*|config-.*)\.spec\.js/,
+			testIgnore: ADMIN_FULL_MATCH,
 			use: { ...devices['Desktop Safari'] },
 		},
 

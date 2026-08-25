@@ -1,13 +1,13 @@
 {
 	"apiVersion": 3,
-	"name": "plusmagi-markdown/mermaid",
-	"title": "PlusMagi Markdown + Mermaid",
+	"name": "plusmagi-blocks/mermaid",
+	"title": "PlusMagi Blocks + Mermaid",
 	"category": "widgets",
 	"icon": "editor-textcolor",
-	"description": "A Mermaid-ready markdown block for PlusMagi Markdown.",
+	"description": "A Mermaid-ready markdown block for PlusMagi Blocks.",
 	"keywords": ["markdown", "mermaid", "plusmagi"],
-	"version": "1.0.0",
-	"textdomain": "plusmagi-markdown",
+	"version": "1.0.2",
+	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"markdown": {
 			"type": "string",
