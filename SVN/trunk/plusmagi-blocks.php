@@ -435,9 +435,25 @@ function plusmagi_blocks_register_blocks() {
 	);
 
 	wp_register_script(
+		'plusmagi-mermaid-zenuml-runtime',
+		PLUSMAGI_BLOCKS_URL . 'js/vendor/mermaid-zenuml.min.js',
+		array( 'plusmagi-markdown-mermaid-runtime' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/vendor/mermaid-zenuml.min.js' ),
+		true
+	);
+
+	wp_register_script(
+		'plusmagi-mermaid-zenuml',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-zenuml.js',
+		array( 'plusmagi-markdown-mermaid-runtime', 'plusmagi-mermaid-zenuml-runtime' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-zenuml.js' ),
+		true
+	);
+
+	wp_register_script(
 		'plusmagi-mermaid-editor',
 		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-mermaid.js',
-		array( 'wp-blocks', 'wp-components', 'wp-element', 'wp-i18n', 'plusmagi-markdown-mermaid-runtime' ),
+		array( 'wp-blocks', 'wp-components', 'wp-element', 'wp-i18n', 'plusmagi-markdown-mermaid-runtime', 'plusmagi-mermaid-zenuml' ),
 		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-mermaid.js' ),
 		true
 	);
@@ -559,7 +575,7 @@ function plusmagi_blocks_enqueue_frontend_assets() {
 	wp_enqueue_script(
 		'plusmagi-markdown-frontend',
 		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-markdown-frontend.js',
-		array( 'plusmagi-markdown-mermaid-runtime' ),
+		array( 'plusmagi-markdown-mermaid-runtime', 'plusmagi-mermaid-zenuml' ),
 		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-markdown-frontend.js' ),
 		true
 	);

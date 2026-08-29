@@ -87,6 +87,16 @@
 	}
 
 	async function initMermaid() {
+		if (window.plusmagiZenUmlReady) {
+			try {
+				await window.plusmagiZenUmlReady;
+			} catch (error) {
+				if (window.console && typeof window.console.warn === 'function') {
+					window.console.warn('PlusMagi ZenUML registration failed:', error);
+				}
+			}
+		}
+
 		var api = getMermaidApi();
 		if (!api) {
 			return;

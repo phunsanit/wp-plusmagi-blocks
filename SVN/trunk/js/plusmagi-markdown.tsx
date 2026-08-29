@@ -20,6 +20,7 @@ type MermaidApi = {
 type WindowWithMermaid = Window & {
 	mermaid?: MermaidApi;
 	plusmagiMermaidInitialized?: boolean;
+	plusmagiZenUmlReady?: Promise<void>;
 };
 
 const mermaidFencePattern = /```mermaid\s*([\s\S]*?)```/i;
@@ -192,6 +193,7 @@ function MarkdownBlockEditor({ attributes, setAttributes }: MarkdownBlockProps) 
 
 		const renderMermaid = async () => {
 			try {
+				await (window as WindowWithMermaid).plusmagiZenUmlReady;
 				const mermaidApi = getMermaidApi();
 
 				const id = makeStableRenderId(mermaidCode);

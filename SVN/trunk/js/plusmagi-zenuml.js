@@ -1,0 +1,1 @@
+(function(){"use strict";const e=window.mermaid,r=window["mermaid-zenuml"];window.plusmagiZenUmlReady=e!=null&&e.registerExternalDiagrams&&r?e.registerExternalDiagrams([r]):Promise.reject(new Error("Mermaid or ZenUML runtime is unavailable."))})();

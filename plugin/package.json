@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-	"build": "vite build && vite build --config vite.config.description-list.ts",
-	"dev": "vite",
-	"dev:description-list": "vite --config vite.config.description-list.ts"
+    "build": "vite build && vite build --config vite.config.description-list.ts && npm run build:zenuml",
+    "build:zenuml": "node scripts/copy-zenuml.mjs && vite build --config vite.config.zenuml.ts",
+    "dev": "vite",
+    "dev:description-list": "vite --config vite.config.description-list.ts"
   },
   "devDependencies": {
-	"vite": "^5.4.11"
+    "vite": "^5.4.11"
   },
   "dependencies": {
-	"mermaid": "^11.16.0"
+    "@mermaid-js/mermaid-zenuml": "^0.2.3",
+    "mermaid": "^11.16.0"
   }
 }

@@ -5,6 +5,8 @@ const path = require('path');
 const NEW_POST_URL = resolveAdminTestUrl('/wp-admin/post-new.php?post_type=post');
 const SVG_OUTPUT_DIR = path.resolve(__dirname, '../../tests-results');
 const LOCAL_MERMAID_RUNTIME_PATH = path.resolve(__dirname, '../../../SVN/trunk/js/vendor/mermaid.min.js');
+const LOCAL_ZENUML_LIBRARY_PATH = path.resolve(__dirname, '../../../SVN/trunk/js/vendor/mermaid-zenuml.min.js');
+const LOCAL_ZENUML_RUNTIME_PATH = path.resolve(__dirname, '../../../SVN/trunk/js/plusmagi-zenuml.js');
 const AUTO_SAVE_HTML5_ARTIFACT = process.env.PLUSMAGI_SAVE_MERMAID_HTML5 === '1';
 const USE_WORDPRESS_EDITOR = process.env.PLUSMAGI_FULL_TEST === '1' || process.env.PLUSMAGI_USE_WORDPRESS === '1';
 const MERMAID_BLOCK_SEARCH_TERMS = ['PlusMagi', 'Mermaid'];
@@ -347,7 +349,7 @@ async function maybeAutoSaveHtml5Artifact(preview, code) {
 }
 
 async function openLocalMermaidEditor(page) {
-	await page.setContent(`<!doctype html>
+	const editorHtml = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -364,9 +366,17 @@ async function openLocalMermaidEditor(page) {
   <div class="plusmagi-markdown-mermaid-preview"></div>
   <div class="plusmagi-markdown-preview-body"></div>
 </body>
-</html>`);
+</html>`;
+
+	await page.route('http://plusmagi.test/', (route) => route.fulfill({
+		contentType: 'text/html',
+		body: editorHtml,
+	}));
+	await page.goto('http://plusmagi.test/');
 
 	await page.addScriptTag({ path: LOCAL_MERMAID_RUNTIME_PATH });
+	await page.addScriptTag({ path: LOCAL_ZENUML_LIBRARY_PATH });
+	await page.addScriptTag({ path: LOCAL_ZENUML_RUNTIME_PATH });
 	await page.waitForFunction(() => {
 		return typeof window !== 'undefined' && window.mermaid && typeof window.mermaid.render === 'function';
 	}, { timeout: 20_000 });
@@ -384,8 +394,13 @@ async function openLocalMermaidEditor(page) {
 async function renderLocalPreview(page, code, options = {}) {
 	const visibleSource = stripFrontmatterBlock(code).trim();
 	const fallbackSvg = buildLocalSvgMarkup(code, options);
+	const allowFallback = options.allowFallback !== false;
 
-	await page.evaluate(async ({ sourceCode, sourceText, fallbackSvgMarkup, siteConfig }) => {
+	await page.evaluate(async ({ sourceCode, sourceText, fallbackSvgMarkup, siteConfig, shouldAllowFallback }) => {
+		if (window.plusmagiZenUmlReady) {
+			await window.plusmagiZenUmlReady;
+		}
+
 		const preview = document.querySelector('.plusmagi-markdown-mermaid-preview');
 		if (!preview) {
 			return;
@@ -398,8 +413,11 @@ async function renderLocalPreview(page, code, options = {}) {
 
 		const api = typeof window !== 'undefined' ? window.mermaid : null;
 		if (!api || typeof api.render !== 'function') {
-			preview.innerHTML = fallbackSvgMarkup;
-			return;
+			if (shouldAllowFallback) {
+				preview.innerHTML = fallbackSvgMarkup;
+				return;
+			}
+			throw new Error('Mermaid runtime is unavailable.');
 		}
 
 		const wantedSiteConfig = siteConfig || {};
@@ -425,13 +443,18 @@ async function renderLocalPreview(page, code, options = {}) {
 			const result = await api.render(id, sourceCode);
 			preview.innerHTML = result && result.svg ? result.svg : String(result || '');
 		} catch (error) {
-			preview.innerHTML = fallbackSvgMarkup;
+			if (shouldAllowFallback) {
+				preview.innerHTML = fallbackSvgMarkup;
+				return;
+			}
+			throw error;
 		}
 	}, {
 		sourceCode: code,
 		sourceText: visibleSource,
 		fallbackSvgMarkup: fallbackSvg,
 		siteConfig: options.siteConfig || null,
+		shouldAllowFallback: allowFallback,
 	});
 }
 
@@ -508,10 +531,10 @@ async function renderMermaidDiagram(page, code) {
 	const { textarea, preview } = await openMermaidBlockEditor(page);
 	await textarea.fill(code);
 	if (!USE_WORDPRESS_EDITOR) {
-		await renderLocalPreview(page, code);
+		await renderLocalPreview(page, code, { allowFallback: false });
 	}
 	await expect(preview).toBeVisible({ timeout: 20_000 });
-	await expect(preview.locator('svg')).toBeVisible({ timeout: 20_000 });
+	await expect(preview.locator('svg').first()).toBeVisible({ timeout: 20_000 });
 	await maybeAutoSaveHtml5Artifact(preview, code);
 	return preview;
 }

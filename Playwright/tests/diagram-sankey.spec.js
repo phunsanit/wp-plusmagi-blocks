@@ -1,4 +1,4 @@
-const { test, renderMermaidSourcePreview } = require('./helpers/mermaid-editor');
+const { test, renderMermaidDiagram, renderMermaidSourcePreview } = require('./helpers/mermaid-editor');
 const options = require('./options.json');
 
 const {
@@ -7,6 +7,10 @@ const {
 } = options.diagramSankey;
 
 test.describe('Mermaid diagram - Sankey', () => {
+	test('renders a basic sankey diagram as SVG', async ({ page }) => {
+		await renderMermaidDiagram(page, syntaxCases[0].source);
+	});
+
 	for (const syntaxCase of syntaxCases) {
 		test(`supports sankey syntax: ${syntaxCase.name}`, async ({ page }) => {
 			await renderMermaidSourcePreview(page, syntaxCase.source, syntaxCase.expectedText);

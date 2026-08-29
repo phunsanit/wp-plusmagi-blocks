@@ -1,8 +1,8 @@
-const { test, renderMermaidSourcePreview } = require('./helpers/mermaid-editor');
+const { test, renderMermaidDiagram } = require('./helpers/mermaid-editor');
 
 test.describe('Mermaid diagram - Wardley', () => {
   test('renders a basic wardley map', async ({ page }) => {
-    await renderMermaidSourcePreview(page, `wardley-beta
+    await renderMermaidDiagram(page, `wardley-beta
 title Tea Shop Value Chain
 
 anchor Business [0.95, 0.63]

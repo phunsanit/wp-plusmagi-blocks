@@ -1,8 +1,8 @@
-const { test, renderMermaidSourcePreview } = require('./helpers/mermaid-editor');
+const { test, renderMermaidDiagram } = require('./helpers/mermaid-editor');
 
 test.describe('Mermaid diagram - Ishikawa', () => {
   test('renders a basic ishikawa diagram', async ({ page }) => {
-    await renderMermaidSourcePreview(page, `ishikawa-beta
+    await renderMermaidDiagram(page, `ishikawa-beta
     Blurry Photo
     Process
         Out of focus

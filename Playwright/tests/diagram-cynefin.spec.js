@@ -1,8 +1,8 @@
-const { test, renderMermaidSourcePreview } = require('./helpers/mermaid-editor');
+const { test, renderMermaidDiagram } = require('./helpers/mermaid-editor');
 
 test.describe('Mermaid diagram - Cynefin', () => {
   test('renders a basic cynefin diagram', async ({ page }) => {
-    await renderMermaidSourcePreview(page, `cynefin-beta
+    await renderMermaidDiagram(page, `cynefin-beta
   title Incident Response
 
   complex
