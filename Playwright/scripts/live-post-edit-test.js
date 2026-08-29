@@ -4,10 +4,11 @@ const path = require('path');
 const dotenv = require('dotenv');
 const { chromium } = require('playwright');
 
-dotenv.config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.env' });
+const ROOT_DIR = path.resolve(__dirname, '../..');
+dotenv.config({ path: path.join(ROOT_DIR, '.env') });
 
 const BASE = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
-const TARGET_URL = `${BASE}/wp-admin/post.php?post=660&action=edit`;
+const TARGET_URL = process.env.WP_URL_TEST_ADMIN || `${BASE}/wp-admin/post-new.php`;
 const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD;
 

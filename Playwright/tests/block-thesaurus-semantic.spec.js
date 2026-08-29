@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 const esbuild = require('esbuild');
 
-const THESAURUS_SCRIPT_PATH = path.resolve(__dirname, '../../my-mermaid-plugin/js/thesaurus-block.js');
+const THESAURUS_SCRIPT_PATH = path.resolve(__dirname, '../../SVN/trunk/js/plusmagi-thesaurus.js');
 
 let cachedReactBundle = '';
 
@@ -65,9 +65,9 @@ async function renderSavedMarkup(page, attributes) {
 	await page.addScriptTag({ path: THESAURUS_SCRIPT_PATH });
 
 	await page.evaluate((attrs) => {
-		const block = window.__plusmagiBlocks['my-thesaurus/entry'];
+		const block = window.__plusmagiBlocks['plusmagi-blocks/thesaurus'];
 		if (!block || typeof block.save !== 'function') {
-			throw new Error('my-thesaurus/entry block is not registered.');
+			throw new Error('plusmagi-blocks/thesaurus block is not registered.');
 		}
 
 		const container = document.getElementById('root');
@@ -76,7 +76,7 @@ async function renderSavedMarkup(page, attributes) {
 		root.render(element);
 	}, attributes);
 
-	await page.waitForSelector('.thesaurus-container');
+	await page.waitForSelector('.plusmagi-thesaurus-container');
 }
 
 test.describe('Thesaurus Block - Semantic Attributes', () => {
@@ -94,7 +94,7 @@ test.describe('Thesaurus Block - Semantic Attributes', () => {
 			],
 		});
 
-		const heading = page.locator('.thesaurus-container h2').first();
+		const heading = page.locator('.plusmagi-thesaurus-container h2').first();
 		await expect(heading).toHaveText('Semantic Thesaurus');
 
 		const headingId = await heading.getAttribute('id');
@@ -117,9 +117,9 @@ test.describe('Thesaurus Block - Semantic Attributes', () => {
 			],
 		});
 
-		await expect(page.locator('.thesaurus-container h2')).toHaveText('ศัพท์ใกล้เคียง');
+		await expect(page.locator('.plusmagi-thesaurus-container h2')).toHaveText('ศัพท์ใกล้เคียง');
 
-		const entry = page.locator('.thesaurus-entry').first();
+		const entry = page.locator('.plusmagi-thesaurus-entry').first();
 		await expect(entry).toHaveAttribute('itemscope', '');
 		await expect(entry).toHaveAttribute('itemtype', 'https://schema.org/DefinedTerm');
 		await expect(entry).toHaveAttribute('data-term', 'abundant');
@@ -129,5 +129,24 @@ test.describe('Thesaurus Block - Semantic Attributes', () => {
 		await expect(entry.locator('dd[data-type="synonyms"][aria-label="Synonyms for Abundant"]')).toHaveCount(1);
 		await expect(entry.locator('dd[data-type="antonyms"][aria-label="Antonyms for Abundant"]')).toHaveCount(1);
 		await expect(entry.locator('ul.tag-list[role="list"] li.tag[itemprop="sameAs"]')).toHaveCount(3);
+	});
+
+	test('sorts terms alphabetically and renders semantic relationships', async ({ page }) => {
+		await renderSavedMarkup(page, {
+			heading: 'Thesaurus',
+			entries: [
+				{ term: 'Zebra', broaderTerms: 'animal', narrowerTerms: 'plains zebra', relatedTerms: 'horse, donkey' },
+				{ term: 'apple', broaderTerms: 'fruit', narrowerTerms: 'gala apple', relatedTerms: 'pear' },
+				{ term: 'Banana', broaderTerms: 'fruit', narrowerTerms: 'plantain', relatedTerms: 'mango' },
+			],
+		});
+
+		await expect(page.locator('.plusmagi-thesaurus-entry dfn')).toHaveText(['apple', 'Banana', 'Zebra']);
+
+		const appleEntry = page.locator('.plusmagi-thesaurus-entry').first();
+		await expect(appleEntry.locator('dd[data-type="broader-terms"] .label')).toHaveText('Broader Terms:');
+		await expect(appleEntry.locator('dd[data-type="narrower-terms"] .label')).toHaveText('Narrower Terms:');
+		await expect(appleEntry.locator('dd[data-type="related-terms"] .label')).toHaveText('Related Terms:');
+		await expect(appleEntry.locator('dd[data-type="related-terms"] li.tag')).toHaveText(['pear']);
 	});
 });

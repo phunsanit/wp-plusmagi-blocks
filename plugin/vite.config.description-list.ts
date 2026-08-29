@@ -12,7 +12,7 @@ export default defineConfig({
 			entry: '../SVN/trunk/js/plusmagi-description-list.tsx',
 			name: 'plusmagiDescriptionList',
 			formats: ['iife'],
-			fileName: () => 'plusmagi-description-list.js',
+			fileName: () => 'plusmagi-dl.js',
 		},
 		rollupOptions: {
 			external: [
@@ -26,6 +26,7 @@ export default defineConfig({
 					'react-dom': 'ReactDOM',
 					'@wordpress/element': 'wp.element',
 					'@wordpress/components': 'wp.components',
+					'@wordpress/block-editor': 'wp.blockEditor',
 				},
 			},
 		},

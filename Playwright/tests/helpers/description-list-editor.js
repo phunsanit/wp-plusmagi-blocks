@@ -2,7 +2,7 @@ const { test: baseTest, expect } = require('@playwright/test');
 const path = require('path');
 const esbuild = require('esbuild');
 
-const DESCRIPTION_LIST_SCRIPT_PATH = path.resolve(__dirname, '../../../SVN/trunk/js/plusmagi-description-list.js');
+const DESCRIPTION_LIST_SCRIPT_PATH = path.resolve(__dirname, '../../../SVN/trunk/js/plusmagi-dl.js');
 
 const test = baseTest;
 
@@ -101,17 +101,22 @@ const MOUNT_EDITOR_SCRIPT = `
 	})();
 `;
 
+const MOUNT_SAVE_SCRIPT = `
+	(function mountDescriptionListSave() {
+		const config = window.__plusmagiBlocks['plusmagi-blocks/description-list'];
+		const container = document.getElementById('root');
+		const root = ReactDOM.createRoot(container);
+		window.__plusmagiRenderSave = (attributes) => root.render(React.createElement(config.save, { attributes }));
+	})();
+`;
+
 async function openDescriptionListEditor(page) {
 	await page.setContent('<!doctype html><html><body><div id="root"></div></body></html>');
 	await page.addScriptTag({ content: await getReactBundle() });
 	await page.addScriptTag({ content: WP_STUBS_SCRIPT });
 	await page.addScriptTag({ path: DESCRIPTION_LIST_SCRIPT_PATH });
-	await page.addScriptTag({ content: MOUNT_EDITOR_SCRIPT });
 
-	return {
-		items: page.locator('.plusmagi-description-list-item'),
-		addItemButton: page.locator('.plusmagi-description-list-add-item'),
-	};
+	return page.evaluate(() => window.__plusmagiBlocks['plusmagi-blocks/description-list']);
 }
 
 function itemRow(items, index) {
@@ -119,11 +124,19 @@ function itemRow(items, index) {
 }
 
 async function fillTerm(items, index, value) {
-	await itemRow(items, index).locator('input').fill(value);
+	await itemRow(items, index).locator('input').first().fill(value);
 }
 
 async function fillDescription(items, index, value) {
-	await itemRow(items, index).locator('textarea').fill(value);
+	await itemRow(items, index).locator('input').nth(1).fill(value);
+}
+
+async function addDescription(items, index) {
+	await itemRow(items, index).locator('.plusmagi-description-list-add-description').click();
+}
+
+async function fillDescriptionAt(items, itemIndex, descriptionIndex, value) {
+	await itemRow(items, itemIndex).locator('input').nth(descriptionIndex + 1).fill(value);
 }
 
 async function removeItem(items, index) {
@@ -134,6 +147,11 @@ async function getAttributes(page) {
 	return page.evaluate(() => window.__plusmagiGetAttributes());
 }
 
+async function renderSavedList(page, attributes) {
+	await page.addScriptTag({ content: MOUNT_SAVE_SCRIPT });
+	await page.evaluate((nextAttributes) => window.__plusmagiRenderSave(nextAttributes), attributes);
+}
+
 module.exports = {
 	test,
 	expect,
@@ -141,6 +159,9 @@ module.exports = {
 	itemRow,
 	fillTerm,
 	fillDescription,
+	addDescription,
+	fillDescriptionAt,
 	removeItem,
 	getAttributes,
+	renderSavedList,
 };

@@ -12,7 +12,7 @@ export default defineConfig({
 			entry: '../SVN/trunk/js/plusmagi-markdown.tsx',
 			name: 'plusmagiMarkdown',
 			formats: ['iife'],
-			fileName: () => 'plusmagi-markdown.js',
+			fileName: () => 'plusmagi-mermaid.js',
 		},
 		rollupOptions: {
 			external: [

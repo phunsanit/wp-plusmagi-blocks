@@ -1,59 +1,34 @@
-const {
-	test,
-	expect,
-	openDescriptionListEditor,
-	itemRow,
-	fillTerm,
-	fillDescription,
-	removeItem,
-	getAttributes,
-} = require('./helpers/description-list-editor');
+const { test, expect, openDescriptionListEditor } = require('./helpers/description-list-editor');
 
 test.describe('Description List - Block', () => {
-	test('renders a single empty item by default', async ({ page }) => {
-		const { items } = await openDescriptionListEditor(page);
+	test('registers the block with the dl alias', async ({ page }) => {
+		const config = await openDescriptionListEditor(page);
 
-		await expect(items).toHaveCount(1);
+		expect(config.title).toBe('PlusMagi - Description list');
+		expect(config.keywords).toContain('dl');
+		expect(config.template).toEqual([
+			['plusmagi-blocks/description-term', {}, [['plusmagi-blocks/description']]],
+			['plusmagi-blocks/description-term', {}, [['plusmagi-blocks/description']]],
+			['plusmagi-blocks/description-term', {}, [['plusmagi-blocks/description']]],
+		]);
+		expect(config.allowedBlocks).toEqual(['plusmagi-blocks/description-term']);
 	});
 
-	test('adds a new item', async ({ page }) => {
-		const { items, addItemButton } = await openDescriptionListEditor(page);
+	test('keeps the ordered attribute default for backward compatibility', async ({ page }) => {
+		const config = await openDescriptionListEditor(page);
 
-		await addItemButton.click();
-
-		await expect(items).toHaveCount(2);
+		expect(config.attributes.ordered.default).toBe(true);
 	});
 
-	test('removes an item, keeping the remaining ones', async ({ page }) => {
-		const { items, addItemButton } = await openDescriptionListEditor(page);
+	test('registers semantic term and description child blocks', async ({ page }) => {
+		const config = await openDescriptionListEditor(page);
+		const childBlocks = await page.evaluate(() => ({
+			term: window.__plusmagiBlocks['plusmagi-blocks/description-term'],
+			description: window.__plusmagiBlocks['plusmagi-blocks/description'],
+		}));
 
-		await addItemButton.click();
-		await addItemButton.click();
-		await fillTerm(items, 0, 'Term A');
-		await fillTerm(items, 1, 'Term B');
-		await fillTerm(items, 2, 'Term C');
-
-		await removeItem(items, 1);
-
-		await expect(items).toHaveCount(2);
-		await expect(itemRow(items, 0).locator('input')).toHaveValue('Term A');
-		await expect(itemRow(items, 1).locator('input')).toHaveValue('Term C');
-	});
-
-	test('cannot remove the last remaining item', async ({ page }) => {
-		const { items } = await openDescriptionListEditor(page);
-
-		await expect(itemRow(items, 0).locator('.plusmagi-description-list-remove-item')).toBeDisabled();
-	});
-
-	test('keeps term and description values in sync with attributes', async ({ page }) => {
-		const { items } = await openDescriptionListEditor(page);
-
-		await fillTerm(items, 0, 'HTML');
-		await fillDescription(items, 0, 'HyperText Markup Language');
-
-		const attributes = await getAttributes(page);
-
-		expect(attributes.items).toEqual([{ term: 'HTML', description: 'HyperText Markup Language' }]);
+		expect(config.allowedBlocks).toContain('plusmagi-blocks/description-term');
+		expect(childBlocks.term.parent).toEqual(['plusmagi-blocks/description-list']);
+		expect(childBlocks.description.parent).toEqual(['plusmagi-blocks/description-term']);
 	});
 });

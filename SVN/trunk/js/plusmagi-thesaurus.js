@@ -20,12 +20,35 @@
       .map((tag) => tag.trim())
       .filter(Boolean);
 
-  /**
-   * Thesaurus Block - A structured dictionary/thesaurus entry block
-   * Allows editors to create thesaurus entries with terms, definitions, synonyms, and antonyms
-   */
-  registerBlockType('my-thesaurus/entry', {
-    title: __('Thesaurus Entry'),
+  const sortEntries = (entries) =>
+    [...entries].sort((first, second) =>
+      String(first.term || '').localeCompare(String(second.term || ''), undefined, {
+        sensitivity: 'base',
+        numeric: true,
+      })
+    );
+
+  const renderTermList = (entry, field, type, label) => {
+    const terms = splitTags(entry[field]);
+    if (terms.length === 0) {
+      return null;
+    }
+
+    return wp.element.createElement(
+      'dd',
+      { 'data-type': type, 'aria-label': label + ' for ' + entry.term },
+      wp.element.createElement('span', { className: 'label', 'aria-hidden': 'true' }, label + ':'),
+      wp.element.createElement(
+        'ul',
+        { className: 'tag-list', role: 'list' },
+        terms.map((term, index) => wp.element.createElement('li', { key: index, className: 'tag' }, term))
+      )
+    );
+  };
+
+  registerBlockType('plusmagi-blocks/thesaurus', {
+    apiVersion: 3,
+    title: __('PlusMagi - Thesaurus'),
     icon: 'book',
     category: 'widgets',
     attributes: {
@@ -52,9 +75,12 @@
         definition: '',
         synonyms: '',
         antonyms: '',
+        broaderTerms: '',
+        narrowerTerms: '',
+        relatedTerms: '',
       });
 
-      const blockProps = useBlockProps({ className: 'my-thesaurus-block' });
+      const blockProps = useBlockProps({ className: 'plusmagi-thesaurus-block' });
 
       const handleAddEntry = () => {
         setEditingIndex(null);
@@ -64,6 +90,9 @@
           definition: '',
           synonyms: '',
           antonyms: '',
+          broaderTerms: '',
+          narrowerTerms: '',
+          relatedTerms: '',
         });
         setIsModalOpen(true);
       };
@@ -76,6 +105,9 @@
           definition: entry.definition || '',
           synonyms: entry.synonyms || '',
           antonyms: entry.antonyms || '',
+          broaderTerms: entry.broaderTerms || '',
+          narrowerTerms: entry.narrowerTerms || '',
+          relatedTerms: entry.relatedTerms || '',
         });
         setEditingIndex(index);
         setIsModalOpen(true);
@@ -94,7 +126,7 @@
           newEntries.push(formData);
         }
 
-        setAttributes({ entries: newEntries });
+        setAttributes({ entries: sortEntries(newEntries) });
         setIsModalOpen(false);
       };
 
@@ -126,26 +158,20 @@
             })
           )
         ),
-
         wp.element.createElement(
           Notice,
           { status: 'info', isDismissible: false },
-          __('Create thesaurus entries with definitions, synonyms, and antonyms.')
+          __('Create alphabetized thesaurus entries with definitions and term relationships.')
         ),
-
         wp.element.createElement(
           'div',
           { style: { marginTop: '12px', marginBottom: '12px' } },
           wp.element.createElement(
             Button,
-            {
-              isPrimary: true,
-              onClick: handleAddEntry,
-            },
+            { isPrimary: true, onClick: handleAddEntry },
             __('+ Add Thesaurus Entry')
           )
         ),
-
         attributes.entries.length === 0
           ? wp.element.createElement(
               'div',
@@ -154,17 +180,16 @@
             )
           : wp.element.createElement(
               'div',
-              { className: 'thesaurus-editor-preview' },
-              attributes.entries.map((entry, index) =>
+              { className: 'plusmagi-thesaurus-editor-preview' },
+              sortEntries(attributes.entries).map((entry) => {
+                const index = attributes.entries.indexOf(entry);
+
+                return (
                 wp.element.createElement(
                   'div',
                   {
                     key: index,
-                    style: {
-                      borderBottom: '1px solid #e2e8f0',
-                      paddingBottom: '12px',
-                      marginBottom: '12px',
-                    },
+                    style: { borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '12px' },
                   },
                   wp.element.createElement(
                     'div',
@@ -176,8 +201,7 @@
                         'strong',
                         null,
                         entry.term,
-                        ' ',
-                        entry.pos && wp.element.createElement('em', { style: { color: '#999', fontSize: '0.9em' } }, '(' + entry.pos + ')')
+                        entry.pos && wp.element.createElement('em', { style: { color: '#999', fontSize: '0.9em' } }, ' (' + entry.pos + ')')
                       )
                     ),
                     wp.element.createElement(
@@ -185,21 +209,13 @@
                       null,
                       wp.element.createElement(
                         Button,
-                        {
-                          isSecondary: true,
-                          isSmall: true,
-                          onClick: () => handleEditEntry(index),
-                        },
+                        { isSecondary: true, isSmall: true, onClick: () => handleEditEntry(index) },
                         __('Edit')
                       ),
                       ' ',
                       wp.element.createElement(
                         Button,
-                        {
-                          isDestructive: true,
-                          isSmall: true,
-                          onClick: () => handleDeleteEntry(index),
-                        },
+                        { isDestructive: true, isSmall: true, onClick: () => handleDeleteEntry(index) },
                         __('Delete')
                       )
                     )
@@ -224,11 +240,25 @@
                       wp.element.createElement('strong', { style: { color: '#e11d48' } }, 'Antonyms:'),
                       ' ',
                       entry.antonyms
-                    )
+                    ),
+                  [
+                    ['broaderTerms', 'Broader Terms'],
+                    ['narrowerTerms', 'Narrower Terms'],
+                    ['relatedTerms', 'Related Terms'],
+                  ].map(([field, label]) =>
+                    entry[field] &&
+                      wp.element.createElement(
+                        'div',
+                        { key: field, style: { fontSize: '0.85em', marginTop: '4px' } },
+                        wp.element.createElement('strong', null, label + ':'),
+                        ' ',
+                        entry[field]
+                      )
+                  )
                 )
-              )
+                );
+              })
             ),
-
         isModalOpen &&
           wp.element.createElement(
             Modal,
@@ -247,14 +277,12 @@
                 placeholder: __('e.g., Fast'),
                 help: __('The word or phrase to define'),
               }),
-
               wp.element.createElement(TextControl, {
                 label: __('Part of Speech (optional)'),
                 value: formData.pos,
                 onChange: (value) => setFormData({ ...formData, pos: value }),
                 placeholder: __('e.g., adj., noun, verb'),
               }),
-
               wp.element.createElement(TextControl, {
                 label: __('Definition'),
                 value: formData.definition,
@@ -262,7 +290,6 @@
                 placeholder: __('The meaning of the term'),
                 help: __('Clear and concise definition'),
               }),
-
               wp.element.createElement(TextControl, {
                 label: __('Synonyms (optional)'),
                 value: formData.synonyms,
@@ -270,7 +297,6 @@
                 placeholder: __('e.g., quick, rapid, swift, speedy'),
                 help: __('Comma-separated list of similar words'),
               }),
-
               wp.element.createElement(TextControl, {
                 label: __('Antonyms (optional)'),
                 value: formData.antonyms,
@@ -278,20 +304,32 @@
                 placeholder: __('e.g., slow, sluggish'),
                 help: __('Comma-separated list of opposite words'),
               }),
-
+              wp.element.createElement(TextControl, {
+                label: __('Broader Terms (optional)'),
+                value: formData.broaderTerms,
+                onChange: (value) => setFormData({ ...formData, broaderTerms: value }),
+                placeholder: __('e.g., animal, living thing'),
+                help: __('Comma-separated list of more general terms'),
+              }),
+              wp.element.createElement(TextControl, {
+                label: __('Narrower Terms (optional)'),
+                value: formData.narrowerTerms,
+                onChange: (value) => setFormData({ ...formData, narrowerTerms: value }),
+                placeholder: __('e.g., specific types or subcategories'),
+                help: __('Comma-separated list of more specific terms'),
+              }),
+              wp.element.createElement(TextControl, {
+                label: __('Related Terms (optional)'),
+                value: formData.relatedTerms,
+                onChange: (value) => setFormData({ ...formData, relatedTerms: value }),
+                placeholder: __('e.g., associated concepts'),
+                help: __('Comma-separated list of associated terms'),
+              }),
               wp.element.createElement(
                 'div',
                 { style: { marginTop: '20px', display: 'flex', gap: '8px', justifyContent: 'flex-end' } },
-                wp.element.createElement(
-                  Button,
-                  { isSecondary: true, onClick: handleCloseModal },
-                  __('Cancel')
-                ),
-                wp.element.createElement(
-                  Button,
-                  { isPrimary: true, onClick: handleSaveEntry },
-                  __('Save Entry')
-                )
+                wp.element.createElement(Button, { isSecondary: true, onClick: handleCloseModal }, __('Cancel')),
+                wp.element.createElement(Button, { isPrimary: true, onClick: handleSaveEntry }, __('Save Entry'))
               )
             )
           )
@@ -300,28 +338,28 @@
 
     save: function Save(props) {
       const { entries } = props.attributes;
+      const sortedEntries = sortEntries(entries);
       const heading = (props.attributes.heading || 'Semantic Thesaurus').trim() || 'Semantic Thesaurus';
       const headingId = 'thesaurus-heading-' + toSlug(heading) + '-' + entries.length;
 
       return wp.element.createElement(
         'div',
-        { className: 'thesaurus-container' },
+        { className: 'plusmagi-thesaurus-container' },
         wp.element.createElement('h2', { id: headingId }, heading),
         wp.element.createElement(
           'dl',
           { 'aria-labelledby': headingId },
-          entries.map((entry, index) => {
+          sortedEntries.map((entry, index) => {
             const termSlug = toSlug(entry.term);
             const termId = 'term-' + termSlug + '-' + index;
             const synonyms = splitTags(entry.synonyms);
             const antonyms = splitTags(entry.antonyms);
 
-            return (
-            wp.element.createElement(
+            return wp.element.createElement(
               'div',
               {
                 key: index,
-                className: 'thesaurus-entry',
+                className: 'plusmagi-thesaurus-entry',
                 itemScope: true,
                 itemType: 'https://schema.org/DefinedTerm',
                 'data-term': termSlug,
@@ -333,68 +371,43 @@
                 entry.pos &&
                   wp.element.createElement(
                     'span',
-                    {
-                      className: 'pos',
-                      title: 'Part of Speech: ' + entry.pos,
-                      'aria-label': 'Part of Speech: ' + entry.pos,
-                    },
+                    { className: 'pos', title: 'Part of Speech: ' + entry.pos, 'aria-label': 'Part of Speech: ' + entry.pos },
                     entry.pos
                   )
               ),
-
               entry.definition &&
                 wp.element.createElement(
                   'dd',
-                  {
-                    'data-type': 'definition',
-                    itemProp: 'description',
-                    'aria-describedby': termId,
-                  },
+                  { 'data-type': 'definition', itemProp: 'description', 'aria-describedby': termId },
                   entry.definition
                 ),
-
               synonyms.length > 0 &&
                 wp.element.createElement(
                   'dd',
-                  {
-                    'data-type': 'synonyms',
-                    'aria-label': 'Synonyms for ' + entry.term,
-                  },
+                  { 'data-type': 'synonyms', 'aria-label': 'Synonyms for ' + entry.term },
                   wp.element.createElement('span', { className: 'label', 'aria-hidden': 'true' }, 'Synonyms:'),
                   wp.element.createElement(
                     'ul',
                     { className: 'tag-list', role: 'list' },
                     synonyms.map((tag, i) =>
-                        wp.element.createElement(
-                          'li',
-                          { key: i, className: 'tag', itemProp: 'sameAs' },
-                          tag.trim()
-                        )
-                      )
+                      wp.element.createElement('li', { key: i, className: 'tag', itemProp: 'sameAs' }, tag.trim())
+                    )
                   )
                 ),
-
               antonyms.length > 0 &&
                 wp.element.createElement(
                   'dd',
-                  {
-                    'data-type': 'antonyms',
-                    'aria-label': 'Antonyms for ' + entry.term,
-                  },
+                  { 'data-type': 'antonyms', 'aria-label': 'Antonyms for ' + entry.term },
                   wp.element.createElement('span', { className: 'label', 'aria-hidden': 'true' }, 'Antonyms:'),
                   wp.element.createElement(
                     'ul',
                     { className: 'tag-list', role: 'list' },
-                    antonyms.map((tag, i) =>
-                        wp.element.createElement(
-                          'li',
-                          { key: i, className: 'tag' },
-                          tag.trim()
-                        )
-                      )
+                    antonyms.map((tag, i) => wp.element.createElement('li', { key: i, className: 'tag' }, tag.trim()))
                   )
-                )
-            )
+                ),
+              renderTermList(entry, 'broaderTerms', 'broader-terms', 'Broader Terms'),
+              renderTermList(entry, 'narrowerTerms', 'narrower-terms', 'Narrower Terms'),
+              renderTermList(entry, 'relatedTerms', 'related-terms', 'Related Terms')
             );
           })
         )

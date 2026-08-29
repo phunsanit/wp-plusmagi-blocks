@@ -76,3 +76,34 @@ svn checkout https://plugins.svn.wordpress.org/plusmagi-markdown
 # หมายเหตุ: SVN จะสร้างโฟลเดอร์ .svn ให้อัตโนมัติ ไม่ต้องสร้างเอง
 ```
 *อ้างอิง: https://wordpress.org/plugins/developers/add/*
+
+---
+
+## 🐳 Local PHP Runtime (OrbStack)
+
+PHP สำหรับ Local Development ทำงานผ่าน Docker Compose ของ WordPress workspace:
+
+- Compose file: `/Users/common/Docker/wordpress_app_7_1/docker-compose.yml`
+- PHP service: `app` (`wp71_app` เมื่อรันแบบ daemon)
+- Nginx service: `web` (`wp71_web`)
+- WordPress URL: `http://localhost:8082`
+- Shared database container: `db_mariadb:3306`
+
+เครื่อง Host อาจไม่มีคำสั่ง `php` ให้ใช้ service `app` สำหรับตรวจ syntax โดย mount repository แบบ read-only และไม่เริ่ม Web Server หรือ Database:
+
+```bash
+docker compose \
+	-f /Users/common/Docker/wordpress_app_7_1/docker-compose.yml \
+	run --rm --no-deps \
+	-v /Users/common/Gits/wp-plusmagi-blocks:/workspace:ro \
+	-w /workspace \
+	app php -l SVN/trunk/plusmagi-blocks.php
+```
+
+ผลการตรวจล่าสุด:
+
+```text
+No syntax errors detected in SVN/trunk/plusmagi-blocks.php
+```
+
+ห้ามบันทึก Database credentials, WordPress salts หรือ Admin password ลงในไฟล์นี้ ให้เก็บ secrets ในไฟล์ `.env` ที่ไม่ Commit เข้า Git

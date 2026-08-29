@@ -1,9 +1,9 @@
 === PlusMagi Blocks ===
 Contributors: phunsanit
-Tags: blocks, mermaid, description-list, editor
+Tags: blocks, mermaid, thesaurus, description-list, editor
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.0.2
+Stable tag: 1.0.0
 Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -57,27 +57,13 @@ Tips:
 
 == Changelog ==
 
-= 1.0.2 =
-* Removed the server-side Mermaid CLI rendering fallback (used `proc_open`, forbidden by WordPress.org plugin guidelines)
-* Updated "Tested up to" to 7.1
-
-= 1.0.1 =
-* Added Description List block (`<dl>`/`<dt>`/`<dd>`) with add/remove items
-* Fixed AMP validation errors caused by Mermaid diagram `<style>`/`style` attributes
-* All blocks now use `apiVersion: 3`
-
 = 1.0.0 =
 * Initial public release
-* Added PlusMagi Markdown plugin entry point
+* Added PlusMagi Blocks plugin entry point
+* Added Mermaid diagram block and Description List block
 * Added basic WordPress plugin scaffold and metadata
 
 == Upgrade Notice ==
-
-= 1.0.2 =
-Removes forbidden proc_open usage and updates WordPress compatibility to 7.1.
-
-= 1.0.1 =
-Adds the Description List block and fixes AMP validation errors for Mermaid diagrams.
 
 = 1.0.0 =
 Initial version.

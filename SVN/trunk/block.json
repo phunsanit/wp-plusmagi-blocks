@@ -1,12 +1,12 @@
 {
 	"apiVersion": 3,
 	"name": "plusmagi-blocks/mermaid",
-	"title": "PlusMagi Blocks + Mermaid",
+	"title": "PlusMagi - Mermaid",
 	"category": "widgets",
 	"icon": "editor-textcolor",
 	"description": "A Mermaid-ready markdown block for PlusMagi Blocks.",
-	"keywords": ["markdown", "mermaid", "plusmagi"],
-	"version": "1.0.2",
+	"keywords": ["plusmagi", "markdown", "mermaid"],
+	"version": "1.0.0",
 	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"markdown": {
@@ -18,6 +18,6 @@
 			"default": ""
 		}
 	},
-	"editorScript": "file:./js/plusmagi-markdown.js",
+	"editorScript": "plusmagi-mermaid-editor",
 	"style": "file:./css/plusmagi-markdown.css"
 }

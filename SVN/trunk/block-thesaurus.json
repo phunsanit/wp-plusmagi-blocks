@@ -1,0 +1,26 @@
+{
+  "apiVersion": 3,
+  "name": "plusmagi-blocks/thesaurus",
+  "title": "PlusMagi - Thesaurus",
+  "category": "widgets",
+  "icon": "book",
+  "description": "Add an alphabetized semantic thesaurus with broader, narrower, and related terms.",
+  "keywords": ["plusmagi", "thesaurus", "dictionary", "broader terms", "narrower terms", "related terms"],
+  "version": "1.0.0",
+  "textdomain": "plusmagi-blocks",
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "default": "Semantic Thesaurus"
+    },
+    "entries": {
+      "type": "array",
+      "default": []
+    }
+  },
+  "supports": {
+    "html": false
+  },
+  "editorScript": "plusmagi-thesaurus-editor",
+  "style": "file:./css/thesaurus-block.css"
+}

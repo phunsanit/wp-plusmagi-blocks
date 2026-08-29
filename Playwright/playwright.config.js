@@ -1,7 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 const path = require('path');
-require('dotenv').config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.env' });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 /**
  * Playwright configuration for PlusMagi Markdown plugin tests.
@@ -9,15 +9,15 @@ require('dotenv').config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.e
  *
  * Run all guest tests:	   npx playwright test
  * Run with UI:			   npx playwright test --ui
-	 * Run admin/block tests:	 npx playwright test --project=admin  (uses wp-plusmagi-tags-reindex/.env)
+	 * Run admin/block tests:	 npx playwright test --project=admin  (uses ../.env)
  * Show HTML report:		  npx playwright show-report
  */
 
 const ADMIN_STATE = path.join(__dirname, 'auth/admin-state.json');
 const FULL_WORDPRESS_TEST = process.env.PLUSMAGI_FULL_TEST === '1';
-const ADMIN_ONLY_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|block-thesaurus-live-semantic)\.spec\.js/;
-const MERMAID_LOCAL_MATCH = /(diagram-.*|config-.*|block-description-list)\.spec\.js/;
-const ADMIN_FULL_MATCH = /(block-tags|reindex-option|tags-reindex|mermaid-block|block-thesaurus|block-thesaurus-live-semantic|diagram-.*|config-.*|block-description-list)\.spec\.js/;
+const ADMIN_ONLY_MATCH = /(block-mermaid-post-4495|block-thesaurus-live-semantic|block-thesaurus-post-4493|block-description-list-post-4494)\.spec\.js/;
+const MERMAID_LOCAL_MATCH = /(mermaid-block|diagram-.*|config-.*|block-description-list|block-thesaurus-semantic)\.spec\.js/;
+const ADMIN_FULL_MATCH = /(mermaid-block|block-mermaid-post-4495|block-thesaurus|block-thesaurus-live-semantic|block-thesaurus-post-4493|block-description-list(?:-post-4494)?|diagram-.*|config-.*)\.spec\.js/;
 
 module.exports = defineConfig({
 	testDir: './tests',
@@ -56,7 +56,7 @@ module.exports = defineConfig({
 	projects: [
 		// ------------------------------------------------------------------
 		// Setup: log in to WP admin and save cookies for the admin project
-		// Run: npx playwright test --project=setup  (uses wp-plusmagi-tags-reindex/.env)
+		// Run: npx playwright test --project=setup  (uses ../.env)
 		// ------------------------------------------------------------------
 		{
 			name: 'setup',

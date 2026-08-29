@@ -5,9 +5,9 @@ const path = require('path');
 const { chromium } = require('playwright');
 const dotenv = require('dotenv');
 
-dotenv.config({ path: '/Users/common/Gits/wp-plusmagi-tags-reindex/.env' });
-
 const ROOT_DIR = path.resolve(__dirname, '../../');
+dotenv.config({ path: path.join(ROOT_DIR, '.env') });
+
 const ZIP_DIR = path.join(ROOT_DIR, 'wp-assets');
 const BASE_URL = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
 const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
@@ -92,6 +92,23 @@ async function uploadAndOverwriteIfNeeded(page, zipPath) {
 	if (!hasSuccess) {
 	const title = await page.title();
 	throw new Error(`Upload flow finished without a visible success message. Current page title: ${title}`);
+	}
+
+	const activateButton = page
+	.locator('a.button-primary, a.button')
+	.filter({ hasText: /activate plugin|activate|เปิดใช้งานปลั๊กอิน|เปิดใช้งาน/i })
+	.first();
+
+	if (await activateButton.isVisible({ timeout: 3000 }).catch(() => false)) {
+	await Promise.all([
+		page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 60000 }),
+		activateButton.click(),
+	]);
+
+	const activationSuccess = page.locator('.notice-success, .updated').first();
+	if (!(await activationSuccess.isVisible({ timeout: 10000 }).catch(() => false))) {
+		throw new Error('Plugin activation finished without a visible success message.');
+	}
 	}
 }
 

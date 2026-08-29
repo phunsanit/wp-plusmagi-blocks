@@ -3,7 +3,7 @@
  * Plugin Name: PlusMagi Blocks
  * Plugin URI: https://plusmagi-blocks.plusmagi.com/
  * Description: Adds custom Gutenberg blocks (Mermaid diagrams, Description Lists, and more) for WordPress content authors.
- * Version: 1.0.2
+ * Version: 1.0.0
  * Author: Pitt Phunsanit
  * Author URI: https://pitt.plusmagi.com
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_VERSION' ) ) {
-	define( 'PLUSMAGI_BLOCKS_VERSION', '1.0.2' );
+	define( 'PLUSMAGI_BLOCKS_VERSION', '1.0.0' );
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_PATH' ) ) {
@@ -30,6 +30,7 @@ if ( ! defined( 'PLUSMAGI_BLOCKS_URL' ) ) {
 add_action( 'admin_menu', 'plusmagi_blocks_register_menu' );
 add_action( 'admin_enqueue_scripts', 'plusmagi_blocks_enqueue_admin_assets' );
 add_action( 'init', 'plusmagi_blocks_register_blocks' );
+add_action( 'enqueue_block_editor_assets', 'plusmagi_blocks_enqueue_editor_assets' );
 add_action( 'wp_enqueue_scripts', 'plusmagi_blocks_enqueue_frontend_assets' );
 
 function plusmagi_blocks_is_amp_request() {
@@ -149,6 +150,7 @@ function plusmagi_blocks_get_allowed_svg_tags() {
 		'polygon'				=> array_merge( $global_attributes, array( 'points' => true ) ),
 		'text'					 => array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'dx' => true, 'dy' => true ) ),
 		'tspan'					=> array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'dx' => true, 'dy' => true ) ),
+		'foreignobject'	=> array_merge( $global_attributes, array( 'x' => true, 'y' => true, 'width' => true, 'height' => true ) ),
 		'defs'					 => $global_attributes,
 		'marker'				 => array_merge( $global_attributes, array( 'markerwidth' => true, 'markerheight' => true, 'refx' => true, 'refy' => true, 'orient' => true, 'viewbox' => true ) ),
 		'use'						=> array_merge( $global_attributes, array( 'href' => true, 'xlink:href' => true, 'x' => true, 'y' => true ) ),
@@ -164,6 +166,34 @@ function plusmagi_blocks_get_allowed_svg_tags() {
 	);
 
 	return $tags;
+}
+
+function plusmagi_blocks_get_allowed_output_tags() {
+	$allowed_tags = wp_kses_allowed_html( 'post' );
+
+	foreach ( plusmagi_blocks_get_allowed_svg_tags() as $tag => $attributes ) {
+		$allowed_tags[ $tag ] = isset( $allowed_tags[ $tag ] )
+			? array_merge( $allowed_tags[ $tag ], $attributes )
+			: $attributes;
+	}
+
+	$allowed_tags['div']['data-plusmagi-mermaid'] = true;
+	$allowed_tags['amp-img'] = array(
+		'src'            => true,
+		'width'          => true,
+		'height'         => true,
+		'layout'         => true,
+		'alt'            => true,
+		'class'          => true,
+		'data-skip-lazy' => true,
+		'data-no-lazy'   => true,
+	);
+
+	return $allowed_tags;
+}
+
+function plusmagi_blocks_sanitize_rendered_html( $html ) {
+	return wp_kses( (string) $html, plusmagi_blocks_get_allowed_output_tags() );
 }
 
 function plusmagi_blocks_sanitize_svg( $svg ) {
@@ -193,7 +223,7 @@ function plusmagi_blocks_sanitize_svg( $svg ) {
 		return '';
 	}
 
-	return $sanitized;
+	return wp_kses( $sanitized, plusmagi_blocks_get_allowed_svg_tags() );
 }
 
 function plusmagi_blocks_extract_svg_dimensions( $svg ) {
@@ -281,10 +311,25 @@ function plusmagi_blocks_store_svg_file( $svg, $mermaid_code ) {
 		);
 	}
 
-	$base_dir = trailingslashit( $base_dir ) . trim( $year_month, '/' );
-	$base_url = trailingslashit( $base_url ) . trim( $year_month, '/' );
+	$relative_dir = 'plusmagi-blocks/' . trim( $year_month, '/' );
+	$base_dir = trailingslashit( $base_dir ) . $relative_dir;
+	$base_url = trailingslashit( $base_url ) . $relative_dir;
 
-	if ( ! wp_mkdir_p( $base_dir ) ) {
+	if ( ! function_exists( 'WP_Filesystem' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+	}
+
+	global $wp_filesystem;
+
+	if ( ! WP_Filesystem() || ! is_object( $wp_filesystem ) ) {
+		return array(
+			'path' => '',
+			'url'  => '',
+			'error' => 'filesystem-unavailable',
+		);
+	}
+
+	if ( ! $wp_filesystem->is_dir( $base_dir ) && ! $wp_filesystem->mkdir( $base_dir, FS_CHMOD_DIR ) ) {
 		return array(
 			'path' => '',
 			'url'	=> '',
@@ -299,10 +344,8 @@ function plusmagi_blocks_store_svg_file( $svg, $mermaid_code ) {
 	$file_path = trailingslashit( $base_dir ) . $filename;
 	$file_url = trailingslashit( $base_url ) . $filename;
 
-	if ( ! file_exists( $file_path ) ) {
-		$result = file_put_contents( $file_path, $svg );
-
-		if ( false === $result ) {
+	if ( ! $wp_filesystem->exists( $file_path ) ) {
+		if ( ! $wp_filesystem->put_contents( $file_path, $svg, FS_CHMOD_FILE ) ) {
 			return array(
 				'path' => '',
 				'url'	=> '',
@@ -391,6 +434,30 @@ function plusmagi_blocks_register_blocks() {
 		true
 	);
 
+	wp_register_script(
+		'plusmagi-mermaid-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-mermaid.js',
+		array( 'wp-blocks', 'wp-components', 'wp-element', 'wp-i18n', 'plusmagi-markdown-mermaid-runtime' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-mermaid.js' ),
+		true
+	);
+
+	wp_register_script(
+		'plusmagi-dl-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-dl.js',
+		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element', 'wp-i18n' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-dl.js' ),
+		true
+	);
+
+	wp_register_script(
+		'plusmagi-thesaurus-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-thesaurus.js',
+		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element', 'wp-i18n' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-thesaurus.js' ),
+		true
+	);
+
 	register_block_type(
 		PLUSMAGI_BLOCKS_PATH . 'block.json',
 		array(
@@ -398,23 +465,81 @@ function plusmagi_blocks_register_blocks() {
 		)
 	);
 
-	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-description-list.json' );
+	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-thesaurus.json' );
 
-	wp_enqueue_script(
-		'plusmagi-markdown-editor',
-		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-markdown.js',
-		array( 'wp-blocks', 'wp-components', 'wp-element', 'wp-i18n', 'plusmagi-markdown-mermaid-runtime' ),
-		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-markdown.js' ),
-		true
+	register_block_type(
+		PLUSMAGI_BLOCKS_PATH . 'block-description-list.json',
+		array( 'render_callback' => 'plusmagi_blocks_render_description_list' )
 	);
+	register_block_type( 'plusmagi-blocks/description-term', array( 'editor_script' => 'plusmagi-dl-editor' ) );
+	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-description.json' );
 
-	wp_enqueue_script(
-		'plusmagi-markdown-description-list-editor',
-		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-description-list.js',
-		array( 'wp-blocks', 'wp-components', 'wp-element', 'wp-i18n' ),
-		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-description-list.js' ),
-		true
-	);
+}
+
+function plusmagi_blocks_render_description_list( $attributes, $content ) {
+	if ( ! class_exists( 'DOMDocument' ) || ! is_string( $content ) || '' === trim( $content ) ) {
+		return wp_kses_post( (string) $content );
+	}
+
+	$document = new DOMDocument();
+	$previous = libxml_use_internal_errors( true );
+	$document->loadHTML( '<?xml encoding="UTF-8">' . $content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+	libxml_clear_errors();
+	libxml_use_internal_errors( $previous );
+	$ordered_list = $document->getElementsByTagName( 'ol' )->item( 0 );
+
+	if ( ! $ordered_list ) {
+		return wp_kses_post( $content );
+	}
+
+	$description_list = $document->createElement( 'dl' );
+	$description_list->setAttribute( 'class', 'wp-block-plusmagi-markdown-description-list' );
+
+	foreach ( iterator_to_array( $ordered_list->childNodes ) as $term_item ) {
+		if ( 'li' !== strtolower( $term_item->nodeName ) ) {
+			continue;
+		}
+
+		$term = $document->createElement( 'dt' );
+		$description_list->appendChild( $term );
+		foreach ( iterator_to_array( $term_item->childNodes ) as $child ) {
+			if ( 'ol' !== strtolower( $child->nodeName ) ) {
+				$term->appendChild( $child->cloneNode( true ) );
+			}
+		}
+
+		$nested_list = null;
+		foreach ( iterator_to_array( $term_item->childNodes ) as $child ) {
+			if ( 'ol' === strtolower( $child->nodeName ) ) {
+				$nested_list = $child;
+				break;
+			}
+		}
+
+		if ( ! $nested_list ) {
+			continue;
+		}
+
+		foreach ( iterator_to_array( $nested_list->childNodes ) as $description_item ) {
+			if ( 'li' !== strtolower( $description_item->nodeName ) ) {
+				continue;
+			}
+
+			$description = $document->createElement( 'dd' );
+			foreach ( iterator_to_array( $description_item->childNodes ) as $child ) {
+				$description->appendChild( $child->cloneNode( true ) );
+			}
+			$description_list->appendChild( $description );
+		}
+	}
+
+	return wp_kses_post( $document->saveHTML( $description_list ) );
+}
+
+function plusmagi_blocks_enqueue_editor_assets() {
+	wp_enqueue_script( 'plusmagi-mermaid-editor' );
+	wp_enqueue_script( 'plusmagi-dl-editor' );
+	wp_enqueue_script( 'plusmagi-thesaurus-editor' );
 }
 
 function plusmagi_blocks_enqueue_frontend_assets() {
@@ -461,7 +586,7 @@ function plusmagi_blocks_render_mermaid_block( $attributes = array() ) {
 				$amp_image = plusmagi_blocks_build_amp_svg_image( $stored_svg['url'], $amp_svg );
 
 				if ( '' !== $amp_image ) {
-					return '<div class="wp-block-plusmagi-markdown-mermaid"><div class="plusmagi-markdown-front-mermaid plusmagi-markdown-front-mermaid-amp-svg" data-plusmagi-mermaid="1">' . $amp_image . '</div></div>';
+					return plusmagi_blocks_sanitize_rendered_html( '<div class="wp-block-plusmagi-markdown-mermaid"><div class="plusmagi-markdown-front-mermaid plusmagi-markdown-front-mermaid-amp-svg" data-plusmagi-mermaid="1">' . $amp_image . '</div></div>' );
 				}
 
 				$debug = plusmagi_blocks_amp_debug_comment(
@@ -473,7 +598,7 @@ function plusmagi_blocks_render_mermaid_block( $attributes = array() ) {
 					)
 				);
 
-				return '<div class="wp-block-plusmagi-markdown-mermaid">' . $debug . '<div class="plusmagi-markdown-front-mermaid plusmagi-markdown-front-mermaid-amp-svg" data-plusmagi-mermaid="1">' . $amp_svg . '</div></div>';
+				return plusmagi_blocks_sanitize_rendered_html( '<div class="wp-block-plusmagi-markdown-mermaid">' . $debug . '<div class="plusmagi-markdown-front-mermaid plusmagi-markdown-front-mermaid-amp-svg" data-plusmagi-mermaid="1">' . $amp_svg . '</div></div>' );
 			}
 
 			$debug = plusmagi_blocks_amp_debug_comment(
@@ -490,10 +615,10 @@ function plusmagi_blocks_render_mermaid_block( $attributes = array() ) {
 				$hint = '<p class="plusmagi-markdown-amp-hint">AMP page could not render Mermaid to SVG on this server. <a href="' . esc_url( $non_amp_url ) . '">Open non-AMP view</a> to render the diagram.</p>';
 			}
 
-			return '<div class="wp-block-plusmagi-markdown-mermaid">' . $debug . '<div class="plusmagi-markdown-front-mermaid" data-plusmagi-mermaid="1">' . $hint . '<pre class="mermaid">' . esc_html( $mermaid_code ) . '</pre></div></div>';
+			return plusmagi_blocks_sanitize_rendered_html( '<div class="wp-block-plusmagi-markdown-mermaid">' . $debug . '<div class="plusmagi-markdown-front-mermaid" data-plusmagi-mermaid="1">' . $hint . '<pre class="mermaid">' . esc_html( $mermaid_code ) . '</pre></div></div>' );
 		}
 
-		return '<div class="wp-block-plusmagi-markdown-mermaid"><div class="plusmagi-markdown-front-mermaid" data-plusmagi-mermaid="1"><pre class="mermaid">' . esc_html( $mermaid_code ) . '</pre></div></div>';
+		return plusmagi_blocks_sanitize_rendered_html( '<div class="wp-block-plusmagi-markdown-mermaid"><div class="plusmagi-markdown-front-mermaid" data-plusmagi-mermaid="1"><pre class="mermaid">' . esc_html( $mermaid_code ) . '</pre></div></div>' );
 	}
 
 	$lines = preg_split( '/\n/', $markdown );
@@ -536,7 +661,7 @@ function plusmagi_blocks_render_mermaid_block( $attributes = array() ) {
 		return '';
 	}
 
-	return '<div class="wp-block-plusmagi-markdown-mermaid">' . implode( "\n", $html ) . '</div>';
+	return plusmagi_blocks_sanitize_rendered_html( '<div class="wp-block-plusmagi-markdown-mermaid">' . implode( "\n", $html ) . '</div>' );
 }
 
 function plusmagi_blocks_render_page() {

@@ -1,0 +1,17 @@
+{
+  "apiVersion": 3,
+  "name": "plusmagi-blocks/description",
+  "title": "PlusMagi - Description",
+  "category": "text",
+  "icon": "editor-paragraph",
+  "parent": ["plusmagi-blocks/description-term", "plusmagi-blocks/description-list"],
+  "description": "Add a description with nested WordPress blocks such as paragraphs and lists.",
+  "keywords": ["plusmagi", "description", "dd", "list"],
+  "version": "1.0.0",
+  "textdomain": "plusmagi-blocks",
+  "supports": {
+    "html": false
+  },
+  "editorScript": "plusmagi-dl-editor",
+  "style": "file:./css/plusmagi-description-list.css"
+}

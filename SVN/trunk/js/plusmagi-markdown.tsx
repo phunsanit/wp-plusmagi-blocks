@@ -246,6 +246,7 @@ const blockType = (window as typeof window & { wp?: { blocks?: { registerBlockTy
 
 if (typeof blockType === 'function') {
 	blockType('plusmagi-blocks/mermaid', {
+		apiVersion: 3,
 		attributes: {
 			markdown: {
 				type: 'string',

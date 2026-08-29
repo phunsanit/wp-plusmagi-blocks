@@ -4,10 +4,67 @@
 
 .wp-block-plusmagi-markdown-description-list dt {
 	font-weight: 600;
+	margin: 1em 0 0.35em;
 }
 
 .wp-block-plusmagi-markdown-description-list dd {
 	margin: 0 0 1em;
+	position: relative;
+	padding-left: 1.25em;
+	margin-left: 20px;
+	border-left: 2px solid #dcdcde;
+	padding-top: 0.15em;
+}
+
+.wp-block-plusmagi-markdown-description-list dd::before {
+	content: '*';
+	position: absolute;
+	left: 0;
+	font-weight: 600;
+}
+
+.plusmagi-description-list-term-editor {
+	display: list-item;
+	list-style-type: decimal;
+	font-weight: 600;
+	font-size: 1.1em;
+	margin: 0;
+	padding: 8px 0;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.plusmagi-description-list-type-label {
+	display: inline-block;
+	width: max-content;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.plusmagi-description-list-type-label-dt {
+	background: #1d2327;
+	color: #fff;
+}
+
+.plusmagi-description-list-definition {
+	display: list-item;
+	list-style-type: disc;
+	position: relative;
+	margin-left: 20px;
+	padding-left: 1em;
+	border-left: 2px solid #dcdcde;
+}
+
+.plusmagi-description-list-type-label-dd {
+	margin-bottom: 6px;
+	background: #2271b1;
+	color: #fff;
+}
+
+.plusmagi-description-list-definition::before {
+	content: none;
 }
 
 .plusmagi-description-list-editor-wrapper {
@@ -19,6 +76,8 @@
 
 .plusmagi-description-list-editor-title {
 	display: block;
+	margin-bottom: 12px;
+	font-weight: 600;
 }
 
 .plusmagi-description-list-item {

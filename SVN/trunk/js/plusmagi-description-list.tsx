@@ -1,104 +1,163 @@
 import { createElement, Fragment } from '@wordpress/element';
-import { Button, TextControl, TextareaControl } from '@wordpress/components';
+import { InnerBlocks, BlockControls, RichText, useBlockProps } from '@wordpress/block-editor';
+import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
 
-type DescriptionListItem = {
-	term: string;
-	description: string;
-};
+const wpGlobals = window as any;
+const createIcon = (path: string) => createElement('svg', { viewBox: '0 0 24 24', fill: 'currentColor' }, createElement('path', { d: path }));
+const formatIndentIncrease = wpGlobals.wp?.icons?.formatIndentIncrease || createIcon('M4 7.2v1.5h16V7.2H4zm8 8.6h8v-1.5h-8v1.5zm-4-4.6l-4 4 4 4 1-1-3-3 3-3-1-1z');
+const formatIndentDecrease = wpGlobals.wp?.icons?.formatIndentDecrease || createIcon('M4 7.2v1.5h16V7.2H4zm8 8.6h8v-1.5h-8v1.5zm-4-4.6l4 4-4 4-1-1 3-3-3-3 1-1z');
+const trash = wpGlobals.wp?.icons?.trash || createIcon('M6 7h12v13H6V7zm3-3h6l1 1h4v2H4V5h4l1-1z');
 
-type DescriptionListAttributes = {
-	items?: DescriptionListItem[];
-};
+const TERM_BLOCK = 'plusmagi-blocks/description-term';
+const DD_BLOCK = 'plusmagi-blocks/description';
+const LIST_BLOCK = 'plusmagi-blocks/description-list';
+const DD_ALLOWED_BLOCKS = [
+	'core/paragraph',
+	'core/list',
+	'core/heading',
+	'core/image',
+	'core/quote',
+	'core/code',
+];
 
-type DescriptionListBlockProps = {
-	attributes: DescriptionListAttributes;
-	setAttributes: (attrs: Record<string, unknown>) => void;
-};
+function DescriptionEditor({ clientId, attributes, setAttributes }: any) {
+	const blockProps = useBlockProps({ className: 'plusmagi-description-list-item' });
+	const indent = () => wpGlobals.wp.data.dispatch('core/block-editor').replaceBlocks(clientId, wpGlobals.wp.blocks.createBlock(DD_BLOCK, {}, [wpGlobals.wp.blocks.createBlock('core/paragraph', { content: attributes.term || '' })]));
+	const addNextTerm = (event: any) => {
+		if (event.key !== 'Enter') {
+			return;
+		}
 
-function createEmptyItem(): DescriptionListItem {
-	return { term: '', description: '' };
-}
-
-// Gutenberg can persist an empty array; always keep at least one editable row.
-function normalizeItems(items?: DescriptionListItem[]): DescriptionListItem[] {
-	return items && items.length > 0 ? items : [createEmptyItem()];
-}
-
-function DescriptionListEditor({ attributes, setAttributes }: DescriptionListBlockProps) {
-	const items = normalizeItems(attributes.items);
-
-	const updateItem = (index: number, key: keyof DescriptionListItem, value: string) => {
-		const nextItems = items.map((item, itemIndex) => (itemIndex === index ? { ...item, [key]: value } : item));
-		setAttributes({ items: nextItems });
+		event.preventDefault();
+		const parentId = wpGlobals.wp.data.select('core/block-editor').getBlockParents(clientId).slice(-1)[0];
+		const parentBlocks = wpGlobals.wp.data.select('core/block-editor').getBlocks(parentId);
+		const index = parentBlocks.findIndex((block: any) => block.clientId === clientId);
+		wpGlobals.wp.data.dispatch('core/block-editor').insertBlocks(
+			wpGlobals.wp.blocks.createBlock(TERM_BLOCK, {}, [wpGlobals.wp.blocks.createBlock(DD_BLOCK)]),
+			index + 1,
+			parentId
+		);
 	};
 
-	const addItem = () => {
-		setAttributes({ items: [...items, createEmptyItem()] });
-	};
-
-	const removeItem = (index: number) => {
-		setAttributes({ items: normalizeItems(items.filter((_, itemIndex) => itemIndex !== index)) });
-	};
-
-	return (
-		<div className="plusmagi-description-list-editor-wrapper">
-			<strong className="plusmagi-description-list-editor-title">Description List</strong>
-			{items.map((item, index) => (
-				<div className="plusmagi-description-list-item" key={index}>
-					<TextControl
-						label={`Term ${index + 1}`}
-						value={item.term}
-						onChange={(value: string) => updateItem(index, 'term', value)}
-					/>
-					<TextareaControl
-						label={`Description ${index + 1}`}
-						value={item.description}
-						onChange={(value: string) => updateItem(index, 'description', value)}
-					/>
-					<Button
-						variant="secondary"
-						isDestructive
-						disabled={items.length <= 1}
-						className="plusmagi-description-list-remove-item"
-						onClick={() => removeItem(index)}
-					>
-						Remove item
-					</Button>
-				</div>
-			))}
-			<Button variant="primary" className="plusmagi-description-list-add-item" onClick={addItem}>
-				Add item
-			</Button>
-		</div>
+	return createElement(
+		'div',
+		blockProps,
+		createElement(BlockControls, null, createElement(ToolbarGroup, null, createElement(ToolbarButton, {
+			icon: formatIndentIncrease,
+			title: 'Indent',
+			label: 'Indent',
+			onClick: indent,
+		}), createElement(ToolbarButton, {
+			icon: trash,
+			title: 'Remove term',
+			label: 'Remove term',
+			onClick: () => wpGlobals.wp.data.dispatch('core/block-editor').removeBlocks(clientId),
+		}))),
+		createElement('span', { className: 'plusmagi-description-list-type-label plusmagi-description-list-type-label-dt' }, 'Term'),
+		createElement(RichText, {
+			tagName: 'div',
+			className: 'plusmagi-description-list-term-editor',
+			value: attributes.term || '',
+			onChange: (term: string) => setAttributes({ term }),
+			placeholder: 'Term',
+			onKeyDown: addNextTerm,
+		}),
+		createElement(InnerBlocks, { allowedBlocks: [DD_BLOCK], template: [[DD_BLOCK]], templateLock: false }),
 	);
 }
 
-function DescriptionListSave({ attributes }: { attributes: DescriptionListAttributes }) {
-	const items = normalizeItems(attributes.items);
+function DescriptionSave({ attributes }: any) {
+	return createElement(Fragment, null, createElement(RichText.Content, { tagName: 'dt', value: attributes.term || '' }), createElement(InnerBlocks.Content, null));
+}
 
-	return (
-		<dl className="wp-block-plusmagi-markdown-description-list">
-			{items.map((item, index) => (
-				<Fragment key={index}>
-					<dt>{item.term}</dt>
-					<dd>{item.description}</dd>
-				</Fragment>
-			))}
-		</dl>
-	);
+function DdEditor({ clientId }: any) {
+	const blockProps = useBlockProps({
+		className: 'plusmagi-description-list-definition',
+		style: { marginLeft: '20px', paddingLeft: '20px', borderLeft: '2px solid #dcdcde' },
+	});
+	const addNextDescription = (event: any) => {
+		if (event.key !== 'Enter' || event.shiftKey || event.defaultPrevented) {
+			return;
+		}
+
+		if (event.target.closest('.wp-block-list, [data-type="core/list"], [data-type="core/list-item"]')) {
+			return;
+		}
+
+		if (!event.target.closest('[data-type="core/paragraph"]')) {
+			return;
+		}
+
+		event.preventDefault();
+		const parentId = wpGlobals.wp.data.select('core/block-editor').getBlockParents(clientId).slice(-1)[0];
+		const parentBlocks = wpGlobals.wp.data.select('core/block-editor').getBlocks(parentId);
+		const index = parentBlocks.findIndex((block: any) => block.clientId === clientId);
+		wpGlobals.wp.data.dispatch('core/block-editor').insertBlocks(
+			wpGlobals.wp.blocks.createBlock(DD_BLOCK, {}, [wpGlobals.wp.blocks.createBlock('core/paragraph')]),
+			index + 1,
+			parentId
+		);
+	};
+	const outdent = () => {
+		const blocks = wpGlobals.wp.data.select('core/block-editor').getBlocks(clientId);
+		const content = blocks.map((block: any) => block.attributes?.content || '').join('\n').trim();
+		wpGlobals.wp.data.dispatch('core/block-editor').replaceBlocks(clientId, wpGlobals.wp.blocks.createBlock(TERM_BLOCK, { term: content }));
+	};
+
+	return createElement('div', { ...blockProps, onKeyDownCapture: addNextDescription }, createElement(BlockControls, null, createElement(ToolbarGroup, null, createElement(ToolbarButton, {
+		icon: formatIndentDecrease,
+		title: 'Outdent',
+		label: 'Outdent',
+		onClick: outdent,
+	}), createElement(ToolbarButton, {
+		icon: trash,
+		title: 'Remove description',
+		label: 'Remove description',
+		onClick: () => wpGlobals.wp.data.dispatch('core/block-editor').removeBlocks(clientId),
+		}))), createElement('span', { className: 'plusmagi-description-list-type-label plusmagi-description-list-type-label-dd' }, 'Description'), createElement(InnerBlocks, { allowedBlocks: DD_ALLOWED_BLOCKS, template: [['core/paragraph']], templateLock: false }));
+}
+
+function DdSave() {
+	return createElement('dd', null, createElement(InnerBlocks.Content, null));
 }
 
 const blockType = (window as typeof window & { wp?: { blocks?: { registerBlockType?: (name: string, config: Record<string, unknown>) => void } } }).wp?.blocks?.registerBlockType;
 
 if (typeof blockType === 'function') {
-	blockType('plusmagi-blocks/description-list', {
-		attributes: {
-			items: {
-				type: 'array',
-				default: [createEmptyItem()],
-			},
-		},
-		edit: (props: DescriptionListBlockProps) => createElement(DescriptionListEditor, props),
-		save: (props: { attributes: DescriptionListAttributes }) => createElement(DescriptionListSave, props),
+	blockType(TERM_BLOCK, {
+		apiVersion: 3,
+		title: 'PlusMagi - Description term',
+		category: 'text',
+		icon: 'editor-bold',
+		parent: [LIST_BLOCK],
+		attributes: { term: { type: 'string', source: 'html', selector: 'dt' } },
+		supports: { html: false, reusable: false },
+		edit: DescriptionEditor,
+		save: DescriptionSave,
+	});
+
+	blockType(DD_BLOCK, {
+		apiVersion: 3,
+		title: 'PlusMagi - Description',
+		category: 'text',
+		icon: 'editor-paragraph',
+		parent: [TERM_BLOCK],
+		supports: { html: false, reusable: false },
+		edit: DdEditor,
+		save: DdSave,
+	});
+
+	blockType(LIST_BLOCK, {
+		apiVersion: 3,
+		title: 'PlusMagi - Description list',
+		category: 'text',
+		icon: 'editor-ul',
+		keywords: ['plusmagi', 'description list', 'definition list', 'dl', 'dt', 'dd'],
+		attributes: { ordered: { type: 'boolean', default: true } },
+		template: [[TERM_BLOCK, {}, [[DD_BLOCK]]], [TERM_BLOCK, {}, [[DD_BLOCK]]], [TERM_BLOCK, {}, [[DD_BLOCK]]]],
+		allowedBlocks: [TERM_BLOCK],
+		supports: { html: false },
+		edit: () => createElement('div', { className: 'plusmagi-description-list-editor-wrapper' }, createElement('strong', { className: 'plusmagi-description-list-editor-title' }, 'PlusMagi - Description list'), createElement(InnerBlocks, { allowedBlocks: [TERM_BLOCK], template: [[TERM_BLOCK, {}, [[DD_BLOCK]]], [TERM_BLOCK, {}, [[DD_BLOCK]]], [TERM_BLOCK, {}, [[DD_BLOCK]]]], templateLock: false })),
+		save: () => createElement('dl', { className: 'wp-block-plusmagi-markdown-description-list' }, createElement(InnerBlocks.Content, null)),
 	});
 }
