@@ -1,0 +1,32 @@
+{
+	"apiVersion": 3,
+	"name": "plusmagi-blocks/table-style",
+	"title": "PlusMagi - Table Style",
+	"category": "design",
+	"icon": "editor-table",
+	"description": "Add a table style example with its style ID rendered as an H3 heading.",
+	"keywords": ["plusmagi", "table", "table style", "style id", "h3"],
+	"version": "1.0.0",
+	"textdomain": "plusmagi-blocks",
+	"attributes": {
+		"styleId": {
+			"type": "string",
+			"source": "html",
+			"selector": "h3",
+			"default": "TableGrid"
+		},
+		"bandedColumns": {
+			"type": "boolean",
+			"default": false
+		},
+		"compareBandedColumns": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorScript": "plusmagi-table-style-editor",
+	"style": "file:./css/plusmagi-table-style.css"
+}

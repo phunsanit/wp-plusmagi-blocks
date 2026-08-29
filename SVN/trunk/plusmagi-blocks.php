@@ -474,6 +474,21 @@ function plusmagi_blocks_register_blocks() {
 		true
 	);
 
+	wp_register_script(
+		'plusmagi-table-style-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-table-style.js',
+		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-compose', 'wp-element', 'wp-hooks' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-table-style.js' ),
+		true
+	);
+
+	wp_register_style(
+		'plusmagi-table-style',
+		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-table-style.css',
+		array(),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-table-style.css' )
+	);
+
 	register_block_type(
 		PLUSMAGI_BLOCKS_PATH . 'block.json',
 		array(
@@ -489,6 +504,7 @@ function plusmagi_blocks_register_blocks() {
 	);
 	register_block_type( 'plusmagi-blocks/description-term', array( 'editor_script' => 'plusmagi-dl-editor' ) );
 	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-description.json' );
+	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-table-style.json' );
 
 }
 
@@ -556,12 +572,16 @@ function plusmagi_blocks_enqueue_editor_assets() {
 	wp_enqueue_script( 'plusmagi-mermaid-editor' );
 	wp_enqueue_script( 'plusmagi-dl-editor' );
 	wp_enqueue_script( 'plusmagi-thesaurus-editor' );
+	wp_enqueue_script( 'plusmagi-table-style-editor' );
+	wp_enqueue_style( 'plusmagi-table-style' );
 }
 
 function plusmagi_blocks_enqueue_frontend_assets() {
 	if ( is_admin() ) {
 		return;
 	}
+
+	wp_enqueue_style( 'plusmagi-table-style' );
 
 	// AMP pages do not allow Mermaid runtime execution.
 	if ( plusmagi_blocks_is_amp_request() ) {

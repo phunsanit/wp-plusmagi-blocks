@@ -1,0 +1,316 @@
+.wp-block-plusmagi-blocks-table-style {
+	--ms-dark1: #000;
+	--ms-light1: #fff;
+	--ms-border: #d1d1d1;
+	--ms-border-dark: #a0a0a0;
+	--ms-accent1: #5b9bd5;
+	--ms-accent2: #ed7d31;
+	--ms-accent3: #a5a5a5;
+	--ms-accent4: #ffc000;
+	--ms-accent5: #4472c4;
+	--ms-accent6: #70ad47;
+	--ms-accent1-tint20: #deebf7;
+	--ms-accent2-tint20: #fce4d6;
+	--ms-accent3-tint20: #ededed;
+	--ms-accent4-tint20: #fff2cc;
+	--ms-accent5-tint20: #d6dce5;
+	--ms-accent6-tint20: #e2efda;
+	--ms-accent1-tint40: #bdd7ee;
+	--ms-accent2-tint40: #f8cbad;
+	--ms-accent3-tint40: #dbdbdb;
+	--ms-accent4-tint40: #ffe699;
+	--ms-accent5-tint40: #b4c6e7;
+	--ms-accent6-tint40: #c6e0b4;
+	--ms-accent1-dark: #2f75b5;
+	--ms-accent2-dark: #c55a11;
+	--ms-accent3-dark: #7b7b7b;
+	--ms-accent4-dark: #bf8f00;
+	--ms-accent5-dark: #2f5496;
+	--ms-accent6-dark: #548235;
+	margin-block: 1.5rem;
+}
+
+.wp-block-plusmagi-blocks-table-style .plusmagi-table-style-id {
+	display: inline-block;
+	margin: 0 0 0.75rem;
+	padding: 0.25rem 0.6rem;
+	border-radius: 4px;
+	background: #f0f4f8;
+	color: #333;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 0.95rem;
+	font-weight: 600;
+	letter-spacing: 0;
+}
+
+.wp-block-plusmagi-blocks-table-style .plusmagi-banded-columns-state {
+	margin: 0 0 0.5rem;
+	color: #666;
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style .wp-block-table {
+	margin-block: 0;
+}
+
+.wp-block-plusmagi-blocks-table-style table {
+	width: 100%;
+	max-width: 480px;
+	border-collapse: collapse;
+	background: var(--ms-light1);
+	font-size: 13px;
+}
+
+.wp-block-plusmagi-blocks-table-style th,
+.wp-block-plusmagi-blocks-table-style td {
+	padding: 7px 12px;
+	text-align: left;
+	vertical-align: middle;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="-Accent1"] { --cur-accent: var(--ms-accent1); --cur-tint: var(--ms-accent1-tint20); --cur-border: var(--ms-accent1-tint40); --cur-dark: var(--ms-accent1-dark); }
+.wp-block-plusmagi-blocks-table-style[class*="-Accent2"] { --cur-accent: var(--ms-accent2); --cur-tint: var(--ms-accent2-tint20); --cur-border: var(--ms-accent2-tint40); --cur-dark: var(--ms-accent2-dark); }
+.wp-block-plusmagi-blocks-table-style[class*="-Accent3"] { --cur-accent: var(--ms-accent3); --cur-tint: var(--ms-accent3-tint20); --cur-border: var(--ms-accent3-tint40); --cur-dark: var(--ms-accent3-dark); }
+.wp-block-plusmagi-blocks-table-style[class*="-Accent4"] { --cur-accent: var(--ms-accent4); --cur-tint: var(--ms-accent4-tint20); --cur-border: var(--ms-accent4-tint40); --cur-dark: var(--ms-accent4-dark); }
+.wp-block-plusmagi-blocks-table-style[class*="-Accent5"] { --cur-accent: var(--ms-accent5); --cur-tint: var(--ms-accent5-tint20); --cur-border: var(--ms-accent5-tint40); --cur-dark: var(--ms-accent5-dark); }
+.wp-block-plusmagi-blocks-table-style[class*="-Accent6"] { --cur-accent: var(--ms-accent6); --cur-tint: var(--ms-accent6-tint20); --cur-border: var(--ms-accent6-tint40); --cur-dark: var(--ms-accent6-dark); }
+
+.wp-block-plusmagi-blocks-table-style.is-banded-columns[class*="GridTable"] tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style.is-banded-columns[class*="ListTable"] tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="GridTable"] .wp-block-table.is-banded-columns tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="ListTable"] .wp-block-table.is-banded-columns tbody td:nth-child(even) {
+	background-color: var(--cur-tint, rgba(0, 0, 0, 0.03)) !important;
+}
+
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.GridTable2 tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.GridTable3 tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.GridTable4 tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.ListTable2 tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.ListTable3 tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.ListTable4 tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style:is(.GridTable2, .GridTable3, .GridTable4, .ListTable2, .ListTable3, .ListTable4) .wp-block-table.is-banded-columns tbody td:nth-child(even) {
+	background-color: #deebf7 !important;
+}
+
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.GridTable5Dark tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style.is-banded-columns.ListTable5Dark tbody td:nth-child(even),
+.wp-block-plusmagi-blocks-table-style:is(.GridTable5Dark, .ListTable5Dark) .wp-block-table.is-banded-columns tbody td:nth-child(even) {
+	background-color: #b4c6e7 !important;
+}
+
+.wp-block-plusmagi-blocks-table-style.TableNormal th,
+.wp-block-plusmagi-blocks-table-style.TableNormal td {
+	border: 0;
+	background: transparent;
+}
+
+.wp-block-plusmagi-blocks-table-style.TableGrid th,
+.wp-block-plusmagi-blocks-table-style.TableGrid td {
+	border: 1px solid var(--ms-border);
+}
+
+.wp-block-plusmagi-blocks-table-style.TableGridLight th,
+.wp-block-plusmagi-blocks-table-style.TableGridLight td {
+	border: 1px solid #e0e0e0;
+}
+
+.wp-block-plusmagi-blocks-table-style.TableSimple1 th,
+.wp-block-plusmagi-blocks-table-style.TableSimple1 td {
+	border-top: 1px solid var(--ms-border);
+	border-bottom: 1px solid var(--ms-border);
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable1 table {
+	border-top: 1.5px solid var(--ms-dark1);
+	border-bottom: 1.5px solid var(--ms-dark1);
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable2 table {
+	border: 1px solid var(--ms-border);
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable3 table {
+	border-top: 2.5px solid var(--ms-dark1);
+	border-bottom: 2.5px solid var(--ms-dark1);
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable1 th,
+.wp-block-plusmagi-blocks-table-style.PlainTable1 td,
+.wp-block-plusmagi-blocks-table-style.PlainTable2 th,
+.wp-block-plusmagi-blocks-table-style.PlainTable2 td,
+.wp-block-plusmagi-blocks-table-style.PlainTable3 th,
+.wp-block-plusmagi-blocks-table-style.PlainTable3 td {
+	border: 0;
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable4 thead th {
+	border-bottom: 2px solid var(--ms-dark1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable4 tbody td {
+	border-bottom: 1px dashed var(--ms-border);
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable5 thead th {
+	border-bottom: 1.5px solid var(--ms-dark1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable5 tfoot td {
+	border-top: 1.5px solid var(--ms-dark1);
+	border-bottom: 3px double var(--ms-dark1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style.PlainTable5 th,
+.wp-block-plusmagi-blocks-table-style.PlainTable5 td {
+	border-right: 0;
+	border-left: 0;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable1Light-Accent"] th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable1Light-Accent"] td {
+	border: 1px solid var(--cur-accent);
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable1Light-Accent"] thead th {
+	border-bottom: 2.5px solid var(--cur-accent);
+	background: transparent;
+	color: var(--cur-accent);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style.GridTable1Light th,
+.wp-block-plusmagi-blocks-table-style.GridTable1Light td {
+	border: 1px solid var(--ms-border);
+}
+
+.wp-block-plusmagi-blocks-table-style.GridTable1Light thead th {
+	border-bottom: 2px solid var(--ms-border-dark);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable2"] th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable2"] td,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable3"] th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable3"] td,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable4"] th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable4"] td,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable5Dark"] th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable5Dark"] td,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable6Colorful"] th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable6Colorful"] td,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable7Colorful"] th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable7Colorful"] td {
+	border: 1px solid var(--cur-border, #c5c5c5);
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable2"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable3"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable4"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable6Colorful"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable7Colorful"] thead th {
+	border-color: var(--cur-accent, var(--ms-accent1));
+	background: var(--cur-accent, var(--ms-accent1));
+	color: var(--ms-light1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable6Colorful-"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="GridTable7Colorful-"] thead th {
+	border-color: var(--ms-light1);
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable2"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="GridTable3"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="GridTable4"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="GridTable7Colorful"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="GridTable6Colorful"] tbody tr:nth-child(odd) {
+	background: var(--cur-tint, var(--ms-accent1-tint20));
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable4"] tbody td:first-child {
+	color: var(--cur-dark, var(--ms-accent1-dark));
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable5Dark"] thead th {
+	background: var(--cur-dark, var(--ms-accent5-dark));
+	color: var(--ms-light1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable5Dark"] tbody tr:nth-child(odd) {
+	background: var(--cur-tint, var(--ms-accent5-tint20));
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable5Dark"] tbody tr:nth-child(even) {
+	background: var(--cur-border, var(--ms-accent5-tint40));
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="GridTable6Colorful"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="GridTable7Colorful"] tbody tr:nth-child(odd) {
+	background: var(--ms-light1);
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable"] th,
+.wp-block-plusmagi-blocks-table-style[class*="ListTable"] td {
+	border-right: 0 !important;
+	border-left: 0 !important;
+}
+
+.wp-block-plusmagi-blocks-table-style.ListTable1Light thead th {
+	border-top: 1.5px solid var(--ms-dark1);
+	border-bottom: 1.5px solid var(--ms-dark1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style.ListTable1Light td {
+	border-bottom: 1px solid #eee;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable1Light-Accent"] thead th {
+	border-top: 2.5px solid var(--cur-accent);
+	border-bottom: 2.5px solid var(--cur-accent);
+	background: transparent;
+	color: var(--cur-accent);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable1Light-Accent"] td {
+	border-bottom: 1px solid var(--cur-tint);
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable2"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="ListTable3"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="ListTable4"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="ListTable6Colorful"] thead th,
+.wp-block-plusmagi-blocks-table-style[class*="ListTable7Colorful"] thead th {
+	background: var(--cur-accent, var(--ms-accent1));
+	color: var(--ms-light1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable2"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="ListTable3"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="ListTable4"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="ListTable7Colorful"] tbody tr:nth-child(even),
+.wp-block-plusmagi-blocks-table-style[class*="ListTable6Colorful"] tbody tr:nth-child(odd) {
+	background: var(--cur-tint, var(--ms-accent1-tint20));
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable5Dark"] thead th {
+	background: var(--cur-dark, var(--ms-accent5-dark));
+	color: var(--ms-light1);
+	font-weight: 600;
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable5Dark"] tbody tr:nth-child(odd) {
+	background: var(--cur-tint, var(--ms-accent5-tint20));
+}
+
+.wp-block-plusmagi-blocks-table-style[class*="ListTable5Dark"] tbody tr:nth-child(even) {
+	background: var(--cur-border, var(--ms-accent5-tint40));
+}
