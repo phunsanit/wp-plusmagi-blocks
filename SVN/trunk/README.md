@@ -5,7 +5,7 @@
 
 ![PlusMagi Blocks banner](../assets/banner-1544x500.png)
 
-**PlusMagi Blocks** adds focused Gutenberg blocks for diagrams, structured definitions, and semantic word references. Authors can create and preview rich technical content without leaving the WordPress editor.
+**PlusMagi Blocks** adds focused Gutenberg tools for diagrams, structured definitions, semantic word references, and Word-inspired table designs. Authors can create and preview rich technical content without leaving the WordPress editor.
 
 ## Requirements
 
@@ -43,6 +43,16 @@ Build structured reference entries for words and concepts.
 - Group synonyms and antonyms
 - Edit entries through Gutenberg controls
 - Publish semantic thesaurus markup with dedicated frontend styles
+
+### Table Styles
+
+Apply one of 107 Microsoft Word-inspired designs to the native Gutenberg Table block.
+
+- Keep the standard `core/table` editing and serialization workflow
+- Choose a style from **Table Design** in the block sidebar
+- Enable optional Banded Columns
+- Change styles or choose **None** without changing the table content
+- Publish the table without an extra heading or wrapper
 
 ## Installation
 
@@ -84,6 +94,14 @@ Use one Mermaid diagram per block. For a longer document, add multiple blocks so
 2. Insert **PlusMagi - Thesaurus**.
 3. Add a heading and entries with definitions, synonyms, and antonyms.
 
+### Style a Gutenberg table
+
+1. Insert or select a standard Gutenberg **Table** block.
+2. Open the block settings sidebar and expand **Table Design**.
+3. Choose one of the 107 styles.
+4. Optionally enable **Banded Columns**.
+5. To clear the design later, choose **None**. The table content remains intact.
+
 ## Frontend and AMP Rendering
 
 On standard WordPress pages, Mermaid diagrams are rendered responsively on the frontend. For AMP requests, the plugin sanitizes the generated SVG, stores it in the WordPress uploads directory, and renders it through AMP-compatible image markup.
@@ -111,6 +129,7 @@ Source repository: [github.com/phunsanit/wp-plusmagi-blocks](https://github.com/
 - Added live Mermaid preview and frontend rendering
 - Added responsive SVG and AMP-compatible diagram output
 - Added editor and frontend styles for structured content
+- Added 107 Table Styles and Banded Columns for native Gutenberg tables
 
 ## License
 

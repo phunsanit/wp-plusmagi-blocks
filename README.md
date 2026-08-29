@@ -3,20 +3,22 @@
 [![WordPress Plugin](https://img.shields.io/badge/WordPress-Plugin-blue.svg)](https://wordpress.org/plugins/plusmagi-blocks)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**PlusMagi Blocks** is a WordPress plugin that adds custom content blocks (Mermaid diagrams, Description Lists, and more) to the admin and editor workflows.
+**PlusMagi Blocks** adds focused Gutenberg tools for Mermaid diagrams, semantic Description Lists, Thesaurus entries, and Microsoft Word-inspired Table Styles.
 
 ---
 
 ## 🌟 Key Features
 
-### 1. Lightweight Plugin Bootstrap
-- Registers the plugin cleanly in WordPress
-- Uses the current PlusMagi Markdown identity without legacy tag-reindex branding
-- Keeps the plugin buildable and safe for WordPress.org packaging
+### 1. Structured Content Blocks
+- Edit Mermaid diagrams with a live preview
+- Build semantic `<dl>`, `<dt>`, and `<dd>` Description Lists
+- Publish Thesaurus entries with definitions, synonyms, and antonyms
 
-### 2. Admin Integration
-- Exposes a simple admin entry point for the plugin
-- Keeps the plugin structure ready for future Markdown-focused enhancements
+### 2. Native Table Styles
+- Extends the standard Gutenberg Table block instead of replacing it
+- Provides 107 Microsoft Word-inspired styles in the **Table Design** sidebar
+- Supports optional Banded Columns and changing or clearing a style later
+- Preserves the table content without generating an extra heading
 
 ### 3. Build and Release Flow
 - Supports packaging through the included build script
@@ -36,8 +38,10 @@
 ## 🚀 How to Use
 
 - Activate the plugin from the WordPress Plugins screen
-- Open the plugin admin entry point from the dashboard menu
-- Extend the plugin with Markdown-specific features as needed
+- Insert a PlusMagi block for Mermaid, Description List, or Thesaurus content
+- To style a table, insert or select a native Gutenberg **Table** block
+- Open **Table Design** in the block sidebar, choose a style, and optionally enable **Banded Columns**
+- Choose **None** to remove the PlusMagi style while preserving the table content
 
 ---
 
@@ -47,6 +51,8 @@
 - Clean plugin bootstrap for PlusMagi Markdown
 - Updated packaging and release flow
 - Removed legacy PlusMagi Tags Reindex branding
+- Added 107 Table Styles for the native Gutenberg Table block
+- Added Banded Columns and in-editor style switching
 
 ---
 

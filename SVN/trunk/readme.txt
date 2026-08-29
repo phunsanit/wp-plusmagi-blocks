@@ -1,6 +1,6 @@
 === PlusMagi Blocks ===
 Contributors: phunsanit
-Tags: blocks, mermaid, thesaurus, description-list, editor
+Tags: blocks, mermaid, table, thesaurus, editor
 Requires at least: 6.0
 Tested up to: 7.1
 Stable tag: 1.0.0
@@ -8,12 +8,12 @@ Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-PlusMagi Blocks is a WordPress plugin that adds custom content blocks (Mermaid diagrams, Description Lists, and more) for WordPress content authors.
+PlusMagi Blocks adds Gutenberg tools for Mermaid diagrams, Description Lists, Thesaurus entries, and Word-inspired Table Styles.
 
 == Description ==
 
 PlusMagi Blocks provides a streamlined experience for working with custom content blocks inside WordPress and the block editor.
-It adds a focused content workflow for authors who need Mermaid diagrams or description lists while keeping the WordPress editing experience intact.
+It adds focused workflows for Mermaid diagrams, description lists, thesaurus entries, and styled tables while keeping the WordPress editing experience intact.
 
 Plugin directory visuals are included via the standard WordPress.org assets:
 
@@ -24,6 +24,9 @@ Plugin directory visuals are included via the standard WordPress.org assets:
 
 * Mermaid diagram block with Markdown-based editing
 * Description List block (<dl>/<dt>/<dd>) with add/remove items
+* Thesaurus block for definitions, synonyms, and antonyms
+* 107 Microsoft Word-inspired styles for the native Gutenberg Table block
+* Optional Banded Columns and in-editor style switching
 * Gutenberg-friendly editor integration
 * Lightweight plugin structure for easy maintenance
 * Simple installation and activation process
@@ -44,6 +47,16 @@ Tips:
 * For long technical articles, split diagrams into multiple Mermaid blocks.
 * If preview does not render, check Mermaid syntax first (missing arrows, brackets, keywords).
 
+== Table Style Guide ==
+
+1. Insert or select a standard Gutenberg Table block.
+2. Open the block settings sidebar and expand **Table Design**.
+3. Choose one of the 107 styles.
+4. Optionally enable **Banded Columns**.
+5. Choose **None** at any time to remove the design without changing table content.
+
+Table Styles extend the native Gutenberg Table block. They do not add a heading to published content.
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/plusmagi-blocks` directory
@@ -61,6 +74,8 @@ Tips:
 * Initial public release
 * Added PlusMagi Blocks plugin entry point
 * Added Mermaid diagram block and Description List block
+* Added Thesaurus and 107 Table Styles for native Gutenberg tables
+* Added optional Banded Columns and in-editor style switching
 * Added basic WordPress plugin scaffold and metadata
 
 == Upgrade Notice ==
