@@ -56,7 +56,6 @@
 
 .wp-block-plusmagi-blocks-table-style table {
 	width: 100%;
-	max-width: 480px;
 	border-collapse: collapse;
 	background: var(--ms-light1);
 	font-size: 13px;
