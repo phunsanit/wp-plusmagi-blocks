@@ -84,8 +84,8 @@ module.exports = defineConfig({
 		},
 
 		// ------------------------------------------------------------------
-		// Admin tests — Gutenberg block tests (requires WP_ADMIN_PASSWORD)
-		// Depends on 'setup' project having run first.
+		// Admin tests — REST auth uses WP_APPLICATION_PASSWORD; browser UI uses saved cookies.
+		// Depends on 'setup' verifying REST credentials first.
 		// ------------------------------------------------------------------
 		{
 			name: 'admin',

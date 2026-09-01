@@ -2,21 +2,19 @@
 
 const path = require('path');
 const dotenv = require('dotenv');
-const { chromium } = require('playwright');
+const { chromium, request } = require('playwright');
+const {
+	requireAdminState,
+	verifyApplicationPassword,
+} = require('../helpers/wordpress-auth');
 
 const ROOT_DIR = path.resolve(__dirname, '../..');
 dotenv.config({ path: path.join(ROOT_DIR, '.env') });
 
 const BASE = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
 const TARGET_URL = process.env.WP_URL_TEST_ADMIN || `${BASE}/wp-admin/post-new.php`;
-const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD;
 
 const SAMPLE_TAGS = ',Ancestral,Chaco Culture National Historical Park,Equinox,Heating,High Desert,Kiva,Orientation,Passive,Passive Solar,Pueblo Bonito,Puebloans,Solar,Terraced Structure,Thermal Mass,กลางคืน,กลางวัน,กักเก็บ,กักเก็บความร้อน,กันความร้อน,การค้า,การปกครอง,กำแพง,ขนาดใหญ่,ครึ่งวงกลม,ความร้อน,คายความร้อน,โคจร,โคลอสเซียม,จิตวิญญาณ,ชั้น,ชาโค,ชาโคแคนยอน,เชื้อเพลิงใด,ดวงอาทิตย์,ดาราศาสตร์,ดูดซับ,เดี่ยว,ติดลบ,ใต้ดิน,โถงทรงกลม,ทะเลทรายสูง,ทิศใต้,ทิศทาง,ธรรมชาติ,นวัตกรรม,บังลม,โบราณ,ผู้ที่อยู่อาศัย,พลังงาน,พวยโบล,พวยโบล โบนิโต,พาสซีฟ,พิธีกรรมทางศาสนา,ภัยหนาว,ภูมิปัญญา,มวลสาร,เย็นสบาย,ร้อนจัด,รัฐนิวเม็กซิโก,รับแสง,ฤดูร้อน,ฤดูหนาว,ไล่ระดับ,วันวิษุวัต,วางผัง,วิทยาการ,วิทยาศาสตร์,ศตวรรษ,ศูนย์รวมจิตวิญญาณ,สถาปัตยกรรม,สเปน,สภาพอากาศ,สหรัฐอเมริกา,สุดขั้ว,แสงแดด,แสงอาทิตย์,หนาวจัด,หมู่บ้าน,หมู่บ้านที่สวยงาม,ห้อง,ห้องพัก,หิน,หุบเขา,ใหญ่,อบอุ่น,อพาร์ตเมนต์,อเมริกาเหนือ,อยู่อาศัย,อากาศ,อาคาร,อารยธรรม,อาศัย,อุณหภูมิ,อุทยานประวัติศาสตร์แห่งชาติ';
-
-function hasValue(val) {
-	return !(val == null || val === '');
-}
 
 async function findVisibleButton(page, selectors) {
 	for (const selector of selectors) {
@@ -28,15 +26,11 @@ async function findVisibleButton(page, selectors) {
 	return null;
 }
 
-async function loginIfNeeded(page) {
+async function openAdminPage(page) {
 	await page.goto(TARGET_URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
 
 	if (page.url().includes('/wp-login.php')) {
-		await page.locator('#user_login').fill(ADMIN_USER);
-		await page.locator('#user_pass').fill(ADMIN_PASS);
-		await page.locator('#wp-submit').click();
-		await page.waitForURL('**/wp-admin/**', { timeout: 90000 });
-		await page.goto(TARGET_URL, { waitUntil: 'domcontentloaded', timeout: 90000 });
+		throw new Error('Saved wp-admin session has expired. Refresh Playwright/auth/admin-state.json with an interactive browser login.');
 	}
 }
 
@@ -98,12 +92,12 @@ async function saveGutenbergPost(page) {
 }
 
 async function run() {
-	if (!hasValue(ADMIN_PASS)) {
-		throw new Error('Missing WP_ADMIN_PASSWORD in .env');
-	}
+	const apiContext = await request.newContext();
+	await verifyApplicationPassword(apiContext);
+	await apiContext.dispose();
 
 	const browser = await chromium.launch({ headless: true });
-	const context = await browser.newContext();
+	const context = await browser.newContext({ storageState: requireAdminState() });
 	const page = await context.newPage();
 	const runtimeErrors = [];
 
@@ -112,7 +106,7 @@ async function run() {
 	});
 
 	try {
-		await loginIfNeeded(page);
+		await openAdminPage(page);
 
 		if (!(await page.locator('#wpadminbar').count())) {
 			throw new Error('Current account has no permission to edit post=660');

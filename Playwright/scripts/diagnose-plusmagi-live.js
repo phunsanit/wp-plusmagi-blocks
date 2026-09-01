@@ -1,32 +1,24 @@
 const path = require('path');
 const dotenv = require('dotenv');
-const { chromium } = require('playwright');
+const { chromium, request } = require('playwright');
+const {
+	requireAdminState,
+	verifyApplicationPassword,
+} = require('../helpers/wordpress-auth');
 
 const ROOT_DIR = path.resolve(__dirname, '../..');
 dotenv.config({ path: path.join(ROOT_DIR, '.env') });
 
 const base = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
-const user = process.env.WP_ADMIN_USER || 'admin';
-const pass = process.env.WP_ADMIN_PASSWORD;
-
-function isEmpty(val) {
-	return val == null || val === '';
-}
 
 async function run() {
-	if (isEmpty(pass)) {
-	throw new Error(`Missing WP_ADMIN_PASSWORD in ${path.join(ROOT_DIR, '.env')}`);
-	}
+	const apiContext = await request.newContext();
+	await verifyApplicationPassword(apiContext);
+	await apiContext.dispose();
 
 	const browser = await chromium.launch({ headless: true });
-	const context = await browser.newContext();
+	const context = await browser.newContext({ storageState: requireAdminState() });
 	const page = await context.newPage();
-
-	await page.goto(`${base}/wp-login.php`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-	await page.locator('#user_login').fill(user);
-	await page.locator('#user_pass').fill(pass);
-	await page.locator('#wp-submit').click();
-	await page.waitForURL('**/wp-admin/**', { timeout: 60000 });
 
 	await page.goto(`${base}/wp-admin/tools.php?page=plusmagi-blocks`, { waitUntil: 'domcontentloaded', timeout: 60000 });
 	const hasSettings = await page.locator('#enable_gap_fill').count();

@@ -2,16 +2,18 @@
 
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require('playwright');
+const { chromium, request } = require('playwright');
 const dotenv = require('dotenv');
+const {
+	requireAdminState,
+	verifyApplicationPassword,
+} = require('../helpers/wordpress-auth');
 
 const ROOT_DIR = path.resolve(__dirname, '../../');
 dotenv.config({ path: path.join(ROOT_DIR, '.env') });
 
 const ZIP_DIR = path.join(ROOT_DIR, 'wp-assets');
 const BASE_URL = (`https://${process.env.WP_URL || 'pitt.plusmagi.com'}`).replace(/\/$/, '');
-const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.WP_ADMIN_PASSWORD;
 const ZIP_ARG = process.argv[2] ? path.resolve(process.argv[2]) : '';
 
 function isInsideDir(filePath, dirPath) {
@@ -41,16 +43,11 @@ function pickLatestZip(dirPath) {
 	return files[0].absPath;
 }
 
-async function login(page) {
-	await page.goto(`${BASE_URL}/wp-login.php`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-	await page.locator('#user_login').fill(ADMIN_USER);
-	await page.locator('#user_pass').fill(ADMIN_PASS);
-	await page.locator('#wp-submit').click();
-	await page.waitForURL('**/wp-admin/**', { timeout: 60000 });
-}
-
 async function uploadAndOverwriteIfNeeded(page, zipPath) {
 	await page.goto(`${BASE_URL}/wp-admin/plugin-install.php?tab=upload`, { waitUntil: 'domcontentloaded', timeout: 60000 });
+	if (page.url().includes('/wp-login.php')) {
+		throw new Error('Saved wp-admin session has expired. Refresh Playwright/auth/admin-state.json with an interactive browser login.');
+	}
 
 	if (!(await page.locator('#pluginzip').count())) {
 	throw new Error('Cannot find plugin upload input (#pluginzip). Access may be denied.');
@@ -113,9 +110,9 @@ async function uploadAndOverwriteIfNeeded(page, zipPath) {
 }
 
 async function main() {
-	if (!ADMIN_PASS) {
-	throw new Error('Missing WP_ADMIN_PASSWORD in environment.');
-	}
+	const apiContext = await request.newContext();
+	await verifyApplicationPassword(apiContext);
+	await apiContext.dispose();
 
 	const zipPath = ZIP_ARG || pickLatestZip(ZIP_DIR);
 	if (!isInsideDir(zipPath, ZIP_DIR)) {
@@ -129,11 +126,10 @@ async function main() {
 	console.log(`Target site: ${BASE_URL}`);
 
 	const browser = await chromium.launch({ headless: true });
-	const context = await browser.newContext();
+	const context = await browser.newContext({ storageState: requireAdminState() });
 	const page = await context.newPage();
 
 	try {
-	await login(page);
 	await uploadAndOverwriteIfNeeded(page, zipPath);
 	console.log('Plugin upload/update completed successfully.');
 	} finally {

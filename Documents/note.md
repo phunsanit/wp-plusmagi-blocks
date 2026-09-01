@@ -47,7 +47,7 @@ tree -I 'node_modules|.git|.svn|.DS_Store|temp_build|playwright-report|test-resu
 ./auto-test-loop.sh
 
 # หรือรันแยกเฉพาะ Playwright
-npm run test:setup  # ล็อกอินเข้าแอดมิน (ต้องการ WP_ADMIN_PASSWORD ใน .env)
+npm run test:setup  # ตรวจ REST API authentication ด้วย WP_APPLICATION_PASSWORD
 npm run test:admin  # รันเทสหน้า Tools และหน้า Block Editor
 ```
 

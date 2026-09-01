@@ -14,6 +14,7 @@
 		"deploy:all": "npm run build:all && npm run deploy:plugin",
 		"deploy:plugin": "npm run deploy -w @plusmagi/plugin",
 		"test:admin": "cd Playwright && npx playwright test --project=admin",
+		"test:api": "npm --prefix Playwright run test:api",
 		"test:setup": "cd Playwright && npx playwright test --project=setup"
 	},
 	"workspaces": [

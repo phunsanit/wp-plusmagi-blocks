@@ -5,18 +5,6 @@ const baseURL = 'https://pitt.plusmagi.com';
 
 test.describe('Thesaurus Block', () => {
   test.beforeEach(async ({ page }) => {
-    // Log in to WordPress admin
-    await page.goto(`${baseURL}/wp-login.php`, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-
-    const adminUser = process.env.WP_ADMIN_USER || 'phunsanit';
-    const adminPassword = process.env.WP_ADMIN_PASSWORD || '';
-
-    await page.fill('input[name="log"]', adminUser);
-    await page.fill('input[name="pwd"]', adminPassword);
-    await page.click('input[value="Log In"]');
-
-    await page.waitForURL('**/wp-admin/**', { timeout: 60_000 });
-
     // Create a new post
     await page.goto(`${baseURL}/wp-admin/post-new.php`, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
