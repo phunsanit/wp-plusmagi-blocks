@@ -108,14 +108,6 @@ On standard WordPress pages, Mermaid diagrams are rendered responsively on the f
 
 If a diagram does not render, validate the Mermaid syntax first. Common causes include missing arrows, unmatched brackets, and invalid diagram keywords.
 
-## Screenshots
-
-![PlusMagi Blocks overview](../assets/screenshot-1.png)
-
-![Mermaid block editor](../assets/screenshot-2.png)
-
-![Rendered block output](../assets/screenshot-3.png)
-
 ## Development
 
 Source repository: [github.com/phunsanit/wp-plusmagi-blocks](https://github.com/phunsanit/wp-plusmagi-blocks)

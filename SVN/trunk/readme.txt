@@ -23,7 +23,7 @@ Plugin directory visuals are included via the standard WordPress.org assets:
 == Features ==
 
 * Mermaid diagram block with Markdown-based editing
-* Description List block (<dl>/<dt>/<dd>) with add/remove items
+* Description List block (`<dl>`/`<dt>`/`<dd>`) with add/remove items
 * Thesaurus block for definitions, synonyms, and antonyms
 * 107 Microsoft Word-inspired styles for the native Gutenberg Table block
 * Optional Banded Columns and in-editor style switching
@@ -47,6 +47,25 @@ Tips:
 * For long technical articles, split diagrams into multiple Mermaid blocks.
 * If preview does not render, check Mermaid syntax first (missing arrows, brackets, keywords).
 
+== Description List Guide ==
+
+1. Open the block inserter and search for **Description List** or **PlusMagi**.
+2. Insert the **PlusMagi - Description List** block.
+3. Enter a term and its description.
+4. Use the block controls to add or remove items.
+5. Publish the post or page.
+
+Example output:
+
+	<dl>
+		<dt>WordPress</dt>
+		<dd>A content management system for building websites.</dd>
+		<dt>Gutenberg</dt>
+		<dd>The block editor included with WordPress.</dd>
+	</dl>
+
+The block publishes semantic `<dl>`, `<dt>`, and `<dd>` markup for accessible term-and-description content.
+
 == Table Style Guide ==
 
 1. Insert or select a standard Gutenberg Table block.
@@ -61,12 +80,6 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 
 1. Upload the plugin files to the `/wp-content/plugins/plusmagi-blocks` directory
 2. Activate the plugin through the 'Plugins' screen in WordPress
-
-== Screenshots ==
-
-1. Plugin header/banner visual style used on plugin page.
-2. Mermaid block inserted in Gutenberg with editable Mermaid source.
-3. Rendered Mermaid output on frontend post view.
 
 == Changelog ==
 
