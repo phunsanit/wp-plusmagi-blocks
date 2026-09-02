@@ -101,13 +101,13 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 == Screenshots ==
 
 1. Feature cards for Description List, Mermaid Diagram, Post-it, SVG, Table Styles, and Thesaurus, arranged alphabetically.
-2. Responsive SVG feature card on a mobile viewport.
+2. Post-it feature card showing its color, typography controls, and responsive 2 x 3 inch note preview.
 
 == Changelog ==
 
 = 1.2.0 =
 * Added the Post-it block with semantic note markup
-* Added four selectable note colors and responsive frontend styling
+* Added six selectable note colors, Gutenberg typography controls, and responsive frontend styling
 
 = 1.1.0 =
 * Added the SVG block with source editing and live preview
@@ -122,6 +122,9 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 * Added basic WordPress plugin scaffold and metadata
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Adds the Post-it block with six coordinated color themes and native typography controls.
 
 = 1.1.0 =
 Adds a new block for editing and publishing sanitized inline SVG.
