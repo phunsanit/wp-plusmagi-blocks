@@ -95,6 +95,14 @@ test.describe('Post-it Block - Post 4528', () => {
 				? [{ name: 'plusmagi-blocks/post-it', tone }, { name: 'core/separator', tone: null }]
 				: [{ name: 'plusmagi-blocks/post-it', tone }]
 		)));
+		const hasEditorCanvas = await page.locator('iframe[name="editor-canvas"]').count() > 0;
+		const editorCanvas = hasEditorCanvas ? page.frameLocator('iframe[name="editor-canvas"]') : page;
+		const visibleNotes = editorCanvas.locator('[data-type="plusmagi-blocks/post-it"]');
+		const visibleSeparators = editorCanvas.locator('[data-type="core/separator"]');
+		await expect(visibleNotes).toHaveCount(DEMOS.length);
+		await expect(visibleSeparators).toHaveCount(DEMOS.length - 1);
+		await expect(visibleNotes.nth(0)).toContainText('Yellow:');
+		await expect(visibleNotes.nth(1)).toContainText('Pink:');
 
 		await page.goto(FRONT_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
