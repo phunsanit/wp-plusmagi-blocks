@@ -23,6 +23,7 @@ yarn-error.log*
 
 # Local packaging artifacts
 Website/build/
+Playwright.zip
 
 # Release artifacts in wp-assets
 wp-assets/*.zip
