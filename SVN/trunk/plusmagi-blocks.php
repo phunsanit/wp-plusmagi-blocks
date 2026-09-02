@@ -497,6 +497,13 @@ function plusmagi_blocks_register_blocks() {
 		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-table-style.css' )
 	);
 
+	wp_register_style(
+		'plusmagi-svg',
+		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-svg.css',
+		array(),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-svg.css' )
+	);
+
 	register_block_type(
 		PLUSMAGI_BLOCKS_PATH . 'block.json',
 		array(
@@ -514,8 +521,28 @@ function plusmagi_blocks_register_blocks() {
 	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-description.json' );
 	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-table-style.json' );
 	register_block_type(
-		PLUSMAGI_BLOCKS_PATH . 'block-svg.json',
-		array( 'render_callback' => 'plusmagi_blocks_render_svg_block' )
+		'plusmagi-blocks/svg',
+		array(
+			'api_version'     => 3,
+			'title'           => 'PlusMagi - SVG',
+			'category'        => 'media',
+			'icon'            => 'format-image',
+			'description'     => 'Add sanitized inline SVG markup with an editor preview.',
+			'keywords'        => array( 'plusmagi', 'svg', 'vector', 'image', 'icon' ),
+			'attributes'      => array(
+				'svg' => array(
+					'type'    => 'string',
+					'default' => '',
+				),
+			),
+			'supports'        => array(
+				'align' => array( 'wide', 'full' ),
+				'html'  => false,
+			),
+			'editor_script'   => 'plusmagi-svg-editor',
+			'style'           => 'plusmagi-svg',
+			'render_callback' => 'plusmagi_blocks_render_svg_block',
+		)
 	);
 
 }
