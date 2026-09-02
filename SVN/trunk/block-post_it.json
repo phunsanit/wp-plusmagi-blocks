@@ -1,12 +1,12 @@
 {
 	"apiVersion": 3,
 	"name": "plusmagi-blocks/post-it",
-	"title": "PlusMagi - Post-it",
+	"title": "PlusMagi - Post it",
 	"category": "text",
 	"icon": "sticky",
 	"description": "Add a concise, colorful note to a post or page.",
-	"keywords": ["plusmagi", "post-it", "sticky note", "note"],
-	"version": "1.2.0",
+	"keywords": ["plusmagi", "post it", "sticky note", "note"],
+	"version": "1.2.1",
 	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"content": {

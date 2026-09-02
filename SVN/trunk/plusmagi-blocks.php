@@ -3,7 +3,7 @@
  * Plugin Name: PlusMagi Blocks
  * Plugin URI: https://plusmagi-blocks.plusmagi.com/
  * Description: Adds custom Gutenberg blocks for SVG, Mermaid diagrams, Description Lists, and more.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Pitt Phunsanit
  * Author URI: https://pitt.plusmagi.com
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_VERSION' ) ) {
-	define( 'PLUSMAGI_BLOCKS_VERSION', '1.2.0' );
+	define( 'PLUSMAGI_BLOCKS_VERSION', '1.2.1' );
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_PATH' ) ) {
@@ -492,9 +492,9 @@ function plusmagi_blocks_register_blocks() {
 
 	wp_register_script(
 		'plusmagi-post-it-editor',
-		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-post-it.js',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-post_it.js',
 		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element' ),
-		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-post-it.js' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-post_it.js' ),
 		true
 	);
 
@@ -514,9 +514,9 @@ function plusmagi_blocks_register_blocks() {
 
 	wp_register_style(
 		'plusmagi-post-it',
-		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-post-it.css',
+		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-post_it.css',
 		array(),
-		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-post-it.css' )
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-post_it.css' )
 	);
 
 	register_block_type(
@@ -563,11 +563,11 @@ function plusmagi_blocks_register_blocks() {
 		'plusmagi-blocks/post-it',
 		array(
 			'api_version'   => 3,
-			'title'         => 'PlusMagi - Post-it',
+			'title'         => 'PlusMagi - Post it',
 			'category'      => 'text',
 			'icon'          => 'sticky',
 			'description'   => 'Add a concise, colorful note to a post or page.',
-			'keywords'      => array( 'plusmagi', 'post-it', 'sticky note', 'note' ),
+			'keywords'      => array( 'plusmagi', 'post it', 'sticky note', 'note' ),
 			'attributes'    => array(
 				'content' => array(
 					'type'     => 'string',

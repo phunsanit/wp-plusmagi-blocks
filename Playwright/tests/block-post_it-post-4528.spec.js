@@ -45,9 +45,9 @@ const DEMOS = [
 	},
 ];
 
-test.describe('Post-it Block - Post 4528', () => {
+test.describe('Post it Block - Post 4528', () => {
 	test('publishes every color and Gutenberg formatting demo', async ({ page }) => {
-		test.skip(!ADMIN_URL || !FRONT_URL, 'Post-it test URLs are not configured.');
+		test.skip(!ADMIN_URL || !FRONT_URL, 'Post it test URLs are not configured.');
 		await page.goto(ADMIN_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 		await expect(page.locator('.edit-post-layout, .interface-interface-skeleton').first()).toBeVisible({ timeout: 60_000 });
 		await page.waitForFunction(() => Boolean(window.wp?.blocks?.getBlockType('plusmagi-blocks/post-it')), null, { timeout: 30_000 });
@@ -120,7 +120,7 @@ test.describe('Post-it Block - Post 4528', () => {
 			const note = notes.nth(index);
 			await expect(note).toBeVisible({ timeout: 30_000 });
 			await expect(note).toHaveAttribute('role', 'note');
-			await expect(note).toHaveAttribute('aria-label', 'Post-it note');
+			await expect(note).toHaveAttribute('aria-label', 'Post it note');
 			await expect(note).toHaveClass(new RegExp(`is-tone-${demo.tone}`));
 			const appearance = await note.evaluate((element) => ({
 				width: element.getBoundingClientRect().width,

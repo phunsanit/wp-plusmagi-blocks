@@ -3,12 +3,12 @@ Contributors: phunsanit
 Tags: blocks, mermaid, post-it, table, editor
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-PlusMagi Blocks adds Gutenberg tools for Description Lists, Mermaid diagrams, Post-it notes, inline SVG, Table Styles, and Thesaurus entries.
+PlusMagi Blocks adds Gutenberg tools for Description Lists, Mermaid diagrams, Post it notes, inline SVG, Table Styles, and Thesaurus entries.
 
 == Description ==
 
@@ -24,7 +24,7 @@ Plugin directory visuals are included via the standard WordPress.org assets:
 
 * **Description List** - Create accessible term-and-description groups with semantic `<dl>`, `<dt>`, and `<dd>` output. Add or remove items directly in Gutenberg.
 * **Mermaid Diagram** - Write Mermaid syntax, catch syntax errors, and preview responsive diagrams before publishing.
-* **Post-it** - Add a concise 2 x 3 inch semantic note in yellow, pink, blue, green, orange, or purple.
+* **Post it** - Add a concise 2 x 3 inch semantic note in yellow, pink, blue, green, orange, or purple.
 * **SVG** - Paste SVG markup, inspect a live image preview, and publish sanitized inline vectors with wide and full alignment support.
 * **Table Styles** - Apply 107 Microsoft Word-inspired designs to the native Gutenberg Table block, including optional Banded Columns.
 * **Thesaurus** - Publish definitions, parts of speech, synonyms, antonyms, and related terms as structured semantic content.
@@ -55,10 +55,10 @@ Tips:
 
 The block renders responsive inline SVG. Scripts, event handlers, and unsafe inline styles are removed before frontend output.
 
-== Post-it Block Guide ==
+== Post it Block Guide ==
 
-1. Open the block inserter and search for **Post-it** or **PlusMagi**.
-2. Insert the **PlusMagi - Post-it** block.
+1. Open the block inserter and search for **Post it** or **PlusMagi**.
+2. Insert the **PlusMagi - Post it** block.
 3. Write the note and choose one of six colors in the block settings.
 4. Publish the post or page.
 
@@ -100,13 +100,18 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 
 == Screenshots ==
 
-1. Feature cards for Description List, Mermaid Diagram, Post-it, SVG, Table Styles, and Thesaurus, arranged alphabetically.
-2. Post-it feature card showing its color, typography controls, and responsive 2 x 3 inch note preview.
+1. Feature cards for Description List, Mermaid Diagram, Post it, SVG, Table Styles, and Thesaurus, arranged alphabetically.
+2. Post it feature card showing its color, typography controls, and responsive 2 x 3 inch note preview.
 
 == Changelog ==
 
+= 1.2.1 =
+* Standardized the block's display name as Post it
+* Renamed Post it source and asset files to use the post_it convention
+* Preserved compatibility with notes saved using the previous accessibility label
+
 = 1.2.0 =
-* Added the Post-it block with semantic note markup
+* Added the Post it block with semantic note markup
 * Added six selectable note colors, Gutenberg typography controls, and responsive frontend styling
 
 = 1.1.0 =
@@ -123,8 +128,11 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 
 == Upgrade Notice ==
 
+= 1.2.1 =
+Standardizes the Post it name and asset filenames while preserving existing notes.
+
 = 1.2.0 =
-Adds the Post-it block with six coordinated color themes and native typography controls.
+Adds the Post it block with six coordinated color themes and native typography controls.
 
 = 1.1.0 =
 Adds a new block for editing and publishing sanitized inline SVG.

@@ -1,8 +1,8 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
-const POST_IT_SCRIPT = path.resolve(__dirname, '../../SVN/trunk/js/plusmagi-post-it.js');
-const POST_IT_STYLES = path.resolve(__dirname, '../../SVN/trunk/css/plusmagi-post-it.css');
+const POST_IT_SCRIPT = path.resolve(__dirname, '../../SVN/trunk/js/plusmagi-post_it.js');
+const POST_IT_STYLES = path.resolve(__dirname, '../../SVN/trunk/css/plusmagi-post_it.css');
 
 test.beforeEach(async ({ page }) => {
 	await page.setContent('<!doctype html><html><body></body></html>');
@@ -24,11 +24,12 @@ test.beforeEach(async ({ page }) => {
 	await page.addScriptTag({ path: POST_IT_SCRIPT });
 });
 
-test.describe('Post-it Block', () => {
+test.describe('Post it Block', () => {
 	test('registers with constrained tones and semantic note markup', async ({ page }) => {
 		const config = await page.evaluate(() => {
 			const block = window.__plusmagiBlocks['plusmagi-blocks/post-it'];
 			const saved = block.save({ attributes: { content: 'Remember the deadline.', tone: 'pink' } });
+			const deprecatedSaved = block.deprecated[0].save({ attributes: { content: 'Existing note.', tone: 'yellow' } });
 			return {
 				title: block.title,
 				attributes: block.attributes,
@@ -36,16 +37,18 @@ test.describe('Post-it Block', () => {
 				savedType: saved.type,
 				savedProps: saved.props,
 				content: saved.children[0].props.value,
+				deprecatedSavedProps: deprecatedSaved.props,
 			};
 		});
 
-		expect(config.title).toBe('PlusMagi - Post-it');
+		expect(config.title).toBe('PlusMagi - Post it');
 		expect(config.attributes.tone.enum).toEqual(['yellow', 'pink', 'blue', 'green', 'orange', 'purple']);
 		expect(config.supports.typography).toMatchObject({ fontSize: true, lineHeight: true });
 		expect(config.supports.color).toMatchObject({ text: true, background: false });
 		expect(config.supports.align).toBeUndefined();
 		expect(config.savedType).toBe('aside');
-		expect(config.savedProps).toMatchObject({ role: 'note', 'aria-label': 'Post-it note' });
+		expect(config.savedProps).toMatchObject({ role: 'note', 'aria-label': 'Post it note' });
+		expect(config.deprecatedSavedProps).toMatchObject({ role: 'note', 'aria-label': 'Post-it note' });
 		expect(config.savedProps.className).toContain('is-tone-pink');
 		expect(config.content).toBe('Remember the deadline.');
 	});

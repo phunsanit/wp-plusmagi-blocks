@@ -7,7 +7,7 @@
   "parent": ["plusmagi-blocks/description-term", "plusmagi-blocks/description-list"],
   "description": "Add a description with nested WordPress blocks such as paragraphs and lists.",
   "keywords": ["plusmagi", "description", "dd", "list"],
-  "version": "1.2.0",
+  "version": "1.2.1",
   "textdomain": "plusmagi-blocks",
   "supports": {
     "html": false

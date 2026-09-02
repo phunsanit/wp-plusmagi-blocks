@@ -35,7 +35,7 @@ Write Mermaid syntax and preview the generated SVG directly in Gutenberg.
 - Sanitized SVG output
 - AMP-compatible image output with intrinsic dimensions
 
-### Post-it
+### Post it
 
 Add a short highlighted note without leaving Gutenberg.
 

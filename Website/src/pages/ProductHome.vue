@@ -92,13 +92,13 @@ import { releaseMeta } from '../generated/release-meta';
 const features = [
 	{ slug: 'description', icon: 'pi pi-list', title: 'Description List', description: 'Create accessible term and definition groups using the right semantic HTML.', items: ['Native dl, dt, and dd output', 'Add or remove terms', 'Ordered display option'] },
 	{ slug: 'mermaid', icon: 'pi pi-sitemap', title: 'Mermaid Diagram', description: 'Turn compact Mermaid syntax into polished diagrams with immediate visual feedback.', items: ['Live SVG preview', 'Helpful syntax errors', 'Multiple diagrams per post'] },
-	{ slug: 'post-it', icon: 'pi pi-bookmark', title: 'Post-it', description: 'Place a concise, colorful note inside a post with accessible semantic markup.', items: ['Six note colors', 'Native typography controls', 'Responsive 2 x 3 inch layout'] },
+	{ slug: 'post-it', icon: 'pi pi-bookmark', title: 'Post it', description: 'Place a concise, colorful note inside a post with accessible semantic markup.', items: ['Six note colors', 'Native typography controls', 'Responsive 2 x 3 inch layout'] },
 	{ slug: 'svg', icon: 'pi pi-image', title: 'SVG', description: 'Paste vector markup, preview it in Gutenberg, and publish safe responsive graphics.', items: ['Live image preview', 'Sanitized inline output', 'Wide and full alignment'] },
 	{ slug: 'table', icon: 'pi pi-table', title: 'Table Styles', description: 'Apply familiar Microsoft Word-inspired designs to the native Gutenberg Table block.', items: ['107 built-in styles', 'Optional banded columns', 'Change styles from the sidebar'] },
 	{ slug: 'thesaurus', icon: 'pi pi-book', title: 'Thesaurus', description: 'Publish rich word references with definitions and meaningful lexical relationships.', items: ['Definitions', 'Synonyms and antonyms', 'Semantic structured output'] },
 ];
 const steps = [
-	{ title: 'Choose a block', text: 'Search the Gutenberg inserter for PlusMagi, Description List, Mermaid, Post-it, SVG, Table Styles, or Thesaurus.' },
+	{ title: 'Choose a block', text: 'Search the Gutenberg inserter for PlusMagi, Description List, Mermaid, Post it, SVG, Table Styles, or Thesaurus.' },
 	{ title: 'Add your content', text: 'Write a note, diagram, or SVG source, create term pairs, style a table, or build a thesaurus entry without leaving the editor.' },
 	{ title: 'Preview as you work', text: 'Check the rendered result immediately and correct diagram syntax before it reaches readers.' },
 	{ title: 'Publish everywhere', text: 'Deliver responsive, semantic output on standard WordPress pages and AMP experiences.' },
