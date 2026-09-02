@@ -16,8 +16,8 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const ADMIN_STATE = path.join(__dirname, 'auth/admin-state.json');
 const FULL_WORDPRESS_TEST = process.env.PLUSMAGI_FULL_TEST === '1';
 const ADMIN_ONLY_MATCH = /(block-mermaid-post-4495|block-thesaurus-live-semantic|block-thesaurus-post-4493|block-description-list-post-4494|block-svg-live|block-table-style-post-4507)\.spec\.js/;
-const MERMAID_LOCAL_MATCH = /(mermaid-block|diagram-.*|config-.*|block-description-list|block-table-style|block-thesaurus-semantic)\.spec\.js/;
-const ADMIN_FULL_MATCH = /(mermaid-block|block-mermaid-post-4495|block-thesaurus|block-thesaurus-live-semantic|block-thesaurus-post-4493|block-description-list(?:-post-4494)?|block-svg(?:-live)?|block-table-style(?:-post-4507)?|diagram-.*|config-.*)\.spec\.js/;
+const MERMAID_LOCAL_MATCH = /(mermaid-block|diagram-.*|config-.*|block-description-list|block-svg|block-table-style|block-thesaurus-semantic)\.spec\.js/;
+const ADMIN_FULL_MATCH = /(mermaid-block|block-mermaid-post-4495|block-thesaurus|block-thesaurus-live-semantic|block-thesaurus-post-4493|block-description-list(?:-post-4494)?|block-svg-live|block-table-style(?:-post-4507)?|diagram-.*|config-.*)\.spec\.js/;
 
 module.exports = defineConfig({
 	testDir: './tests',
