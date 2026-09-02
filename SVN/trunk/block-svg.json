@@ -6,7 +6,7 @@
 	"icon": "format-image",
 	"description": "Add sanitized inline SVG markup with an editor preview.",
 	"keywords": ["plusmagi", "svg", "vector", "image", "icon"],
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"svg": {

@@ -6,7 +6,7 @@
   "icon": "book",
   "description": "Add an alphabetized semantic thesaurus with broader, narrower, and related terms.",
   "keywords": ["plusmagi", "thesaurus", "dictionary", "broader terms", "narrower terms", "related terms"],
-  "version": "1.1.0",
+  "version": "1.2.0",
   "textdomain": "plusmagi-blocks",
   "attributes": {
     "heading": {

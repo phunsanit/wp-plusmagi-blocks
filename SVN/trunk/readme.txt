@@ -1,14 +1,14 @@
 === PlusMagi Blocks ===
 Contributors: phunsanit
-Tags: blocks, mermaid, table, thesaurus, editor
+Tags: blocks, mermaid, post-it, table, editor
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-PlusMagi Blocks adds Gutenberg tools for Mermaid diagrams, inline SVG, Description Lists, Thesaurus entries, and Word-inspired Table Styles.
+PlusMagi Blocks adds Gutenberg tools for Description Lists, Mermaid diagrams, Post-it notes, inline SVG, Table Styles, and Thesaurus entries.
 
 == Description ==
 
@@ -24,6 +24,7 @@ Plugin directory visuals are included via the standard WordPress.org assets:
 
 * **Description List** - Create accessible term-and-description groups with semantic `<dl>`, `<dt>`, and `<dd>` output. Add or remove items directly in Gutenberg.
 * **Mermaid Diagram** - Write Mermaid syntax, catch syntax errors, and preview responsive diagrams before publishing.
+* **Post-it** - Add a concise 2 x 3 inch semantic note in yellow, pink, blue, green, orange, or purple.
 * **SVG** - Paste SVG markup, inspect a live image preview, and publish sanitized inline vectors with wide and full alignment support.
 * **Table Styles** - Apply 107 Microsoft Word-inspired designs to the native Gutenberg Table block, including optional Banded Columns.
 * **Thesaurus** - Publish definitions, parts of speech, synonyms, antonyms, and related terms as structured semantic content.
@@ -53,6 +54,15 @@ Tips:
 5. Publish the post or page.
 
 The block renders responsive inline SVG. Scripts, event handlers, and unsafe inline styles are removed before frontend output.
+
+== Post-it Block Guide ==
+
+1. Open the block inserter and search for **Post-it** or **PlusMagi**.
+2. Insert the **PlusMagi - Post-it** block.
+3. Write the note and choose one of six colors in the block settings.
+4. Publish the post or page.
+
+The block publishes an accessible `<aside role="note">` element in a responsive 2 x 3 inch layout. It supports bold, italic, links, text color, font size, line height, font family, weight, style, decoration, and letter case through Gutenberg controls.
 
 == Description List Guide ==
 
@@ -90,10 +100,14 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 
 == Screenshots ==
 
-1. Feature cards for Description List, Mermaid Diagram, SVG, Table Styles, and Thesaurus, arranged alphabetically.
+1. Feature cards for Description List, Mermaid Diagram, Post-it, SVG, Table Styles, and Thesaurus, arranged alphabetically.
 2. Responsive SVG feature card on a mobile viewport.
 
 == Changelog ==
+
+= 1.2.0 =
+* Added the Post-it block with semantic note markup
+* Added four selectable note colors and responsive frontend styling
 
 = 1.1.0 =
 * Added the SVG block with source editing and live preview

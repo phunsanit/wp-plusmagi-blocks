@@ -5,7 +5,7 @@
 
 ![PlusMagi Blocks banner](../assets/banner-1544x500.png)
 
-**PlusMagi Blocks** adds focused Gutenberg tools for diagrams, structured definitions, semantic word references, and Word-inspired table designs. Authors can create and preview rich technical content without leaving the WordPress editor.
+**PlusMagi Blocks** adds focused Gutenberg tools for diagrams, notes, structured definitions, semantic word references, and Word-inspired table designs. Authors can create and preview rich technical content without leaving the WordPress editor.
 
 ## Requirements
 
@@ -14,14 +14,14 @@
 
 ## Blocks
 
-### SVG
+### Description List
 
-Paste SVG markup, preview it in Gutenberg, and publish sanitized inline SVG that scales with its container.
+Create semantic definition lists using native `<dl>`, `<dt>`, and `<dd>` markup.
 
-- Source editor with a live image preview
-- Scripts, event handlers, and unsafe styling removed on render
-- Wide and full-width alignment support
-- Responsive frontend output
+- Add or remove terms and descriptions in the editor
+- Use nested core blocks inside descriptions
+- Choose the ordered display option
+- Publish accessible, semantic HTML
 
 ### Mermaid Diagram
 
@@ -35,23 +35,25 @@ Write Mermaid syntax and preview the generated SVG directly in Gutenberg.
 - Sanitized SVG output
 - AMP-compatible image output with intrinsic dimensions
 
-### Description List
+### Post-it
 
-Create semantic definition lists using native `<dl>`, `<dt>`, and `<dd>` markup.
+Add a short highlighted note without leaving Gutenberg.
 
-- Add or remove terms and descriptions in the editor
-- Use nested core blocks inside descriptions
-- Choose the ordered display option
-- Publish accessible, semantic HTML
+- Rich text with bold, italic, and link support
+- Six note colors: yellow, pink, blue, green, orange, and purple
+- Native Gutenberg typography and text color controls
+- Responsive 2 x 3 inch layout
+- Accessible `<aside role="note">` output
+- Responsive frontend styling
 
-### Thesaurus
+### SVG
 
-Build structured reference entries for words and concepts.
+Paste SVG markup, preview it in Gutenberg, and publish sanitized inline SVG that scales with its container.
 
-- Add definitions and parts of speech
-- Group synonyms and antonyms
-- Edit entries through Gutenberg controls
-- Publish semantic thesaurus markup with dedicated frontend styles
+- Source editor with a live image preview
+- Scripts, event handlers, and unsafe styling removed on render
+- Wide and full-width alignment support
+- Responsive frontend output
 
 ### Table Styles
 
@@ -62,6 +64,15 @@ Apply one of 107 Microsoft Word-inspired designs to the native Gutenberg Table b
 - Enable optional Banded Columns
 - Change styles or choose **None** without changing the table content
 - Publish the table without an extra heading or wrapper
+
+### Thesaurus
+
+Build structured reference entries for words and concepts.
+
+- Add definitions and parts of speech
+- Group synonyms and antonyms
+- Edit entries through Gutenberg controls
+- Publish semantic thesaurus markup with dedicated frontend styles
 
 ## Installation
 

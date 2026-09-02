@@ -1,0 +1,43 @@
+{
+	"apiVersion": 3,
+	"name": "plusmagi-blocks/post-it",
+	"title": "PlusMagi - Post-it",
+	"category": "text",
+	"icon": "sticky",
+	"description": "Add a concise, colorful note to a post or page.",
+	"keywords": ["plusmagi", "post-it", "sticky note", "note"],
+	"version": "1.2.0",
+	"textdomain": "plusmagi-blocks",
+	"attributes": {
+		"content": {
+			"type": "string",
+			"source": "html",
+			"selector": "p",
+			"default": ""
+		},
+		"tone": {
+			"type": "string",
+			"enum": ["yellow", "pink", "blue", "green", "orange", "purple"],
+			"default": "yellow"
+		}
+	},
+	"supports": {
+		"color": {
+			"text": true,
+			"background": false,
+			"gradients": false
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontStyle": true,
+			"__experimentalFontWeight": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalTextTransform": true
+		},
+		"html": false
+	},
+	"editorScript": "plusmagi-post-it-editor",
+	"style": "plusmagi-post-it"
+}

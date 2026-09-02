@@ -3,7 +3,7 @@
  * Plugin Name: PlusMagi Blocks
  * Plugin URI: https://plusmagi-blocks.plusmagi.com/
  * Description: Adds custom Gutenberg blocks for SVG, Mermaid diagrams, Description Lists, and more.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Pitt Phunsanit
  * Author URI: https://pitt.plusmagi.com
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_VERSION' ) ) {
-	define( 'PLUSMAGI_BLOCKS_VERSION', '1.1.0' );
+	define( 'PLUSMAGI_BLOCKS_VERSION', '1.2.0' );
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_PATH' ) ) {
@@ -490,6 +490,14 @@ function plusmagi_blocks_register_blocks() {
 		true
 	);
 
+	wp_register_script(
+		'plusmagi-post-it-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-post-it.js',
+		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-post-it.js' ),
+		true
+	);
+
 	wp_register_style(
 		'plusmagi-table-style',
 		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-table-style.css',
@@ -502,6 +510,13 @@ function plusmagi_blocks_register_blocks() {
 		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-svg.css',
 		array(),
 		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-svg.css' )
+	);
+
+	wp_register_style(
+		'plusmagi-post-it',
+		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-post-it.css',
+		array(),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-post-it.css' )
 	);
 
 	register_block_type(
@@ -542,6 +557,49 @@ function plusmagi_blocks_register_blocks() {
 			'editor_script'   => 'plusmagi-svg-editor',
 			'style'           => 'plusmagi-svg',
 			'render_callback' => 'plusmagi_blocks_render_svg_block',
+		)
+	);
+	register_block_type(
+		'plusmagi-blocks/post-it',
+		array(
+			'api_version'   => 3,
+			'title'         => 'PlusMagi - Post-it',
+			'category'      => 'text',
+			'icon'          => 'sticky',
+			'description'   => 'Add a concise, colorful note to a post or page.',
+			'keywords'      => array( 'plusmagi', 'post-it', 'sticky note', 'note' ),
+			'attributes'    => array(
+				'content' => array(
+					'type'     => 'string',
+					'source'   => 'html',
+					'selector' => 'p',
+					'default'  => '',
+				),
+				'tone'    => array(
+					'type'    => 'string',
+					'enum'    => array( 'yellow', 'pink', 'blue', 'green', 'orange', 'purple' ),
+					'default' => 'yellow',
+				),
+			),
+			'supports'      => array(
+				'color' => array(
+					'text'       => true,
+					'background' => false,
+					'gradients'  => false,
+				),
+				'typography' => array(
+					'fontSize'                     => true,
+					'lineHeight'                   => true,
+					'__experimentalFontFamily'     => true,
+					'__experimentalFontStyle'      => true,
+					'__experimentalFontWeight'     => true,
+					'__experimentalTextDecoration' => true,
+					'__experimentalTextTransform'  => true,
+				),
+				'html'  => false,
+			),
+			'editor_script' => 'plusmagi-post-it-editor',
+			'style'         => 'plusmagi-post-it',
 		)
 	);
 
@@ -631,7 +689,9 @@ function plusmagi_blocks_enqueue_editor_assets() {
 	wp_enqueue_script( 'plusmagi-thesaurus-editor' );
 	wp_enqueue_script( 'plusmagi-table-style-editor' );
 	wp_enqueue_script( 'plusmagi-svg-editor' );
+	wp_enqueue_script( 'plusmagi-post-it-editor' );
 	wp_enqueue_style( 'plusmagi-table-style' );
+	wp_enqueue_style( 'plusmagi-post-it' );
 }
 
 function plusmagi_blocks_enqueue_frontend_assets() {

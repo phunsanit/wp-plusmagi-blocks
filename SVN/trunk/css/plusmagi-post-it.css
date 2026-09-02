@@ -1,0 +1,54 @@
+.wp-block-plusmagi-blocks-post-it.plusmagi-post-it {
+	position: relative;
+	box-sizing: border-box;
+	width: 3in;
+	max-width: 100%;
+	min-height: 2in;
+	margin-block: 1.5rem;
+	padding: 0.38in;
+	border: 1px solid rgba(38, 43, 40, 0.14);
+	border-radius: 1px;
+	background: #fff475;
+	box-shadow: 0 8px 16px rgba(38, 43, 40, 0.13);
+	color: #493c00;
+	font-family: Georgia, serif;
+	font-size: 1.08rem;
+	font-weight: 600;
+	line-height: 1.65;
+}
+
+.wp-block-plusmagi-blocks-post-it.plusmagi-post-it p {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.wp-block-plusmagi-blocks-post-it.is-tone-pink {
+	background: #ffb7c5;
+	color: #641c35;
+}
+
+.wp-block-plusmagi-blocks-post-it.is-tone-blue {
+	background: #a7d8ff;
+	color: #123d63;
+}
+
+.wp-block-plusmagi-blocks-post-it.is-tone-green {
+	background: #bde8b5;
+	color: #1f5129;
+}
+
+.wp-block-plusmagi-blocks-post-it.is-tone-orange {
+	background: #ffc58f;
+	color: #60310d;
+}
+
+.wp-block-plusmagi-blocks-post-it.is-tone-purple {
+	background: #d7c2f0;
+	color: #452667;
+}
+
+@media (max-width: 600px) {
+	.wp-block-plusmagi-blocks-post-it.plusmagi-post-it {
+		padding: 1.4rem;
+	}
+}
