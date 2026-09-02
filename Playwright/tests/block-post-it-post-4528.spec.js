@@ -77,6 +77,25 @@ test.describe('Post-it Block - Post 4528', () => {
 
 		expect(savedPost.savedTitle).toBe(savedPost.originalTitle);
 		await expect.poll(() => page.evaluate(() => window.wp.data.select('core/editor').isSavingPost())).toBe(false);
+		await expect.poll(() => page.evaluate(() => window.wp.data.select('core/editor').isEditedPostDirty())).toBe(false);
+
+		await page.reload({ waitUntil: 'domcontentloaded', timeout: 60_000 });
+		await expect(page.locator('.edit-post-layout, .interface-interface-skeleton').first()).toBeVisible({ timeout: 60_000 });
+		await page.waitForFunction(() => Boolean(window.wp?.data?.select('core/block-editor')), null, { timeout: 30_000 });
+		await expect.poll(() => page.evaluate(() => window.wp.data.select('core/block-editor').getBlocks().length), {
+			message: 'Saved demo blocks should remain after reloading wp-admin.',
+			timeout: 30_000,
+		}).toBe(DEMOS.length * 2 - 1);
+		const persistedBlocks = await page.evaluate(() => window.wp.data.select('core/block-editor').getBlocks().map((block) => ({
+			name: block.name,
+			tone: block.attributes.tone || null,
+		})));
+		expect(persistedBlocks).toEqual(DEMOS.flatMap(({ tone }, index) => (
+			index < DEMOS.length - 1
+				? [{ name: 'plusmagi-blocks/post-it', tone }, { name: 'core/separator', tone: null }]
+				: [{ name: 'plusmagi-blocks/post-it', tone }]
+		)));
+
 		await page.goto(FRONT_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
 		const notes = page.locator('aside.wp-block-plusmagi-blocks-post-it.plusmagi-post-it');
