@@ -1,0 +1,23 @@
+{
+	"apiVersion": 3,
+	"name": "plusmagi-blocks/svg",
+	"title": "PlusMagi - SVG",
+	"category": "media",
+	"icon": "format-image",
+	"description": "Add sanitized inline SVG markup with an editor preview.",
+	"keywords": ["plusmagi", "svg", "vector", "image", "icon"],
+	"version": "1.1.0",
+	"textdomain": "plusmagi-blocks",
+	"attributes": {
+		"svg": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"align": ["wide", "full"],
+		"html": false
+	},
+	"editorScript": "plusmagi-svg-editor",
+	"style": "file:./css/plusmagi-svg.css"
+}

@@ -47,6 +47,10 @@
 
 ## Changelog
 
+**1.1.0**
+- Added an SVG block with source editing and live preview
+- Added sanitized, responsive inline SVG rendering
+
 **1.0.0** (Initial Release)
 - Clean plugin bootstrap for PlusMagi Markdown
 - Updated packaging and release flow

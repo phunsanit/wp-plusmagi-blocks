@@ -3,12 +3,12 @@ Contributors: phunsanit
 Tags: blocks, mermaid, table, thesaurus, editor
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-PlusMagi Blocks adds Gutenberg tools for Mermaid diagrams, Description Lists, Thesaurus entries, and Word-inspired Table Styles.
+PlusMagi Blocks adds Gutenberg tools for Mermaid diagrams, inline SVG, Description Lists, Thesaurus entries, and Word-inspired Table Styles.
 
 == Description ==
 
@@ -22,14 +22,11 @@ Plugin directory visuals are included via the standard WordPress.org assets:
 
 == Features ==
 
-* Mermaid diagram block with Markdown-based editing
-* Description List block (`<dl>`/`<dt>`/`<dd>`) with add/remove items
-* Thesaurus block for definitions, synonyms, and antonyms
-* 107 Microsoft Word-inspired styles for the native Gutenberg Table block
-* Optional Banded Columns and in-editor style switching
-* Gutenberg-friendly editor integration
-* Lightweight plugin structure for easy maintenance
-* Simple installation and activation process
+* **Description List** - Create accessible term-and-description groups with semantic `<dl>`, `<dt>`, and `<dd>` output. Add or remove items directly in Gutenberg.
+* **Mermaid Diagram** - Write Mermaid syntax, catch syntax errors, and preview responsive diagrams before publishing.
+* **SVG** - Paste SVG markup, inspect a live image preview, and publish sanitized inline vectors with wide and full alignment support.
+* **Table Styles** - Apply 107 Microsoft Word-inspired designs to the native Gutenberg Table block, including optional Banded Columns.
+* **Thesaurus** - Publish definitions, parts of speech, synonyms, antonyms, and related terms as structured semantic content.
 
 == Mermaid Block Placement Guide ==
 
@@ -46,6 +43,16 @@ Tips:
 * Use one Mermaid diagram per block for cleaner editing.
 * For long technical articles, split diagrams into multiple Mermaid blocks.
 * If preview does not render, check Mermaid syntax first (missing arrows, brackets, keywords).
+
+== SVG Block Guide ==
+
+1. Open the block inserter and search for **SVG** or **PlusMagi**.
+2. Insert the **PlusMagi - SVG** block.
+3. Paste markup that starts with an `<svg>` element.
+4. Confirm the preview in the editor.
+5. Publish the post or page.
+
+The block renders responsive inline SVG. Scripts, event handlers, and unsafe inline styles are removed before frontend output.
 
 == Description List Guide ==
 
@@ -81,17 +88,29 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 1. Upload the plugin files to the `/wp-content/plugins/plusmagi-blocks` directory
 2. Activate the plugin through the 'Plugins' screen in WordPress
 
+== Screenshots ==
+
+1. Feature cards for Description List, Mermaid Diagram, SVG, Table Styles, and Thesaurus, arranged alphabetically.
+2. Responsive SVG feature card on a mobile viewport.
+
 == Changelog ==
+
+= 1.1.0 =
+* Added the SVG block with source editing and live preview
+* Added sanitized, responsive inline SVG rendering
 
 = 1.0.0 =
 * Initial public release
 * Added PlusMagi Blocks plugin entry point
-* Added Mermaid diagram block and Description List block
+* Added Mermaid diagram and Description List blocks
 * Added Thesaurus and 107 Table Styles for native Gutenberg tables
 * Added optional Banded Columns and in-editor style switching
 * Added basic WordPress plugin scaffold and metadata
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds a new block for editing and publishing sanitized inline SVG.
 
 = 1.0.0 =
 Initial version.

@@ -2,8 +2,8 @@
 /**
  * Plugin Name: PlusMagi Blocks
  * Plugin URI: https://plusmagi-blocks.plusmagi.com/
- * Description: Adds custom Gutenberg blocks (Mermaid diagrams, Description Lists, and more) for WordPress content authors.
- * Version: 1.0.0
+ * Description: Adds custom Gutenberg blocks for SVG, Mermaid diagrams, Description Lists, and more.
+ * Version: 1.1.0
  * Author: Pitt Phunsanit
  * Author URI: https://pitt.plusmagi.com
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_VERSION' ) ) {
-	define( 'PLUSMAGI_BLOCKS_VERSION', '1.0.0' );
+	define( 'PLUSMAGI_BLOCKS_VERSION', '1.1.0' );
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_PATH' ) ) {
@@ -482,6 +482,14 @@ function plusmagi_blocks_register_blocks() {
 		true
 	);
 
+	wp_register_script(
+		'plusmagi-svg-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-svg.js',
+		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-svg.js' ),
+		true
+	);
+
 	wp_register_style(
 		'plusmagi-table-style',
 		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-table-style.css',
@@ -505,7 +513,29 @@ function plusmagi_blocks_register_blocks() {
 	register_block_type( 'plusmagi-blocks/description-term', array( 'editor_script' => 'plusmagi-dl-editor' ) );
 	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-description.json' );
 	register_block_type( PLUSMAGI_BLOCKS_PATH . 'block-table-style.json' );
+	register_block_type(
+		PLUSMAGI_BLOCKS_PATH . 'block-svg.json',
+		array( 'render_callback' => 'plusmagi_blocks_render_svg_block' )
+	);
 
+}
+
+function plusmagi_blocks_render_svg_block( $attributes = array() ) {
+	$source = isset( $attributes['svg'] ) ? (string) $attributes['svg'] : '';
+
+	if ( ! preg_match( '/^\s*<svg(?:\s|>)/i', $source ) ) {
+		return '';
+	}
+
+	$svg = plusmagi_blocks_sanitize_svg( $source );
+
+	if ( '' === $svg ) {
+		return '';
+	}
+
+	$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'plusmagi-svg' ) );
+
+	return '<div ' . $wrapper_attributes . '>' . $svg . '</div>';
 }
 
 function plusmagi_blocks_render_description_list( $attributes, $content ) {
@@ -573,6 +603,7 @@ function plusmagi_blocks_enqueue_editor_assets() {
 	wp_enqueue_script( 'plusmagi-dl-editor' );
 	wp_enqueue_script( 'plusmagi-thesaurus-editor' );
 	wp_enqueue_script( 'plusmagi-table-style-editor' );
+	wp_enqueue_script( 'plusmagi-svg-editor' );
 	wp_enqueue_style( 'plusmagi-table-style' );
 }
 

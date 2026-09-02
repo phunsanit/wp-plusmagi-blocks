@@ -14,6 +14,15 @@
 
 ## Blocks
 
+### SVG
+
+Paste SVG markup, preview it in Gutenberg, and publish sanitized inline SVG that scales with its container.
+
+- Source editor with a live image preview
+- Scripts, event handlers, and unsafe styling removed on render
+- Wide and full-width alignment support
+- Responsive frontend output
+
 ### Mermaid Diagram
 
 Write Mermaid syntax and preview the generated SVG directly in Gutenberg.
@@ -65,6 +74,13 @@ For a manual installation, upload the plugin directory to `/wp-content/plugins/p
 
 ## Usage
 
+### Add inline SVG
+
+1. Search for **SVG** or **PlusMagi** in the block inserter.
+2. Insert **PlusMagi - SVG**.
+3. Paste markup beginning with an `<svg>` element.
+4. Confirm the preview, then publish the post.
+
 ### Create a Mermaid diagram
 
 1. Open the block inserter.
@@ -108,11 +124,22 @@ On standard WordPress pages, Mermaid diagrams are rendered responsively on the f
 
 If a diagram does not render, validate the Mermaid syntax first. Common causes include missing arrows, unmatched brackets, and invalid diagram keywords.
 
+## Screenshots
+
+![Alphabetically arranged PlusMagi Blocks feature cards](../assets/screenshot-1.png)
+
+![Responsive SVG feature card on mobile](../assets/screenshot-2.png)
+
 ## Development
 
 Source repository: [github.com/phunsanit/wp-plusmagi-blocks](https://github.com/phunsanit/wp-plusmagi-blocks)
 
 ## Changelog
+
+**1.1.0**
+
+- Added the SVG block with source editing and live preview
+- Added sanitized, responsive inline SVG rendering
 
 **1.0.0** (Initial Release)
 

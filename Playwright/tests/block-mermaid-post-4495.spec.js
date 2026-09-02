@@ -3,8 +3,8 @@ const { test, expect, resolveAdminTestUrl } = require('./helpers/admin-test');
 const { MERMAID_DIAGRAMS } = require('./fixtures/mermaid-diagrams');
 
 const POST_ID = 4495;
-const ADMIN_URL = process.env.WP_URL_TEST_ADMIN_MERMAID_DIAGRAM || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
-const FRONT_URL = process.env.WP_URL_TEST_FRONT_MERMAID_DIAGRAM;
+const ADMIN_URL = process.env.WP_URL_TEST_MERMAID_DIAGRAM_ADMIN || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
+const FRONT_URL = process.env.WP_URL_TEST_MERMAID_DIAGRAM_FRONT;
 test.describe('Mermaid Diagram Post 4495', () => {
 	test.setTimeout(600_000);
 

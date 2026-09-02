@@ -3,8 +3,8 @@ const { test, expect, resolveAdminTestUrl } = require('./helpers/admin-test');
 
 const POST_ID = 4493;
 const SOURCE_URL = 'https://infojournal.kku.ac.th/index.php/information/th/article/view/78/63';
-const ADMIN_URL = process.env.WP_URL_TEST_ADMIN_THESAURUS || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
-const FRONT_URL = process.env.WP_URL_TEST_FRONT_THESAURUS;
+const ADMIN_URL = process.env.WP_URL_TEST_THESAURUS_ADMIN || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
+const FRONT_URL = process.env.WP_URL_TEST_THESAURUS_FRONT;
 
 const ENTRIES = [
 	{

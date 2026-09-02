@@ -3,8 +3,8 @@ const { test, expect, resolveAdminTestUrl } = require('./helpers/admin-test');
 const { TABLE_STYLE_GROUPS, TABLE_STYLE_IDS } = require('./fixtures/table-styles');
 
 const POST_ID = 4507;
-const ADMIN_URL = process.env.WP_URL_TEST_ADMIN_TABLE_STYLE || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
-const FRONT_URL = process.env.WP_URL_TEST_FRONT_TABLE_STYLE;
+const ADMIN_URL = process.env.WP_URL_TEST_TABLE_STYLE_ADMIN || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
+const FRONT_URL = process.env.WP_URL_TEST_TABLE_STYLE_FRONT;
 const TABLE = {
 	head: [{ cells: [
 		{ content: 'Header 1', tag: 'th' },

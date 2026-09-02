@@ -2,8 +2,8 @@
 const { test, expect, resolveAdminTestUrl } = require('./helpers/admin-test');
 
 const POST_ID = 4494;
-const ADMIN_URL = process.env.WP_URL_TEST_ADMIN_DESCRIPTION_LIST || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
-const FRONT_URL = process.env.WP_URL_TEST_DESCRIPTION_LIST;
+const ADMIN_URL = process.env.WP_URL_TEST_DESCRIPTION_LIST_ADMIN || resolveAdminTestUrl(`/wp-admin/post.php?post=${POST_ID}&action=edit`);
+const FRONT_URL = process.env.WP_URL_TEST_DESCRIPTION_LIST_FRONT;
 
 const ITEMS = [
 	{
