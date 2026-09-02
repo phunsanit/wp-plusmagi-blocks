@@ -8,10 +8,10 @@ export default defineConfig({
 		outDir: '../SVN/trunk/js',
 		emptyOutDir: false,
 		lib: {
-			entry: '../SVN/trunk/js/plusmagi-post_it.tsx',
-			name: 'plusmagiPostIt',
+			entry: '../SVN/trunk/js/plusmagi-sticky_notes.tsx',
+			name: 'plusmagiStickyNotes',
 			formats: ['iife'],
-			fileName: () => 'plusmagi-post_it.js',
+			fileName: () => 'plusmagi-sticky_notes.js',
 		},
 		rollupOptions: {
 			external: ['react', 'react-dom', /^@wordpress\//],

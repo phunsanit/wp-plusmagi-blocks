@@ -1,8 +1,8 @@
 // @ts-check
 const { test, expect } = require('./helpers/admin-test');
 
-const ADMIN_URL = process.env.WP_URL_TEST_POSTIT_ADMIN;
-const FRONT_URL = process.env.WP_URL_TEST_POSTIT_FRONT;
+const ADMIN_URL = process.env.WP_URL_TEST_STICKY_NOTES_ADMIN;
+const FRONT_URL = process.env.WP_URL_TEST_STICKY_NOTES_FRONT;
 const DEMOS = [
 	{
 		tone: 'yellow',
@@ -45,13 +45,13 @@ const DEMOS = [
 	},
 ];
 
-test.describe('Post it Block - Post 4528', () => {
+test.describe('Sticky Notes Block - Post 4528', () => {
 	test('publishes every color and Gutenberg formatting demo', async ({ page }) => {
-		test.skip(!ADMIN_URL || !FRONT_URL, 'Post it test URLs are not configured.');
+		test.skip(!ADMIN_URL || !FRONT_URL, 'Sticky Notes test URLs are not configured.');
 		await page.goto(ADMIN_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 		await expect(page.locator('.edit-post-layout, .interface-interface-skeleton').first()).toBeVisible({ timeout: 60_000 });
-		await page.waitForFunction(() => Boolean(window.wp?.blocks?.getBlockType('plusmagi-blocks/post-it')), null, { timeout: 30_000 });
-		const supports = await page.evaluate(() => window.wp.blocks.getBlockType('plusmagi-blocks/post-it').supports);
+		await page.waitForFunction(() => Boolean(window.wp?.blocks?.getBlockType('plusmagi-blocks/sticky-notes')), null, { timeout: 30_000 });
+		const supports = await page.evaluate(() => window.wp.blocks.getBlockType('plusmagi-blocks/sticky-notes').supports);
 		expect(supports.typography).toMatchObject({ fontSize: true, lineHeight: true });
 		expect(supports.color).toMatchObject({ text: true, background: false });
 		expect(supports.align).toBeUndefined();
@@ -60,7 +60,7 @@ test.describe('Post it Block - Post 4528', () => {
 			const originalTitle = window.wp.data.select('core/editor').getEditedPostAttribute('title');
 			const blocks = demos.flatMap(({ tone, content, style }, index) => {
 				const note = window.wp.blocks.createBlock(
-					'plusmagi-blocks/post-it',
+					'plusmagi-blocks/sticky-notes',
 					{ tone, content, ...(style ? { style } : {}) },
 				);
 				return index < demos.length - 1
@@ -92,12 +92,12 @@ test.describe('Post it Block - Post 4528', () => {
 		})));
 		expect(persistedBlocks).toEqual(DEMOS.flatMap(({ tone }, index) => (
 			index < DEMOS.length - 1
-				? [{ name: 'plusmagi-blocks/post-it', tone }, { name: 'core/separator', tone: null }]
-				: [{ name: 'plusmagi-blocks/post-it', tone }]
+				? [{ name: 'plusmagi-blocks/sticky-notes', tone }, { name: 'core/separator', tone: null }]
+				: [{ name: 'plusmagi-blocks/sticky-notes', tone }]
 		)));
 		const hasEditorCanvas = await page.locator('iframe[name="editor-canvas"]').count() > 0;
 		const editorCanvas = hasEditorCanvas ? page.frameLocator('iframe[name="editor-canvas"]') : page;
-		const visibleNotes = editorCanvas.locator('[data-type="plusmagi-blocks/post-it"]');
+		const visibleNotes = editorCanvas.locator('[data-type="plusmagi-blocks/sticky-notes"]');
 		const visibleSeparators = editorCanvas.locator('[data-type="core/separator"]');
 		await expect(visibleNotes).toHaveCount(DEMOS.length);
 		await expect(visibleSeparators).toHaveCount(DEMOS.length - 1);
@@ -106,12 +106,12 @@ test.describe('Post it Block - Post 4528', () => {
 
 		await page.goto(FRONT_URL, { waitUntil: 'domcontentloaded', timeout: 60_000 });
 
-		const notes = page.locator('aside.wp-block-plusmagi-blocks-post-it.plusmagi-post-it');
+		const notes = page.locator('aside.wp-block-plusmagi-blocks-sticky-notes.plusmagi-sticky-notes');
 		await expect(notes).toHaveCount(DEMOS.length);
 		const separators = page.locator('hr.wp-block-separator');
 		await expect(separators).toHaveCount(DEMOS.length - 1);
 		const contentOrder = await page.locator('.entry-content, .wp-block-post-content').first().evaluate((container) => (
-			Array.from(container.querySelectorAll(':scope > aside.wp-block-plusmagi-blocks-post-it, :scope > hr.wp-block-separator'))
+			Array.from(container.querySelectorAll(':scope > aside.wp-block-plusmagi-blocks-sticky-notes, :scope > hr.wp-block-separator'))
 				.map((element) => element.tagName.toLowerCase())
 		));
 		expect(contentOrder).toEqual(['aside', 'hr', 'aside', 'hr', 'aside', 'hr', 'aside', 'hr', 'aside', 'hr', 'aside']);
@@ -120,7 +120,7 @@ test.describe('Post it Block - Post 4528', () => {
 			const note = notes.nth(index);
 			await expect(note).toBeVisible({ timeout: 30_000 });
 			await expect(note).toHaveAttribute('role', 'note');
-			await expect(note).toHaveAttribute('aria-label', 'Post it note');
+			await expect(note).toHaveAttribute('aria-label', 'Sticky note');
 			await expect(note).toHaveClass(new RegExp(`is-tone-${demo.tone}`));
 			const appearance = await note.evaluate((element) => ({
 				width: element.getBoundingClientRect().width,

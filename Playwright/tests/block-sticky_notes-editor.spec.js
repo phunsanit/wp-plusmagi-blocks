@@ -1,8 +1,8 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 
-const POST_IT_SCRIPT = path.resolve(__dirname, '../../SVN/trunk/js/plusmagi-post_it.js');
-const POST_IT_STYLES = path.resolve(__dirname, '../../SVN/trunk/css/plusmagi-post_it.css');
+const STICKY_NOTES_SCRIPT = path.resolve(__dirname, '../../SVN/trunk/js/plusmagi-sticky_notes.js');
+const STICKY_NOTES_STYLES = path.resolve(__dirname, '../../SVN/trunk/css/plusmagi-sticky_notes.css');
 
 test.beforeEach(async ({ page }) => {
 	await page.setContent('<!doctype html><html><body></body></html>');
@@ -21,15 +21,14 @@ test.beforeEach(async ({ page }) => {
 			blocks: { registerBlockType(name, config) { window.__plusmagiBlocks[name] = config; } },
 		};
 	` });
-	await page.addScriptTag({ path: POST_IT_SCRIPT });
+	await page.addScriptTag({ path: STICKY_NOTES_SCRIPT });
 });
 
-test.describe('Post it Block', () => {
+test.describe('Sticky Notes Block', () => {
 	test('registers with constrained tones and semantic note markup', async ({ page }) => {
 		const config = await page.evaluate(() => {
-			const block = window.__plusmagiBlocks['plusmagi-blocks/post-it'];
+			const block = window.__plusmagiBlocks['plusmagi-blocks/sticky-notes'];
 			const saved = block.save({ attributes: { content: 'Remember the deadline.', tone: 'pink' } });
-			const deprecatedSaved = block.deprecated[0].save({ attributes: { content: 'Existing note.', tone: 'yellow' } });
 			return {
 				title: block.title,
 				attributes: block.attributes,
@@ -37,25 +36,23 @@ test.describe('Post it Block', () => {
 				savedType: saved.type,
 				savedProps: saved.props,
 				content: saved.children[0].props.value,
-				deprecatedSavedProps: deprecatedSaved.props,
 			};
 		});
 
-		expect(config.title).toBe('PlusMagi - Post it');
+		expect(config.title).toBe('PlusMagi - Sticky Notes');
 		expect(config.attributes.tone.enum).toEqual(['yellow', 'pink', 'blue', 'green', 'orange', 'purple']);
 		expect(config.supports.typography).toMatchObject({ fontSize: true, lineHeight: true });
 		expect(config.supports.color).toMatchObject({ text: true, background: false });
 		expect(config.supports.align).toBeUndefined();
 		expect(config.savedType).toBe('aside');
-		expect(config.savedProps).toMatchObject({ role: 'note', 'aria-label': 'Post it note' });
-		expect(config.deprecatedSavedProps).toMatchObject({ role: 'note', 'aria-label': 'Post-it note' });
+		expect(config.savedProps).toMatchObject({ role: 'note', 'aria-label': 'Sticky note' });
 		expect(config.savedProps.className).toContain('is-tone-pink');
 		expect(config.content).toBe('Remember the deadline.');
 	});
 
 	test('falls back to yellow for an unsupported tone', async ({ page }) => {
 		const className = await page.evaluate(() => {
-			const block = window.__plusmagiBlocks['plusmagi-blocks/post-it'];
+			const block = window.__plusmagiBlocks['plusmagi-blocks/sticky-notes'];
 			return block.save({ attributes: { content: 'Safe note', tone: 'javascript:alert(1)' } }).props.className;
 		});
 
@@ -65,9 +62,9 @@ test.describe('Post it Block', () => {
 
 	test('pairs every note color with a readable default text color', async ({ page }) => {
 		await page.setContent(['yellow', 'pink', 'blue', 'green', 'orange', 'purple']
-			.map((tone) => `<aside data-tone="${tone}" class="wp-block-plusmagi-blocks-post-it plusmagi-post-it is-tone-${tone}">Note</aside>`)
+			.map((tone) => `<aside data-tone="${tone}" class="wp-block-plusmagi-blocks-sticky-notes plusmagi-sticky-notes is-tone-${tone}">Note</aside>`)
 			.join(''));
-		await page.addStyleTag({ path: POST_IT_STYLES });
+		await page.addStyleTag({ path: STICKY_NOTES_STYLES });
 
 		const colors = await page.locator('aside').evaluateAll((notes) => notes.map((note) => ({
 			tone: note.getAttribute('data-tone'),

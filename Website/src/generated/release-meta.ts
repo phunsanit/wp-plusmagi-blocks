@@ -4,13 +4,13 @@ export const releaseMeta = {
   "version": "1.2.1",
   "changelogVersion": "1.2.1",
   "changelogItems": [
-    "Standardized the block's display name as Post it",
-    "Renamed Post it source and asset files to use the post_it convention",
+    "Standardized the block's display name as Sticky Notes",
+    "Renamed Sticky Notes source and asset files to use the sticky_notes convention",
     "Preserved compatibility with notes saved using the previous accessibility label"
   ],
   "sources": {
     "pluginHeader": "SVN/trunk/plusmagi-markdown.php",
     "readme": "SVN/trunk/readme.txt"
   },
-  "generatedAt": "2026-09-02T11:04:07.571Z"
+  "generatedAt": "2026-09-02T12:05:13.239Z"
 } as const;

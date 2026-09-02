@@ -38,7 +38,7 @@
 ## 🚀 How to Use
 
 - Activate the plugin from the WordPress Plugins screen
-- Insert a PlusMagi block for Description List, Mermaid, Post it, SVG, or Thesaurus content
+- Insert a PlusMagi block for Description List, Mermaid, Sticky Notes, SVG, or Thesaurus content
 - To style a table, insert or select a native Gutenberg **Table** block
 - Open **Table Design** in the block sidebar, choose a style, and optionally enable **Banded Columns**
 - Choose **None** to remove the PlusMagi style while preserving the table content
@@ -48,13 +48,13 @@
 ## Changelog
 
 **1.2.1**
-- Standardized the display name as Post it
-- Renamed Post it files to use the `post_it` convention
+- Standardized the display name as Sticky Notes
+- Renamed Sticky Notes files to use the `sticky_notes` convention
 - Preserved compatibility with existing notes
 
 **1.2.0**
-- Added a semantic Post it block with six selectable note colors
-- Added responsive Post it styles and editor controls
+- Added a semantic Sticky Notes block with six selectable note colors
+- Added responsive Sticky Notes styles and editor controls
 
 **1.1.0**
 - Added an SVG block with source editing and live preview

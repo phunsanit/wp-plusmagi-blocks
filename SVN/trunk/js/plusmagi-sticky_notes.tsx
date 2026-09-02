@@ -2,7 +2,7 @@ import { createElement } from '@wordpress/element';
 import { InspectorControls, RichText, useBlockProps } from '@wordpress/block-editor';
 import { ColorPalette, PanelBody } from '@wordpress/components';
 
-const BLOCK_NAME = 'plusmagi-blocks/post-it';
+const BLOCK_NAME = 'plusmagi-blocks/sticky-notes';
 const COLORS = [
 	{ name: 'Yellow', slug: 'yellow', color: '#fff475' },
 	{ name: 'Pink', slug: 'pink', color: '#ffb7c5' },
@@ -17,19 +17,19 @@ function normalizeTone(tone: string): string {
 	return TONES.includes(tone) ? tone : 'yellow';
 }
 
-function PostItEditor({ attributes, setAttributes }: any) {
+function StickyNotesEditor({ attributes, setAttributes }: any) {
 	const tone = normalizeTone(attributes.tone || 'yellow');
-	const blockProps = useBlockProps({ className: `plusmagi-post-it is-tone-${tone}` });
+	const blockProps = useBlockProps({ className: `plusmagi-sticky-notes is-tone-${tone}` });
 
 	return createElement(
 		'aside',
-		{ ...blockProps, role: 'note', 'aria-label': 'Post it note' },
+		{ ...blockProps, role: 'note', 'aria-label': 'Sticky note' },
 		createElement(
 			InspectorControls,
 			null,
 			createElement(
 				PanelBody,
-				{ title: 'Post it settings' },
+				{ title: 'Sticky Notes settings' },
 				createElement(ColorPalette, {
 					colors: COLORS,
 					value: COLORS.find(({ slug }) => slug === tone)?.color,
@@ -52,24 +52,13 @@ function PostItEditor({ attributes, setAttributes }: any) {
 	);
 }
 
-function PostItSave({ attributes }: any) {
+function StickyNotesSave({ attributes }: any) {
 	const tone = normalizeTone(attributes.tone || 'yellow');
-	const blockProps = useBlockProps.save({ className: `plusmagi-post-it is-tone-${tone}` });
+	const blockProps = useBlockProps.save({ className: `plusmagi-sticky-notes is-tone-${tone}` });
 
 	return createElement(
 		'aside',
-		{ ...blockProps, role: 'note', 'aria-label': 'Post it note' },
-		createElement(RichText.Content, { tagName: 'p', value: attributes.content || '' }),
-	);
-}
-
-function DeprecatedPostItSave({ attributes }: any) {
-	const tone = normalizeTone(attributes.tone || 'yellow');
-	const blockProps = useBlockProps.save({ className: `plusmagi-post-it is-tone-${tone}` });
-
-	return createElement(
-		'aside',
-		{ ...blockProps, role: 'note', 'aria-label': 'Post-it note' },
+		{ ...blockProps, role: 'note', 'aria-label': 'Sticky note' },
 		createElement(RichText.Content, { tagName: 'p', value: attributes.content || '' }),
 	);
 }
@@ -79,11 +68,11 @@ const registerBlockType = (window as any).wp?.blocks?.registerBlockType;
 if (typeof registerBlockType === 'function') {
 	registerBlockType(BLOCK_NAME, {
 		apiVersion: 3,
-		title: 'PlusMagi - Post it',
+		title: 'PlusMagi - Sticky Notes',
 		category: 'text',
 		icon: 'sticky',
 		description: 'Add a concise, colorful note to a post or page.',
-		keywords: ['plusmagi', 'post it', 'sticky note', 'note'],
+		keywords: ['plusmagi', 'sticky notes', 'sticky note', 'note'],
 		attributes: {
 			content: { type: 'string', source: 'html', selector: 'p', default: '' },
 			tone: { type: 'string', enum: TONES, default: 'yellow' },
@@ -101,14 +90,7 @@ if (typeof registerBlockType === 'function') {
 			},
 			html: false,
 		},
-		edit: PostItEditor,
-		save: PostItSave,
-		deprecated: [{
-			attributes: {
-				content: { type: 'string', source: 'html', selector: 'p', default: '' },
-				tone: { type: 'string', enum: TONES, default: 'yellow' },
-			},
-			save: DeprecatedPostItSave,
-		}],
+		edit: StickyNotesEditor,
+		save: StickyNotesSave,
 	});
 }

@@ -491,10 +491,10 @@ function plusmagi_blocks_register_blocks() {
 	);
 
 	wp_register_script(
-		'plusmagi-post-it-editor',
-		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-post_it.js',
+		'plusmagi-sticky-notes-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-sticky_notes.js',
 		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element' ),
-		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-post_it.js' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-sticky_notes.js' ),
 		true
 	);
 
@@ -513,10 +513,10 @@ function plusmagi_blocks_register_blocks() {
 	);
 
 	wp_register_style(
-		'plusmagi-post-it',
-		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-post_it.css',
+		'plusmagi-sticky-notes',
+		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-sticky_notes.css',
 		array(),
-		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-post_it.css' )
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-sticky_notes.css' )
 	);
 
 	register_block_type(
@@ -560,14 +560,14 @@ function plusmagi_blocks_register_blocks() {
 		)
 	);
 	register_block_type(
-		'plusmagi-blocks/post-it',
+		'plusmagi-blocks/sticky-notes',
 		array(
 			'api_version'   => 3,
-			'title'         => 'PlusMagi - Post it',
+			'title'         => 'PlusMagi - Sticky Notes',
 			'category'      => 'text',
 			'icon'          => 'sticky',
 			'description'   => 'Add a concise, colorful note to a post or page.',
-			'keywords'      => array( 'plusmagi', 'post it', 'sticky note', 'note' ),
+			'keywords'      => array( 'plusmagi', 'sticky notes', 'sticky note', 'note' ),
 			'attributes'    => array(
 				'content' => array(
 					'type'     => 'string',
@@ -598,8 +598,8 @@ function plusmagi_blocks_register_blocks() {
 				),
 				'html'  => false,
 			),
-			'editor_script' => 'plusmagi-post-it-editor',
-			'style'         => 'plusmagi-post-it',
+			'editor_script' => 'plusmagi-sticky-notes-editor',
+			'style'         => 'plusmagi-sticky-notes',
 		)
 	);
 
@@ -689,9 +689,9 @@ function plusmagi_blocks_enqueue_editor_assets() {
 	wp_enqueue_script( 'plusmagi-thesaurus-editor' );
 	wp_enqueue_script( 'plusmagi-table-style-editor' );
 	wp_enqueue_script( 'plusmagi-svg-editor' );
-	wp_enqueue_script( 'plusmagi-post-it-editor' );
+	wp_enqueue_script( 'plusmagi-sticky-notes-editor' );
 	wp_enqueue_style( 'plusmagi-table-style' );
-	wp_enqueue_style( 'plusmagi-post-it' );
+	wp_enqueue_style( 'plusmagi-sticky-notes' );
 }
 
 function plusmagi_blocks_enqueue_frontend_assets() {
