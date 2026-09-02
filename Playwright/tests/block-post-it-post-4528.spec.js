@@ -58,11 +58,16 @@ test.describe('Post-it Block - Post 4528', () => {
 
 		const savedPost = await page.evaluate(async (demos) => {
 			const originalTitle = window.wp.data.select('core/editor').getEditedPostAttribute('title');
-			const notes = demos.map(({ tone, content, style }) => window.wp.blocks.createBlock(
-				'plusmagi-blocks/post-it',
-				{ tone, content, ...(style ? { style } : {}) },
-			));
-			window.wp.data.dispatch('core/block-editor').resetBlocks(notes);
+			const blocks = demos.flatMap(({ tone, content, style }, index) => {
+				const note = window.wp.blocks.createBlock(
+					'plusmagi-blocks/post-it',
+					{ tone, content, ...(style ? { style } : {}) },
+				);
+				return index < demos.length - 1
+					? [note, window.wp.blocks.createBlock('core/separator')]
+					: [note];
+			});
+			window.wp.data.dispatch('core/block-editor').resetBlocks(blocks);
 			await window.wp.data.dispatch('core/editor').savePost();
 			return {
 				originalTitle,
@@ -76,6 +81,13 @@ test.describe('Post-it Block - Post 4528', () => {
 
 		const notes = page.locator('aside.wp-block-plusmagi-blocks-post-it.plusmagi-post-it');
 		await expect(notes).toHaveCount(DEMOS.length);
+		const separators = page.locator('hr.wp-block-separator');
+		await expect(separators).toHaveCount(DEMOS.length - 1);
+		const contentOrder = await page.locator('.entry-content, .wp-block-post-content').first().evaluate((container) => (
+			Array.from(container.querySelectorAll(':scope > aside.wp-block-plusmagi-blocks-post-it, :scope > hr.wp-block-separator'))
+				.map((element) => element.tagName.toLowerCase())
+		));
+		expect(contentOrder).toEqual(['aside', 'hr', 'aside', 'hr', 'aside', 'hr', 'aside', 'hr', 'aside', 'hr', 'aside']);
 
 		for (const [index, demo] of DEMOS.entries()) {
 			const note = notes.nth(index);
