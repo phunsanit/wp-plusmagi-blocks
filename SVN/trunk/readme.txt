@@ -3,7 +3,7 @@ Contributors: phunsanit
 Tags: blocks, mermaid, plantuml, sticky-notes, table
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -22,13 +22,13 @@ Plugin directory visuals are included via the standard WordPress.org assets:
 
 == Features ==
 
-* **Description List** - Create accessible term-and-description groups with semantic `<dl>`, `<dt>`, and `<dd>` output. Add or remove items directly in Gutenberg.
-* **Mermaid Diagram** - Write Mermaid syntax, catch syntax errors, and preview responsive diagrams before publishing.
-* **PlantUML** - Write @startuml markup and publish diagrams rendered by the public PlantUML server, in SVG or PNG.
-* **Sticky Notes** - Add a concise 2 x 3 inch semantic note in yellow, pink, blue, green, orange, or purple.
-* **SVG** - Paste SVG markup, inspect a live image preview, and publish sanitized inline vectors with wide and full alignment support.
-* **Table Styles** - Apply 107 Microsoft Word-inspired designs to the native Gutenberg Table block, including optional Banded Columns.
-* **Thesaurus** - Publish definitions, parts of speech, synonyms, antonyms, and related terms as structured semantic content.
+* **Description List** - Create accessible term-and-description groups with semantic `<dl>`, `<dt>`, and `<dd>` output. Add or remove items directly in Gutenberg. [Live example](https://pitt.plusmagi.com/plusmagi-blocks-description-list-block)
+* **Mermaid Diagram** - Write Mermaid syntax, catch syntax errors, and preview responsive diagrams before publishing. [Live example](https://pitt.plusmagi.com/plusmagi-blocks-mermaid-diagram-block)
+* **PlantUML** - Write @startuml markup and publish diagrams rendered by the public PlantUML server, in SVG or PNG. [Live example](https://pitt.plusmagi.com/test-plusmagi-blocks-plantuml)
+* **Sticky Notes** - Add a concise 2 x 3 inch semantic note in yellow, pink, blue, green, orange, or purple. [Live example](https://pitt.plusmagi.com/plusmagi-blocks-sticky-notes-block)
+* **SVG** - Paste SVG markup, inspect a live image preview, and publish sanitized inline vectors with wide and full alignment support. [Live example](https://pitt.plusmagi.com/plusmagi-blocks-svg-block)
+* **Table Styles** - Apply 107 Microsoft Word-inspired designs to the native Gutenberg Table block, including optional Banded Columns. [Live example](https://pitt.plusmagi.com/plusmagi-blocks-table-style-block)
+* **Thesaurus** - Publish definitions, parts of speech, synonyms, antonyms, and related terms as structured semantic content. [Live example](https://pitt.plusmagi.com/plusmagi-blocks-test-thesaurus-block)
 
 == Mermaid Block Placement Guide ==
 
@@ -116,6 +116,9 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 
 == Changelog ==
 
+= 1.2.4 =
+* Added a live example link to each Features list entry
+
 = 1.2.3 =
 * Fixed the PlantUML diagram image being replaced by a broken placeholder on sites with image lazy-loading optimizations
 
@@ -145,6 +148,9 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 * Added basic WordPress plugin scaffold and metadata
 
 == Upgrade Notice ==
+
+= 1.2.4 =
+Adds a live example link to each block in the Features list.
 
 = 1.2.3 =
 Fixes PlantUML diagram images not loading on sites with lazy-loading optimizations enabled.

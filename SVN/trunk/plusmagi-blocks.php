@@ -3,7 +3,7 @@
  * Plugin Name: PlusMagi Blocks
  * Plugin URI: https://plusmagi-blocks.plusmagi.com/
  * Description: Adds custom Gutenberg blocks for SVG, Mermaid diagrams, Description Lists, and more.
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: Pitt Phunsanit
  * Author URI: https://pitt.plusmagi.com
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_VERSION' ) ) {
-	define( 'PLUSMAGI_BLOCKS_VERSION', '1.2.3' );
+	define( 'PLUSMAGI_BLOCKS_VERSION', '1.2.4' );
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_PATH' ) ) {
