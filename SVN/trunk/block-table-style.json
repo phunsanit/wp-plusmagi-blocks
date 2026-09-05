@@ -6,7 +6,7 @@
 	"icon": "editor-table",
 	"description": "Add a table style example with its style ID rendered as an H3 heading.",
 	"keywords": ["plusmagi", "table", "table style", "style id", "h3"],
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"styleId": {

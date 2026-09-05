@@ -3,7 +3,7 @@ Contributors: phunsanit
 Tags: blocks, mermaid, plantuml, sticky-notes, table
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -116,6 +116,9 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 
 == Changelog ==
 
+= 1.2.3 =
+* Fixed the PlantUML diagram image being replaced by a broken placeholder on sites with image lazy-loading optimizations
+
 = 1.2.2 =
 * Republished the stable release with the Sticky Notes name (the WordPress.org listing still showed the previous "Post it" wording from 1.2.1)
 * Added the PlantUML block, rendering @startuml diagrams via the public PlantUML server with SVG/PNG preview
@@ -142,6 +145,9 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 * Added basic WordPress plugin scaffold and metadata
 
 == Upgrade Notice ==
+
+= 1.2.3 =
+Fixes PlantUML diagram images not loading on sites with lazy-loading optimizations enabled.
 
 = 1.2.2 =
 Fixes the plugin listing to show Sticky Notes (not Post it) and adds the new PlantUML block.

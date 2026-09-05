@@ -6,7 +6,7 @@
 	"icon": "editor-textcolor",
 	"description": "A Mermaid-ready markdown block for PlusMagi Blocks.",
 	"keywords": ["plusmagi", "markdown", "mermaid"],
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"markdown": {

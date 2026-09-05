@@ -15,9 +15,9 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const ADMIN_STATE = path.join(__dirname, 'auth/admin-state.json');
 const FULL_WORDPRESS_TEST = process.env.PLUSMAGI_FULL_TEST === '1';
-const ADMIN_ONLY_MATCH = /(block-mermaid-post-4495|block-thesaurus-live-semantic|block-thesaurus-post-4493|block-description-list-post-4494|block-sticky_notes-post-4528|block-svg-live|block-plantuml-live|block-table-style-post-4507)\.spec\.js/;
+const ADMIN_ONLY_MATCH = /(block-mermaid-post-4495|block-thesaurus-live-semantic|block-thesaurus-post-4493|block-description-list-post-4494|block-sticky_notes-post-4528|block-svg-live|block-plantuml-live|block-plantuml-post-4727|block-table-style-post-4507)\.spec\.js/;
 const MERMAID_LOCAL_MATCH = /(block-mermaid-(?:editor|diagram-.*|config-.*)|block-description-list-editor|block-sticky_notes-editor|block-svg-editor|block-plantuml-editor|block-table-style-editor|block-thesaurus-semantic)\.spec\.js/;
-const ADMIN_FULL_MATCH = /(block-mermaid-(?:editor|post-4495|diagram-.*|config-.*)|block-thesaurus-(?:editor|live-semantic|post-4493)|block-description-list-(?:editor|post-4494)|block-sticky_notes-(?:editor|post-4528)|block-svg-live|block-plantuml-live|block-table-style-(?:editor|post-4507))\.spec\.js/;
+const ADMIN_FULL_MATCH = /(block-mermaid-(?:editor|post-4495|diagram-.*|config-.*)|block-thesaurus-(?:editor|live-semantic|post-4493)|block-description-list-(?:editor|post-4494)|block-sticky_notes-(?:editor|post-4528)|block-svg-live|block-plantuml-live|block-plantuml-post-4727|block-table-style-(?:editor|post-4507))\.spec\.js/;
 
 module.exports = defineConfig({
 	testDir: './tests',

@@ -6,7 +6,7 @@
 	"icon": "sticky",
 	"description": "Add a concise, colorful note to a post or page.",
 	"keywords": ["plusmagi", "sticky notes", "sticky note", "note"],
-	"version": "1.2.2",
+	"version": "1.2.3",
 	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"content": {
