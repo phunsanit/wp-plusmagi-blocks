@@ -3,7 +3,7 @@
  * Plugin Name: PlusMagi Blocks
  * Plugin URI: https://plusmagi-blocks.plusmagi.com/
  * Description: Adds custom Gutenberg blocks for SVG, Mermaid diagrams, Description Lists, and more.
- * Version: 1.2.1
+ * Version: 1.2.2
  * Author: Pitt Phunsanit
  * Author URI: https://pitt.plusmagi.com
  * License: GPL v2 or later
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_VERSION' ) ) {
-	define( 'PLUSMAGI_BLOCKS_VERSION', '1.2.1' );
+	define( 'PLUSMAGI_BLOCKS_VERSION', '1.2.2' );
 }
 
 if ( ! defined( 'PLUSMAGI_BLOCKS_PATH' ) ) {
@@ -98,6 +98,14 @@ function plusmagi_blocks_extract_mermaid_code( $markdown ) {
 	}
 
 	return '';
+}
+
+function plusmagi_blocks_looks_like_plantuml( $source ) {
+	return (bool) preg_match( '/^\s*@start/mi', (string) $source );
+}
+
+function plusmagi_blocks_encode_plantuml_hex( $source ) {
+	return '~h' . bin2hex( (string) $source );
 }
 
 function plusmagi_blocks_get_allowed_svg_tags() {
@@ -491,6 +499,14 @@ function plusmagi_blocks_register_blocks() {
 	);
 
 	wp_register_script(
+		'plusmagi-plantuml-editor',
+		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-plantuml.js',
+		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element' ),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'js/plusmagi-plantuml.js' ),
+		true
+	);
+
+	wp_register_script(
 		'plusmagi-sticky-notes-editor',
 		PLUSMAGI_BLOCKS_URL . 'js/plusmagi-sticky_notes.js',
 		array( 'wp-blocks', 'wp-block-editor', 'wp-components', 'wp-element' ),
@@ -510,6 +526,13 @@ function plusmagi_blocks_register_blocks() {
 		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-svg.css',
 		array(),
 		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-svg.css' )
+	);
+
+	wp_register_style(
+		'plusmagi-plantuml',
+		PLUSMAGI_BLOCKS_URL . 'css/plusmagi-plantuml.css',
+		array(),
+		filemtime( PLUSMAGI_BLOCKS_PATH . 'css/plusmagi-plantuml.css' )
 	);
 
 	wp_register_style(
@@ -557,6 +580,35 @@ function plusmagi_blocks_register_blocks() {
 			'editor_script'   => 'plusmagi-svg-editor',
 			'style'           => 'plusmagi-svg',
 			'render_callback' => 'plusmagi_blocks_render_svg_block',
+		)
+	);
+	register_block_type(
+		'plusmagi-blocks/plantuml',
+		array(
+			'api_version'     => 3,
+			'title'           => 'PlusMagi - PlantUML',
+			'category'        => 'widgets',
+			'icon'            => 'editor-code',
+			'description'     => 'Render PlantUML diagrams from text markup using the public PlantUML server.',
+			'keywords'        => array( 'plusmagi', 'plantuml', 'uml', 'diagram' ),
+			'attributes'      => array(
+				'source' => array(
+					'type'    => 'string',
+					'default' => '',
+				),
+				'format' => array(
+					'type'    => 'string',
+					'enum'    => array( 'svg', 'png' ),
+					'default' => 'svg',
+				),
+			),
+			'supports'        => array(
+				'align' => array( 'wide', 'full' ),
+				'html'  => false,
+			),
+			'editor_script'   => 'plusmagi-plantuml-editor',
+			'style'           => 'plusmagi-plantuml',
+			'render_callback' => 'plusmagi_blocks_render_plantuml_block',
 		)
 	);
 	register_block_type(
@@ -621,6 +673,24 @@ function plusmagi_blocks_render_svg_block( $attributes = array() ) {
 	$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'plusmagi-svg' ) );
 
 	return '<div ' . $wrapper_attributes . '>' . $svg . '</div>';
+}
+
+function plusmagi_blocks_render_plantuml_block( $attributes = array() ) {
+	$source = isset( $attributes['source'] ) ? (string) $attributes['source'] : '';
+	$source = trim( plusmagi_blocks_normalize_source( $source ) );
+
+	if ( ! plusmagi_blocks_looks_like_plantuml( $source ) ) {
+		return '';
+	}
+
+	$format = isset( $attributes['format'] ) && in_array( $attributes['format'], array( 'svg', 'png' ), true )
+		? $attributes['format']
+		: 'svg';
+
+	$url = 'https://www.plantuml.com/plantuml/' . $format . '/' . plusmagi_blocks_encode_plantuml_hex( $source );
+	$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'plusmagi-plantuml' ) );
+
+	return '<div ' . $wrapper_attributes . '><img class="plusmagi-plantuml-image" src="' . esc_url( $url ) . '" alt="PlantUML diagram" loading="lazy" /></div>';
 }
 
 function plusmagi_blocks_render_description_list( $attributes, $content ) {
@@ -689,8 +759,10 @@ function plusmagi_blocks_enqueue_editor_assets() {
 	wp_enqueue_script( 'plusmagi-thesaurus-editor' );
 	wp_enqueue_script( 'plusmagi-table-style-editor' );
 	wp_enqueue_script( 'plusmagi-svg-editor' );
+	wp_enqueue_script( 'plusmagi-plantuml-editor' );
 	wp_enqueue_script( 'plusmagi-sticky-notes-editor' );
 	wp_enqueue_style( 'plusmagi-table-style' );
+	wp_enqueue_style( 'plusmagi-plantuml' );
 	wp_enqueue_style( 'plusmagi-sticky-notes' );
 }
 

@@ -1,14 +1,15 @@
 {
   "name": "@plusmagi/plugin",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "scripts": {
-    "build": "vite build && vite build --config vite.config.description-list.ts && vite build --config vite.config.table-style.ts && vite build --config vite.config.svg.ts && vite build --config vite.config.sticky_notes.ts && npm run build:zenuml",
+    "build": "vite build && vite build --config vite.config.description-list.ts && vite build --config vite.config.table-style.ts && vite build --config vite.config.svg.ts && vite build --config vite.config.plantuml.ts && vite build --config vite.config.sticky_notes.ts && npm run build:zenuml",
     "build:zenuml": "node scripts/copy-zenuml.mjs && vite build --config vite.config.zenuml.ts",
     "dev": "vite",
     "dev:description-list": "vite --config vite.config.description-list.ts",
     "dev:table-style": "vite --config vite.config.table-style.ts",
-    "dev:svg": "vite --config vite.config.svg.ts"
+    "dev:svg": "vite --config vite.config.svg.ts",
+    "dev:plantuml": "vite --config vite.config.plantuml.ts"
   },
   "devDependencies": {
     "vite": "^5.4.11"

@@ -1,0 +1,26 @@
+.plusmagi-plantuml-editor {
+	padding: 16px;
+	border: 1px solid #d0d5dd;
+	background: #f8fafc;
+}
+
+.plusmagi-plantuml-preview {
+	margin: 16px 0 0;
+	padding: 12px;
+	border: 1px solid #d0d5dd;
+	background: #ffffff;
+}
+
+.plusmagi-plantuml-preview figcaption {
+	margin-bottom: 8px;
+	color: #475467;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.plusmagi-plantuml-preview img,
+.plusmagi-plantuml-image {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}

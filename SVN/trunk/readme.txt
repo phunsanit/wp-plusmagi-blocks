@@ -1,14 +1,14 @@
 === PlusMagi Blocks ===
 Contributors: phunsanit
-Tags: blocks, mermaid, sticky-notes, table, editor
+Tags: blocks, mermaid, plantuml, sticky-notes, table
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Development: https://github.com/phunsanit/wp-plusmagi-blocks
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-PlusMagi Blocks adds Gutenberg tools for Description Lists, Mermaid diagrams, Sticky Notes, inline SVG, Table Styles, and Thesaurus entries.
+PlusMagi Blocks adds Gutenberg tools for Description Lists, Mermaid diagrams, PlantUML diagrams, Sticky Notes, inline SVG, Table Styles, and Thesaurus entries.
 
 == Description ==
 
@@ -24,6 +24,7 @@ Plugin directory visuals are included via the standard WordPress.org assets:
 
 * **Description List** - Create accessible term-and-description groups with semantic `<dl>`, `<dt>`, and `<dd>` output. Add or remove items directly in Gutenberg.
 * **Mermaid Diagram** - Write Mermaid syntax, catch syntax errors, and preview responsive diagrams before publishing.
+* **PlantUML** - Write @startuml markup and publish diagrams rendered by the public PlantUML server, in SVG or PNG.
 * **Sticky Notes** - Add a concise 2 x 3 inch semantic note in yellow, pink, blue, green, orange, or purple.
 * **SVG** - Paste SVG markup, inspect a live image preview, and publish sanitized inline vectors with wide and full alignment support.
 * **Table Styles** - Apply 107 Microsoft Word-inspired designs to the native Gutenberg Table block, including optional Banded Columns.
@@ -54,6 +55,16 @@ Tips:
 5. Publish the post or page.
 
 The block renders responsive inline SVG. Scripts, event handlers, and unsafe inline styles are removed before frontend output.
+
+== PlantUML Block Guide ==
+
+1. Open the block inserter and search for **PlantUML** or **PlusMagi**.
+2. Insert the **PlusMagi - PlantUML** block.
+3. Write markup starting with `@startuml` (or another PlantUML `@start` tag).
+4. Choose SVG or PNG as the output format.
+5. Confirm the preview in the editor, then publish the post or page.
+
+The block renders the diagram by requesting an image from the public PlantUML server; no local Java/Graphviz installation is required.
 
 == Sticky Notes Block Guide ==
 
@@ -105,6 +116,10 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 
 == Changelog ==
 
+= 1.2.2 =
+* Republished the stable release with the Sticky Notes name (the WordPress.org listing still showed the previous "Post it" wording from 1.2.1)
+* Added the PlantUML block, rendering @startuml diagrams via the public PlantUML server with SVG/PNG preview
+
 = 1.2.1 =
 * Standardized the block's display name as Sticky Notes
 * Renamed Sticky Notes source and asset files to use the sticky_notes convention
@@ -127,6 +142,9 @@ Table Styles extend the native Gutenberg Table block. They do not add a heading 
 * Added basic WordPress plugin scaffold and metadata
 
 == Upgrade Notice ==
+
+= 1.2.2 =
+Fixes the plugin listing to show Sticky Notes (not Post it) and adds the new PlantUML block.
 
 = 1.2.1 =
 Standardizes the Sticky Notes name and asset filenames.

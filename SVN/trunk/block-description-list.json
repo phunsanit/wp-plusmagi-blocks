@@ -6,7 +6,7 @@
 	"icon": "editor-ul",
 	"description": "Add a definition list (<dl>, <dt>, <dd>) and add or remove terms as needed.",
 	"keywords": ["plusmagi", "description list", "definition list", "dl", "dt", "dd"],
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"textdomain": "plusmagi-blocks",
 	"attributes": {
 		"ordered": {
